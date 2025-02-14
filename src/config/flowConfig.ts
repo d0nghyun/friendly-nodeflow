@@ -40,10 +40,9 @@ export const initialNodes = [
     type: 'default',
     data: { 
       label: 'Start',
-      variables: {
-        system: {},
-        global: {}
-      }
+      variables: [],
+      inputVariables: [],
+      outputVariables: []
     },
     position: { x: 250, y: 50 },
     className: 'bg-blue-50 shadow-lg rounded-lg border border-blue-200'

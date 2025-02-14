@@ -107,9 +107,9 @@ const FlowCanvas = () => {
         data: { 
           label: sidebarItem.label,
           variables: [],
-          inputVariables: [] as Array<{ name: string; type: string; value?: string }>,
-          outputVariables: [] as Array<{ name: string; type: string }>
-        } satisfies NodeData,
+          inputVariables: [],
+          outputVariables: []
+        } as NodeData,
         className: `shadow-lg rounded-lg border ${sidebarItem.className}`
       };
 

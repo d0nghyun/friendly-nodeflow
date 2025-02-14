@@ -1,10 +1,13 @@
 
+export interface Variable {
+  name: string;
+  type: string;
+  value?: string;
+}
+
 export interface NodeData {
   label: string;
-  variables?: {
-    system: Record<string, unknown>;
-    global: Record<string, unknown>;
-  };
+  variables?: Variable[];
   inputVariables?: Array<{
     name: string;
     type: string;
