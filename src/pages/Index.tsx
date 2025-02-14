@@ -4,25 +4,110 @@ import '@xyflow/react/dist/style.css';
 import { useState } from 'react';
 import { PanelLeft } from 'lucide-react';
 
+const nodeTypes = {
+  start: { label: 'Start Node', description: 'Define system and global variables' },
+  variable: { label: 'Variable Node', description: 'Select and configure variables' },
+  code: { label: 'Code Node', description: 'Execute code with templates' },
+  load: { label: 'Load Node', description: 'Upload data to S3' },
+  end: { label: 'End Node', description: 'Workflow completion' }
+};
+
 const initialNodes = [
   {
-    id: '1',
+    id: 'start-1',
     type: 'default',
-    data: { label: 'Input Node' },
-    position: { x: 250, y: 100 },
-    className: 'bg-white shadow-lg rounded-lg border border-gray-200'
+    data: { 
+      label: 'Start',
+      variables: {
+        system: {},
+        global: {}
+      }
+    },
+    position: { x: 250, y: 50 },
+    className: 'bg-blue-50 shadow-lg rounded-lg border border-blue-200'
   },
   {
-    id: '2',
+    id: 'variable-1',
     type: 'default',
-    data: { label: 'Processing Node' },
-    position: { x: 250, y: 200 },
-    className: 'bg-white shadow-lg rounded-lg border border-gray-200'
+    data: { 
+      label: 'Variable Selection',
+      variables: {
+        input: {},
+        output: {}
+      }
+    },
+    position: { x: 250, y: 150 },
+    className: 'bg-green-50 shadow-lg rounded-lg border border-green-200'
+  },
+  {
+    id: 'code-1',
+    type: 'default',
+    data: { 
+      label: 'Code Execution',
+      variables: {
+        input: {},
+        output: {}
+      }
+    },
+    position: { x: 250, y: 250 },
+    className: 'bg-purple-50 shadow-lg rounded-lg border border-purple-200'
+  },
+  {
+    id: 'load-1',
+    type: 'default',
+    data: { 
+      label: 'Data Load',
+      variables: {
+        input: {},
+        output: {}
+      }
+    },
+    position: { x: 250, y: 350 },
+    className: 'bg-yellow-50 shadow-lg rounded-lg border border-yellow-200'
+  },
+  {
+    id: 'end-1',
+    type: 'default',
+    data: { 
+      label: 'End',
+      variables: {
+        input: {}
+      }
+    },
+    position: { x: 250, y: 450 },
+    className: 'bg-red-50 shadow-lg rounded-lg border border-red-200'
   }
 ];
 
 const initialEdges = [
-  { id: 'e1-2', source: '1', target: '2', animated: true }
+  { 
+    id: 'e-start-var', 
+    source: 'start-1', 
+    target: 'variable-1', 
+    animated: true,
+    style: { stroke: '#93C5FD' }
+  },
+  { 
+    id: 'e-var-code', 
+    source: 'variable-1', 
+    target: 'code-1', 
+    animated: true,
+    style: { stroke: '#93C5FD' }
+  },
+  { 
+    id: 'e-code-load', 
+    source: 'code-1', 
+    target: 'load-1', 
+    animated: true,
+    style: { stroke: '#93C5FD' }
+  },
+  { 
+    id: 'e-load-end', 
+    source: 'load-1', 
+    target: 'end-1', 
+    animated: true,
+    style: { stroke: '#93C5FD' }
+  }
 ];
 
 const Index = () => {
@@ -39,15 +124,15 @@ const Index = () => {
         <div className="p-4">
           <h2 className="text-lg font-semibold mb-4">Node Types</h2>
           <div className="space-y-2">
-            <div className="p-3 bg-gray-50 rounded-lg cursor-pointer hover:bg-gray-100 transition-colors duration-200">
-              Input Node
-            </div>
-            <div className="p-3 bg-gray-50 rounded-lg cursor-pointer hover:bg-gray-100 transition-colors duration-200">
-              Processing Node
-            </div>
-            <div className="p-3 bg-gray-50 rounded-lg cursor-pointer hover:bg-gray-100 transition-colors duration-200">
-              Output Node
-            </div>
+            {Object.entries(nodeTypes).map(([type, info]) => (
+              <div 
+                key={type}
+                className="p-3 bg-gray-50 rounded-lg cursor-pointer hover:bg-gray-100 transition-colors duration-200"
+              >
+                <div className="font-medium">{info.label}</div>
+                <div className="text-sm text-gray-500">{info.description}</div>
+              </div>
+            ))}
           </div>
         </div>
       </div>
