@@ -70,7 +70,7 @@ const Index = () => {
           className="bg-gray-50"
           fitView
         >
-          <Background color="#ccc" variant="dots" />
+          <Background color="#ccc" variant="dot" />
           <Controls className="bg-white shadow-lg border border-gray-200" />
           <MiniMap className="bg-white shadow-lg border border-gray-200" />
         </ReactFlow>
