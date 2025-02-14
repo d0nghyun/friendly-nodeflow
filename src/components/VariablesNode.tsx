@@ -24,14 +24,14 @@ export default function VariablesNode({ data }: { data: any }) {
   const [stringValue, setStringValue] = useState("");
   const [variableName, setVariableName] = useState("");
 
-  const handleTypeChange = (type) => {
+  const handleTypeChange = (type: string) => {
     setSelectedType(type);
     const defaultNames = {
       "Data": "var_data",
       "Data List": "var_data_list",
       "String": "var_str"
     };
-    setVariableName(defaultNames[type] || "var_unknown");
+    setVariableName(defaultNames[type as keyof typeof defaultNames] || "var_unknown");
     if (type === "Data" || type === "Data List") {
       setSelectedSource("S3");
     } else {
@@ -41,12 +41,18 @@ export default function VariablesNode({ data }: { data: any }) {
 
   const addVariable = () => {
     if (selectedType && variableName) {
-      const newVariable = { name: variableName, type: selectedType, source: selectedSource };
+      const newVariable: Variable = {
+        name: variableName,
+        type: selectedType,
+        source: selectedSource
+      };
+      
       if (selectedType === "String") {
         newVariable.value = stringValue;
       } else if (selectedSource === "S3") {
         newVariable.files = [...selectedFiles];
       }
+      
       setVariables((prevVariables) => [...prevVariables, newVariable]);
       setSelectedType("");
       setSelectedSource("S3");
@@ -57,7 +63,7 @@ export default function VariablesNode({ data }: { data: any }) {
     }
   };
 
-  const handleFileSelection = (file) => {
+  const handleFileSelection = (file: string) => {
     setSelectedFiles((prevFiles) =>
       prevFiles.includes(file) ? prevFiles.filter((f) => f !== file) : [...prevFiles, file]
     );
