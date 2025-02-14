@@ -1,5 +1,4 @@
-
-import { ReactFlow, Background, Controls, MiniMap, useNodesState, useEdgesState, addEdge, BackgroundVariant, Node } from '@xyflow/react';
+import { ReactFlow, Background, Controls, MiniMap, useNodesState, useEdgesState, addEdge, BackgroundVariant, Node, ReactFlowProvider } from '@xyflow/react';
 import '@xyflow/react/dist/style.css';
 import { useState } from 'react';
 import { PanelLeft } from 'lucide-react';
@@ -62,7 +61,7 @@ const initialNodes = [
   }
 ];
 
-const Index = () => {
+const FlowCanvas = () => {
   const [nodes, setNodes, onNodesChange] = useNodesState(initialNodes);
   const [edges, setEdges, onEdgesChange] = useEdgesState([]);
   const [sidebarOpen, setSidebarOpen] = useState(true);
@@ -183,6 +182,14 @@ const Index = () => {
       {/* Node Detail Panel */}
       {renderNodeDetail()}
     </div>
+  );
+};
+
+const Index = () => {
+  return (
+    <ReactFlowProvider>
+      <FlowCanvas />
+    </ReactFlowProvider>
   );
 };
 
