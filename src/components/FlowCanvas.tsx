@@ -79,7 +79,8 @@ const FlowCanvas = () => {
     setSelectedNode(node);
   }, []);
 
-  const onDragStart = (event: React.DragEvent, nodeType: string) => {
+  const onDragStart = (event: React.DragEvent<HTMLDivElement>, nodeType: string) => {
+    event.stopPropagation();
     event.dataTransfer.setData('application/reactflow', nodeType);
     event.dataTransfer.effectAllowed = 'move';
     setIsDragging(true);
@@ -180,15 +181,15 @@ const FlowCanvas = () => {
               </DropdownMenuTrigger>
               <DropdownMenuContent align="start" className="w-56">
                 {sidebarItems.map((item) => (
-                  <DropdownMenuItem
+                  <div
                     key={item.type}
-                    className="flex items-center gap-2 cursor-grab"
+                    className="flex items-center gap-2 px-2 py-1.5 cursor-grab hover:bg-gray-100 rounded-sm"
                     draggable
                     onDragStart={(e) => onDragStart(e, item.type)}
                   >
                     <div className={`w-2 h-2 rounded-full ${item.className.replace('bg-', 'bg-')}`} />
                     <span>{item.label}</span>
-                  </DropdownMenuItem>
+                  </div>
                 ))}
               </DropdownMenuContent>
             </DropdownMenu>
