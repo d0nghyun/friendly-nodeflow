@@ -1,6 +1,7 @@
-import { ReactFlow, Background, Controls, MiniMap, useNodesState, useEdgesState, addEdge, BackgroundVariant, Node, ReactFlowProvider } from '@xyflow/react';
+
+import { ReactFlow, Background, Controls, MiniMap, useNodesState, useEdgesState, addEdge, BackgroundVariant, Node, ReactFlowProvider, useReactFlow } from '@xyflow/react';
 import '@xyflow/react/dist/style.css';
-import { useState } from 'react';
+import { useState, useCallback } from 'react';
 import { PanelLeft } from 'lucide-react';
 import VariablesNode from '../components/VariablesNode';
 import CodeBlockNode from '../components/CodeBlockNode';
@@ -66,12 +67,45 @@ const FlowCanvas = () => {
   const [edges, setEdges, onEdgesChange] = useEdgesState([]);
   const [sidebarOpen, setSidebarOpen] = useState(true);
   const [selectedNode, setSelectedNode] = useState<Node | null>(null);
+  const { project } = useReactFlow();
 
-  const onConnect = (params: any) => setEdges((eds) => addEdge(params, eds));
+  const onConnect = useCallback((params: any) => {
+    setEdges((eds) => addEdge(params, eds));
+    
+    // Update target node data based on source node type
+    const sourceNode = nodes.find(node => node.id === params.source);
+    const targetNode = nodes.find(node => node.id === params.target);
 
-  const onNodeClick = (_: React.MouseEvent, node: Node) => {
-    setSelectedNode(node);
-  };
+    if (sourceNode && targetNode) {
+      if (sourceNode.type === 'variablesNode' && targetNode.type === 'codeBlockNode') {
+        setNodes(nds => nds.map(node => {
+          if (node.id === targetNode.id) {
+            return {
+              ...node,
+              data: {
+                ...node.data,
+                inputVariables: sourceNode.data.variables || []
+              }
+            };
+          }
+          return node;
+        }));
+      } else if (sourceNode.type === 'codeBlockNode' && targetNode.type === 'loadNode') {
+        setNodes(nds => nds.map(node => {
+          if (node.id === targetNode.id) {
+            return {
+              ...node,
+              data: {
+                ...node.data,
+                inputVariables: sourceNode.data.outputVariables || []
+              }
+            };
+          }
+          return node;
+        }));
+      }
+    }
+  }, [nodes, setNodes]);
 
   const onDragStart = (event: React.DragEvent, nodeType: string) => {
     event.dataTransfer.setData('application/reactflow', nodeType);
@@ -86,10 +120,10 @@ const FlowCanvas = () => {
     const sidebarItem = sidebarItems.find(item => item.type === type);
 
     if (reactFlowBounds && sidebarItem) {
-      const position = {
+      const position = project({
         x: event.clientX - reactFlowBounds.left,
         y: event.clientY - reactFlowBounds.top,
-      };
+      });
 
       const newNode = {
         id: `${type}-${nodes.length + 1}`,
@@ -97,10 +131,7 @@ const FlowCanvas = () => {
         position,
         data: { 
           label: sidebarItem.label,
-          variables: {
-            system: {},
-            global: {}
-          }
+          variables: []
         },
         className: `shadow-lg rounded-lg border ${sidebarItem.className}`
       };
