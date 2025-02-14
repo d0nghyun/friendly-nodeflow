@@ -15,7 +15,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { useToast } from "@/components/ui/use-toast";
 import { sidebarItems, initialNodes } from '../config/flowConfig';
-import { NodeData } from '../types/flow';
+import { NodeData, CustomNode } from '../types/flow';
 
 const nodeTypes = {
   variablesNode: VariablesNode,
@@ -24,9 +24,9 @@ const nodeTypes = {
 };
 
 const FlowCanvas = () => {
-  const [nodes, setNodes, onNodesChange] = useNodesState(initialNodes);
+  const [nodes, setNodes, onNodesChange] = useNodesState<NodeData>(initialNodes);
   const [edges, setEdges, onEdgesChange] = useEdgesState([]);
-  const [selectedNode, setSelectedNode] = useState<Node | null>(null);
+  const [selectedNode, setSelectedNode] = useState<CustomNode | null>(null);
   const [isDragging, setIsDragging] = useState(false);
   const [draggedItem, setDraggedItem] = useState<string | null>(null);
   const reactFlowInstance = useReactFlow();
@@ -40,40 +40,44 @@ const FlowCanvas = () => {
 
     if (sourceNode && targetNode) {
       if (sourceNode.type === 'variablesNode' && targetNode.type === 'codeBlockNode') {
-        setNodes(nds => nds.map(node => {
-          if (node.id === targetNode.id) {
-            // Use all variables from the source node
-            return {
-              ...node,
-              data: {
+        setNodes((nds) => 
+          nds.map((node) => {
+            if (node.id === targetNode.id) {
+              const updatedData: NodeData = {
                 ...node.data,
                 label: node.data.label,
-                inputVariables: sourceNode.data.variables || []
-              }
-            };
-          }
-          return node;
-        }));
+                inputVariables: sourceNode.data.variables
+              };
+              return {
+                ...node,
+                data: updatedData,
+              };
+            }
+            return node;
+          })
+        );
       } else if (sourceNode.type === 'codeBlockNode' && targetNode.type === 'loadNode') {
-        setNodes(nds => nds.map(node => {
-          if (node.id === targetNode.id) {
-            const sourceData = sourceNode.data as NodeData;
-            return {
-              ...node,
-              data: {
+        setNodes((nds) =>
+          nds.map((node) => {
+            if (node.id === targetNode.id) {
+              const updatedData: NodeData = {
                 ...node.data,
                 label: node.data.label,
-                inputVariables: sourceData.outputVariables || []
-              }
-            };
-          }
-          return node;
-        }));
+                inputVariables: sourceNode.data.outputVariables
+              };
+              return {
+                ...node,
+                data: updatedData,
+              };
+            }
+            return node;
+          })
+        );
       }
     }
   }, [nodes, setNodes]);
 
-  const onNodeClick = useCallback((_: React.MouseEvent, node: Node) => {
+  const onNodeClick = useCallback((_: React.MouseEvent, node: CustomNode) => {
     setSelectedNode(node);
   }, []);
 
@@ -100,16 +104,16 @@ const FlowCanvas = () => {
         y: event.clientY - reactFlowBounds.top,
       });
 
-      const newNode = {
+      const newNode: CustomNode = {
         id: `${type}-${nodes.length + 1}`,
         type,
         position,
-        data: { 
+        data: {
           label: sidebarItem.label,
           variables: [],
           inputVariables: [],
           outputVariables: []
-        } as NodeData,
+        },
         className: `shadow-lg rounded-lg border ${sidebarItem.className}`
       };
 
