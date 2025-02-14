@@ -10,7 +10,26 @@ import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from "@
 import { Dialog, DialogTrigger, DialogContent, DialogTitle } from "@/components/ui/dialog";
 import { FolderIcon } from "lucide-react";
 
-export default function LoadNode({ data }: { data: any }) {
+interface LoadNodeProps {
+  data: any;
+  isPanel?: boolean;
+}
+
+const NodeContent = ({ data }: { data: any }) => (
+  <div className="bg-white p-2 rounded-lg shadow-sm border border-gray-200 min-w-[150px]">
+    <Handle type="target" position={Position.Left} className="w-2 h-2" />
+    <div className="text-sm font-medium mb-2">{data.label}</div>
+    <div className="flex flex-wrap gap-1">
+      {data.inputVariables?.map((variable: any, index: number) => (
+        <Badge key={index} variant="outline" className="text-xs">
+          {variable.name}
+        </Badge>
+      ))}
+    </div>
+  </div>
+);
+
+const PanelContent = ({ data }: { data: any }) => {
   const [uploadSource, setUploadSource] = useState("");
   const [storageMapping, setStorageMapping] = useState<Record<string, string>>({});
   const [showStorageMapping, setShowStorageMapping] = useState(false);
@@ -59,137 +78,125 @@ export default function LoadNode({ data }: { data: any }) {
   };
 
   return (
-    <div>
-      {/* Flow Node */}
-      <div className="bg-white p-2 rounded-lg shadow-sm border border-gray-200 min-w-[150px]">
-        <Handle type="target" position={Position.Left} className="w-2 h-2" />
-        <div className="text-sm font-medium mb-2">{data.label}</div>
-        <div className="flex flex-wrap gap-1">
-          {data.inputVariables?.map((variable: any, index: number) => (
-            <Badge key={index} variant="outline" className="text-xs">
-              {variable.name}
-            </Badge>
-          ))}
-        </div>
-      </div>
+    <Card className="w-full max-w-4xl p-6 border rounded-lg">
+      <CardContent className="flex flex-col gap-6">
+        <p className="text-2xl font-bold">Load</p>
 
-      {/* Details Panel */}
-      <Card className="w-full max-w-4xl p-6 border rounded-lg">
-        <CardContent className="flex flex-col gap-6">
-          <p className="text-2xl font-bold">Load</p>
-
-          <Card className="w-full p-4 border rounded-lg">
-            <CardContent>
-              <p className="text-lg font-medium mb-2">Input Variables</p>
-              <Table>
-                <TableHeader>
-                  <TableRow>
-                    <TableHead>Variable</TableHead>
-                    <TableHead>Value</TableHead>
-                    <TableHead>Type</TableHead>
+        <Card className="w-full p-4 border rounded-lg">
+          <CardContent>
+            <p className="text-lg font-medium mb-2">Input Variables</p>
+            <Table>
+              <TableHeader>
+                <TableRow>
+                  <TableHead>Variable</TableHead>
+                  <TableHead>Value</TableHead>
+                  <TableHead>Type</TableHead>
+                </TableRow>
+              </TableHeader>
+              <TableBody>
+                {data.inputVariables?.map((variable: any, index: number) => (
+                  <TableRow key={index}>
+                    <TableCell>{variable.name}</TableCell>
+                    <TableCell>{variable.value || 'N/A'}</TableCell>
+                    <TableCell>{variable.type}</TableCell>
                   </TableRow>
-                </TableHeader>
-                <TableBody>
-                  {data.inputVariables?.map((variable: any, index: number) => (
-                    <TableRow key={index}>
-                      <TableCell>{variable.name}</TableCell>
-                      <TableCell>{variable.value || 'N/A'}</TableCell>
-                      <TableCell>{variable.type}</TableCell>
-                    </TableRow>
-                  ))}
-                </TableBody>
-              </Table>
-            </CardContent>
-          </Card>
+                ))}
+              </TableBody>
+            </Table>
+          </CardContent>
+        </Card>
 
-          <Card className="w-full p-4 border rounded-lg">
-            <CardContent>
-              <div className="flex justify-between items-center mb-4">
-                <p className="text-lg font-medium">Upload</p>
-                <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
-                  <DialogTrigger asChild>
-                    <Button className="bg-blue-500 text-white p-2 rounded ml-4">+</Button>
-                  </DialogTrigger>
-                  <DialogContent>
-                    <DialogTitle>Configure Upload Source</DialogTitle>
-                    <Select value={uploadSource} onValueChange={handleUploadSourceChange}>
-                      <SelectTrigger className="min-w-[150px] mt-4">
-                        <SelectValue placeholder="Select Source" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="s3">S3</SelectItem>
-                        <SelectItem value="cm">CM</SelectItem>
-                        <SelectItem value="sm">SM</SelectItem>
-                      </SelectContent>
-                    </Select>
-                    {showStorageMapping && (
-                      <Card className="w-full p-4 border rounded-lg mt-4">
-                        <CardContent>
-                          <p className="text-lg font-medium mb-2">Storage Mapping</p>
-                          <Table>
-                            <TableBody>
-                              {data.inputVariables?.map((variable: any, index: number) => (
-                                <TableRow key={index}>
-                                  <TableCell>{variable.name}</TableCell>
-                                  <TableCell className="flex items-center gap-2">
-                                    <Input
-                                      className="w-full p-2"
-                                      value={storageMapping[variable.name] || ""}
-                                      onChange={(e) => handleStorageChange(variable.name, e.target.value)}
-                                    />
-                                    <Dialog open={isFolderDialogOpen} onOpenChange={setIsFolderDialogOpen}>
-                                      <DialogTrigger asChild>
-                                        <Button className="p-2" onClick={() => handleFolderSelect(variable.name)}>
-                                          <FolderIcon className="w-5 h-5" />
+        <Card className="w-full p-4 border rounded-lg">
+          <CardContent>
+            <div className="flex justify-between items-center mb-4">
+              <p className="text-lg font-medium">Upload</p>
+              <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
+                <DialogTrigger asChild>
+                  <Button className="bg-blue-500 text-white p-2 rounded ml-4">+</Button>
+                </DialogTrigger>
+                <DialogContent>
+                  <DialogTitle>Configure Upload Source</DialogTitle>
+                  <Select value={uploadSource} onValueChange={handleUploadSourceChange}>
+                    <SelectTrigger className="min-w-[150px] mt-4">
+                      <SelectValue placeholder="Select Source" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="s3">S3</SelectItem>
+                      <SelectItem value="cm">CM</SelectItem>
+                      <SelectItem value="sm">SM</SelectItem>
+                    </SelectContent>
+                  </Select>
+                  {showStorageMapping && (
+                    <Card className="w-full p-4 border rounded-lg mt-4">
+                      <CardContent>
+                        <p className="text-lg font-medium mb-2">Storage Mapping</p>
+                        <Table>
+                          <TableBody>
+                            {data.inputVariables?.map((variable: any, index: number) => (
+                              <TableRow key={index}>
+                                <TableCell>{variable.name}</TableCell>
+                                <TableCell className="flex items-center gap-2">
+                                  <Input
+                                    className="w-full p-2"
+                                    value={storageMapping[variable.name] || ""}
+                                    onChange={(e) => handleStorageChange(variable.name, e.target.value)}
+                                  />
+                                  <Dialog open={isFolderDialogOpen} onOpenChange={setIsFolderDialogOpen}>
+                                    <DialogTrigger asChild>
+                                      <Button className="p-2" onClick={() => handleFolderSelect(variable.name)}>
+                                        <FolderIcon className="w-5 h-5" />
+                                      </Button>
+                                    </DialogTrigger>
+                                    <DialogContent>
+                                      <DialogTitle>Select a Folder</DialogTitle>
+                                      {folderOptions.map((folder) => (
+                                        <Button key={folder} className="w-full text-left p-2" onClick={() => handleFolderChoice(folder)}>
+                                          {folder}
                                         </Button>
-                                      </DialogTrigger>
-                                      <DialogContent>
-                                        <DialogTitle>Select a Folder</DialogTitle>
-                                        {folderOptions.map((folder) => (
-                                          <Button key={folder} className="w-full text-left p-2" onClick={() => handleFolderChoice(folder)}>
-                                            {folder}
-                                          </Button>
-                                        ))}
-                                      </DialogContent>
-                                    </Dialog>
-                                  </TableCell>
-                                </TableRow>
-                              ))}
-                            </TableBody>
-                          </Table>
-                          <Button className="mt-4 bg-green-500 text-white p-2 rounded" onClick={handleAddUpload}>Add Upload</Button>
-                        </CardContent>
-                      </Card>
-                    )}
-                  </DialogContent>
-                </Dialog>
-              </div>
+                                      ))}
+                                    </DialogContent>
+                                  </Dialog>
+                                </TableCell>
+                              </TableRow>
+                            ))}
+                          </TableBody>
+                        </Table>
+                        <Button className="mt-4 bg-green-500 text-white p-2 rounded" onClick={handleAddUpload}>Add Upload</Button>
+                      </CardContent>
+                    </Card>
+                  )}
+                </DialogContent>
+              </Dialog>
+            </div>
 
-              {uploadedData.length > 0 && (
-                <div className="mt-4">
-                  <p className="text-lg font-medium mb-2">Uploaded Variables</p>
-                  <Table>
-                    <TableHeader>
-                      <TableRow>
-                        <TableHead>Variable</TableHead>
-                        <TableHead>Storage Location</TableHead>
+            {uploadedData.length > 0 && (
+              <div className="mt-4">
+                <p className="text-lg font-medium mb-2">Uploaded Variables</p>
+                <Table>
+                  <TableHeader>
+                    <TableRow>
+                      <TableHead>Variable</TableHead>
+                      <TableHead>Storage Location</TableHead>
+                    </TableRow>
+                  </TableHeader>
+                  <TableBody>
+                    {uploadedData.map((item, index) => (
+                      <TableRow key={index}>
+                        <TableCell>{item.variable}</TableCell>
+                        <TableCell>{item.location}</TableCell>
                       </TableRow>
-                    </TableHeader>
-                    <TableBody>
-                      {uploadedData.map((item, index) => (
-                        <TableRow key={index}>
-                          <TableCell>{item.variable}</TableCell>
-                          <TableCell>{item.location}</TableCell>
-                        </TableRow>
-                      ))}
-                    </TableBody>
-                  </Table>
-                </div>
-              )}
-            </CardContent>
-          </Card>
-        </CardContent>
-      </Card>
-    </div>
+                    ))}
+                  </TableBody>
+                </Table>
+              </div>
+            )}
+          </CardContent>
+        </Card>
+      </CardContent>
+    </Card>
   );
+};
+
+export default function LoadNode({ data, isPanel = false }: LoadNodeProps) {
+  return isPanel ? <PanelContent data={data} /> : <NodeContent data={data} />;
 }
