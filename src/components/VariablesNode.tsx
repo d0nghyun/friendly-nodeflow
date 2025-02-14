@@ -11,18 +11,17 @@ import { Input } from "@/components/ui/input";
 interface Variable {
   name: string;
   type: string;
-  source: string;
   value?: string;
-  files?: string[];
 }
 
 interface VariablesNodeProps {
   data: any;
   isPanel?: boolean;
+  onSave?: (newData: any) => void;
 }
 
 const NodeContent = ({ data }: { data: any }) => {
-  const [variables] = useState<Variable[]>([]);
+  const [variables] = useState<Variable[]>(data.variables || []);
 
   return (
     <div className="bg-white p-2 rounded-lg shadow-sm border border-gray-200 min-w-[150px]">
@@ -40,58 +39,39 @@ const NodeContent = ({ data }: { data: any }) => {
   );
 };
 
-const PanelContent = ({ data }: { data: any }) => {
-  const [variables, setVariables] = useState<Variable[]>([]);
+const PanelContent = ({ data, onSave }: { data: any; onSave?: (newData: any) => void }) => {
+  const [variables, setVariables] = useState<Variable[]>(data.variables || []);
   const [isAddDialogOpen, setIsAddDialogOpen] = useState(false);
   const [selectedType, setSelectedType] = useState("");
-  const [selectedSource, setSelectedSource] = useState("S3");
-  const [selectedFiles, setSelectedFiles] = useState<string[]>([]);
-  const [stringValue, setStringValue] = useState("");
   const [variableName, setVariableName] = useState("");
-
-  const handleTypeChange = (type: string) => {
-    setSelectedType(type);
-    const defaultNames = {
-      "Data": "var_data",
-      "Data List": "var_data_list",
-      "String": "var_str"
-    };
-    setVariableName(defaultNames[type as keyof typeof defaultNames] || "var_unknown");
-    if (type === "Data" || type === "Data List") {
-      setSelectedSource("S3");
-    } else {
-      setSelectedSource("");
-    }
-  };
+  const [stringValue, setStringValue] = useState("");
 
   const addVariable = () => {
     if (selectedType && variableName) {
       const newVariable: Variable = {
         name: variableName,
-        type: selectedType,
-        source: selectedSource
+        type: selectedType
       };
       
       if (selectedType === "String") {
         newVariable.value = stringValue;
-      } else if (selectedSource === "S3") {
-        newVariable.files = [...selectedFiles];
       }
       
-      setVariables((prevVariables) => [...prevVariables, newVariable]);
+      const newVariables = [...variables, newVariable];
+      setVariables(newVariables);
+      
+      if (onSave) {
+        onSave({
+          ...data,
+          variables: newVariables
+        });
+      }
+
       setSelectedType("");
-      setSelectedSource("S3");
-      setSelectedFiles([]);
       setStringValue("");
       setVariableName("");
       setIsAddDialogOpen(false);
     }
-  };
-
-  const handleFileSelection = (file: string) => {
-    setSelectedFiles((prevFiles) =>
-      prevFiles.includes(file) ? prevFiles.filter((f) => f !== file) : [...prevFiles, file]
-    );
   };
 
   return (
@@ -103,13 +83,6 @@ const PanelContent = ({ data }: { data: any }) => {
             <DialogTrigger asChild>
               <Button 
                 className="text-base px-4 py-2 bg-blue-500 text-white rounded"
-                onClick={() => {
-                  setSelectedType("");
-                  setSelectedSource("S3");
-                  setSelectedFiles([]);
-                  setStringValue("");
-                  setVariableName("");
-                }}
               >
                 + Add Variable
               </Button>
@@ -119,14 +92,14 @@ const PanelContent = ({ data }: { data: any }) => {
               <DialogDescription>Provide a name and select a type.</DialogDescription>
               <div className="flex flex-col gap-4">
                 <div className="flex gap-4 items-center w-full">
-                  <Select value={selectedType} onValueChange={handleTypeChange}>
+                  <Select value={selectedType} onValueChange={setSelectedType}>
                     <SelectTrigger className="min-w-[150px]">
                       <SelectValue placeholder="Type" />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="Data">Data</SelectItem>
-                      <SelectItem value="Data List">Data List</SelectItem>
                       <SelectItem value="String">String</SelectItem>
+                      <SelectItem value="Number">Number</SelectItem>
+                      <SelectItem value="Boolean">Boolean</SelectItem>
                     </SelectContent>
                   </Select>
                   <Input 
@@ -137,19 +110,6 @@ const PanelContent = ({ data }: { data: any }) => {
                   />
                 </div>
 
-                {(selectedType === "Data" || selectedType === "Data List") && (
-                  <Select value={selectedSource} onValueChange={setSelectedSource}>
-                    <SelectTrigger className="min-w-[150px]">
-                      <SelectValue placeholder="Source" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="S3">S3</SelectItem>
-                      <SelectItem value="CM">CM</SelectItem>
-                      <SelectItem value="SM">SM</SelectItem>
-                    </SelectContent>
-                  </Select>
-                )}
-
                 {selectedType === "String" && (
                   <Input 
                     value={stringValue} 
@@ -159,23 +119,9 @@ const PanelContent = ({ data }: { data: any }) => {
                   />
                 )}
 
-                {selectedType && selectedSource === "S3" && (
-                  <>
-                    <p className="text-lg font-medium">Select Files</p>
-                    <div className="flex flex-wrap gap-4 bg-gray-200 p-4 rounded">
-                      {["bareska/ftp/sample.csv", "bareska/ftp/another_file.csv"].map((file) => (
-                        <button 
-                          key={file} 
-                          className={`px-4 py-2 rounded ${selectedFiles.includes(file) ? 'bg-blue-500 text-white' : 'bg-white border'}`} 
-                          onClick={() => handleFileSelection(file)}
-                        >
-                          {file}
-                        </button>
-                      ))}
-                    </div>
-                  </>
-                )}
-                <Button onClick={addVariable} className="mt-4 bg-green-500 text-white p-3 rounded text-lg">Add Variable</Button>
+                <Button onClick={addVariable} className="mt-4 bg-green-500 text-white p-3 rounded text-lg">
+                  Add Variable
+                </Button>
               </div>
             </DialogContent>
           </Dialog>
@@ -185,10 +131,8 @@ const PanelContent = ({ data }: { data: any }) => {
           {variables.map((variable, index) => (
             <div key={index} className="flex items-center justify-between border p-4 rounded-md bg-white shadow-sm text-lg">
               <span className="font-medium text-gray-700 flex-1 truncate">{variable.name}</span>
-              {variable.type === "String" ? (
+              {variable.value && (
                 <span className="italic text-gray-600 flex-1 truncate">"{variable.value}"</span>
-              ) : (
-                <span className="truncate text-gray-500 flex-1">{variable.files?.length > 0 ? variable.files.join(", ") : "No files selected"}</span>
               )}
               <span className="text-gray-500 text-lg">{variable.type}</span>
             </div>
@@ -199,6 +143,6 @@ const PanelContent = ({ data }: { data: any }) => {
   );
 };
 
-export default function VariablesNode({ data, isPanel = false }: VariablesNodeProps) {
-  return isPanel ? <PanelContent data={data} /> : <NodeContent data={data} />;
+export default function VariablesNode({ data, isPanel = false, onSave }: VariablesNodeProps) {
+  return isPanel ? <PanelContent data={data} onSave={onSave} /> : <NodeContent data={data} />;
 }
