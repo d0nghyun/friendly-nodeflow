@@ -64,7 +64,10 @@ const initialNodes = [
 
 interface NodeData {
   label: string;
-  variables: any;
+  variables: {
+    system: Record<string, unknown>;
+    global: Record<string, unknown>;
+  };
   inputVariables?: any[];
   outputVariables?: any[];
 }
@@ -99,11 +102,12 @@ const FlowCanvas = () => {
       } else if (sourceNode.type === 'codeBlockNode' && targetNode.type === 'loadNode') {
         setNodes(nds => nds.map(node => {
           if (node.id === targetNode.id) {
+            const sourceData = sourceNode.data as NodeData;
             return {
               ...node,
               data: {
                 ...node.data,
-                inputVariables: sourceNode.data.outputVariables || []
+                inputVariables: sourceData.outputVariables || []
               }
             };
           }
@@ -130,7 +134,7 @@ const FlowCanvas = () => {
     const sidebarItem = sidebarItems.find(item => item.type === type);
 
     if (reactFlowBounds && sidebarItem) {
-      const position = reactFlowInstance.project({
+      const position = reactFlowInstance.screenToFlowPosition({
         x: event.clientX - reactFlowBounds.left,
         y: event.clientY - reactFlowBounds.top,
       });
