@@ -9,22 +9,35 @@ interface OutputVariable {
   type: string;
 }
 
-export default function CodeBlockNode({ data }: { data: any }) {
+interface Variable {
+  name: string;
+  type: string;
+  value?: string;
+}
+
+interface CodeBlockData {
+  label: string;
+  inputVariables?: Variable[];
+  outputVariables?: OutputVariable[];
+}
+
+export default function CodeBlockNode({ data }: { data: CodeBlockData }) {
   const [outputVariables, setOutputVariables] = useState<OutputVariable[]>([]);
   const [pythonCode, setPythonCode] = useState(`# Python script\n`);
 
   useEffect(() => {
-    if (data.inputVariables) {
-      const updatedCode = `# Python script\n${data.inputVariables.map((v: any) => 
-        `${v.name} = ${v.type === 'String' ? `"${v.value}"` : 'None'}`
+    if (Array.isArray(data.inputVariables) && data.inputVariables.length > 0) {
+      const updatedCode = `# Python script\n${data.inputVariables.map((v) => 
+        `${v.name} = ${v.type === 'String' ? `"${v.value || ''}"` : 'None'}`
       ).join('\n')}\n\n# Your code here\n`;
       setPythonCode(updatedCode);
     }
   }, [data.inputVariables]);
 
   const handleAddOutput = (name: string, type: string) => {
-    setOutputVariables(prev => [...prev, { name, type }]);
-    data.outputVariables = [...outputVariables, { name, type }];
+    const newOutput = { name, type };
+    setOutputVariables(prev => [...prev, newOutput]);
+    data.outputVariables = [...(data.outputVariables || []), newOutput];
   };
 
   return (
@@ -35,7 +48,7 @@ export default function CodeBlockNode({ data }: { data: any }) {
       <div className="text-sm font-medium mb-2">{data.label}</div>
       
       <div className="flex flex-wrap gap-1 mb-2">
-        {data.inputVariables?.map((variable: any, index: number) => (
+        {Array.isArray(data.inputVariables) && data.inputVariables.map((variable, index) => (
           <Badge key={index} variant="outline" className="text-xs">
             in: {variable.name}
           </Badge>
