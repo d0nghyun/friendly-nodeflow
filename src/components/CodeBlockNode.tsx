@@ -1,6 +1,5 @@
 
 import { useState, useEffect } from "react";
-import { Card, CardContent } from "@/components/ui/card";
 import { Handle, Position } from '@xyflow/react';
 import { Badge } from "@/components/ui/badge";
 
@@ -34,16 +33,10 @@ export default function CodeBlockNode({ data }: { data: CodeBlockData }) {
     }
   }, [data.inputVariables]);
 
-  const handleAddOutput = (name: string, type: string) => {
-    const newOutput = { name, type };
-    setOutputVariables(prev => [...prev, newOutput]);
-    data.outputVariables = [...(data.outputVariables || []), newOutput];
-  };
-
   return (
     <div className="bg-white p-2 rounded-lg shadow-sm border border-gray-200 min-w-[150px]">
-      <Handle type="target" position={Position.Top} className="w-2 h-2" />
-      <Handle type="source" position={Position.Bottom} className="w-2 h-2" />
+      <Handle type="target" position={Position.Left} className="w-2 h-2" />
+      <Handle type="source" position={Position.Right} className="w-2 h-2" />
       
       <div className="text-sm font-medium mb-2">{data.label}</div>
       

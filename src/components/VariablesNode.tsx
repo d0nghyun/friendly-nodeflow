@@ -1,5 +1,5 @@
+
 import { useState } from "react";
-import { Card, CardContent } from "@/components/ui/card";
 import { Handle, Position } from '@xyflow/react';
 import { Badge } from "@/components/ui/badge";
 
@@ -20,54 +20,10 @@ export default function VariablesNode({ data }: { data: any }) {
   const [stringValue, setStringValue] = useState("");
   const [variableName, setVariableName] = useState("");
 
-  const handleTypeChange = (type: string) => {
-    setSelectedType(type);
-    const defaultNames = {
-      "Data": "var_data",
-      "Data List": "var_data_list",
-      "String": "var_str"
-    };
-    setVariableName(defaultNames[type as keyof typeof defaultNames] || "var_unknown");
-    if (type === "Data" || type === "Data List") {
-      setSelectedSource("S3");
-    } else {
-      setSelectedSource("");
-    }
-  };
-
-  const addVariable = () => {
-    if (selectedType && variableName) {
-      const newVariable: Variable = {
-        name: variableName,
-        type: selectedType,
-        source: selectedSource
-      };
-      
-      if (selectedType === "String") {
-        newVariable.value = stringValue;
-      } else if (selectedSource === "S3") {
-        newVariable.files = [...selectedFiles];
-      }
-      
-      setVariables((prevVariables) => [...prevVariables, newVariable]);
-      setSelectedType("");
-      setSelectedSource("S3");
-      setSelectedFiles([]);
-      setStringValue("");
-      setVariableName("");
-      setIsAddDialogOpen(false);
-    }
-  };
-
-  const handleFileSelection = (file: string) => {
-    setSelectedFiles((prevFiles) =>
-      prevFiles.includes(file) ? prevFiles.filter((f) => f !== file) : [...prevFiles, file]
-    );
-  };
-
   return (
     <div className="bg-white p-2 rounded-lg shadow-sm border border-gray-200 min-w-[150px]">
-      <Handle type="source" position={Position.Bottom} className="w-2 h-2" />
+      <Handle type="target" position={Position.Left} className="w-2 h-2" />
+      <Handle type="source" position={Position.Right} className="w-2 h-2" />
       <div className="text-sm font-medium mb-2">{data.label}</div>
       <div className="flex flex-wrap gap-1">
         {variables.map((variable, index) => (
