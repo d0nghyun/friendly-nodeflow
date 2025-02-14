@@ -2,10 +2,17 @@
 import { ReactFlow, Background, Controls, MiniMap, useNodesState, useEdgesState, addEdge, BackgroundVariant, Node, useReactFlow } from '@xyflow/react';
 import '@xyflow/react/dist/style.css';
 import { useState, useCallback } from 'react';
+import { Plus } from "lucide-react";
 import VariablesNode from './VariablesNode';
 import CodeBlockNode from './CodeBlockNode';
 import LoadNode from './LoadNode';
-import Sidebar from './Sidebar';
+import { Button } from "@/components/ui/button";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 import { sidebarItems, initialNodes } from '../config/flowConfig';
 import { NodeData } from '../types/flow';
 
@@ -18,8 +25,9 @@ const nodeTypes = {
 const FlowCanvas = () => {
   const [nodes, setNodes, onNodesChange] = useNodesState(initialNodes);
   const [edges, setEdges, onEdgesChange] = useEdgesState([]);
-  const [sidebarOpen, setSidebarOpen] = useState(true);
   const [selectedNode, setSelectedNode] = useState<Node | null>(null);
+  const [isDragging, setIsDragging] = useState(false);
+  const [draggedItem, setDraggedItem] = useState<string | null>(null);
   const reactFlowInstance = useReactFlow();
 
   const onConnect = useCallback((params: any) => {
@@ -74,10 +82,14 @@ const FlowCanvas = () => {
   const onDragStart = (event: React.DragEvent, nodeType: string) => {
     event.dataTransfer.setData('application/reactflow', nodeType);
     event.dataTransfer.effectAllowed = 'move';
+    setIsDragging(true);
+    setDraggedItem(nodeType);
   };
 
   const onDrop = (event: React.DragEvent) => {
     event.preventDefault();
+    setIsDragging(false);
+    setDraggedItem(null);
 
     const reactFlowBounds = document.querySelector('.react-flow')?.getBoundingClientRect();
     const type = event.dataTransfer.getData('application/reactflow');
@@ -145,13 +157,6 @@ const FlowCanvas = () => {
 
   return (
     <div className="h-screen w-full bg-gray-50 flex">
-      <Sidebar 
-        items={sidebarItems}
-        isOpen={sidebarOpen}
-        onToggle={() => setSidebarOpen(!sidebarOpen)}
-        onDragStart={onDragStart}
-      />
-
       <div className="flex-1 relative">
         <ReactFlow
           nodes={nodes}
@@ -166,6 +171,28 @@ const FlowCanvas = () => {
           className="bg-gray-50"
           fitView
         >
+          <div className="absolute left-4 top-4 z-10">
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button variant="default" size="icon" className="rounded-full w-12 h-12 shadow-lg">
+                  <Plus className="h-6 w-6" />
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="start" className="w-56">
+                {sidebarItems.map((item) => (
+                  <DropdownMenuItem
+                    key={item.type}
+                    className="flex items-center gap-2 cursor-grab"
+                    draggable
+                    onDragStart={(e) => onDragStart(e, item.type)}
+                  >
+                    <div className={`w-2 h-2 rounded-full ${item.className.replace('bg-', 'bg-')}`} />
+                    <span>{item.label}</span>
+                  </DropdownMenuItem>
+                ))}
+              </DropdownMenuContent>
+            </DropdownMenu>
+          </div>
           <Background color="#ccc" variant={BackgroundVariant.Dots} />
           <Controls className="bg-white shadow-lg border border-gray-200" />
           <MiniMap className="bg-white shadow-lg border border-gray-200" />
@@ -173,6 +200,15 @@ const FlowCanvas = () => {
       </div>
 
       {renderNodeDetail()}
+
+      {isDragging && draggedItem && (
+        <div 
+          className="fixed top-0 left-0 pointer-events-none w-full h-full z-50 cursor-grabbing"
+          style={{
+            background: 'rgba(0, 0, 0, 0.1)'
+          }}
+        />
+      )}
     </div>
   );
 };
