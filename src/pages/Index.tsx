@@ -184,10 +184,18 @@ const FlowCanvas = () => {
     const NodeComponent = nodeTypes[selectedNode.type as keyof typeof nodeTypes];
     if (!NodeComponent) return null;
 
+    // Ensure data has the required label property for CodeBlockData
+    const nodeData = {
+      ...selectedNode.data,
+      label: selectedNode.data.label || 'Untitled',
+      inputVariables: selectedNode.data.inputVariables || [],
+      outputVariables: selectedNode.data.outputVariables || []
+    };
+
     return (
       <div className="fixed right-0 top-0 h-screen w-96 bg-white shadow-lg border-l border-gray-200 overflow-y-auto">
         <div className="p-4">
-          <NodeComponent data={selectedNode.data} />
+          <NodeComponent data={nodeData} />
         </div>
       </div>
     );
