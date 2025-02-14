@@ -64,12 +64,19 @@ const initialNodes = [
 
 interface NodeData {
   label: string;
-  variables: {
+  variables?: {
     system: Record<string, unknown>;
     global: Record<string, unknown>;
   };
-  inputVariables?: any[];
-  outputVariables?: any[];
+  inputVariables?: Array<{
+    name: string;
+    type: string;
+    value?: string;
+  }>;
+  outputVariables?: Array<{
+    name: string;
+    type: string;
+  }>;
 }
 
 const FlowCanvas = () => {
@@ -148,8 +155,10 @@ const FlowCanvas = () => {
           variables: {
             system: {},
             global: {}
-          }
-        } as NodeData,
+          },
+          inputVariables: [],
+          outputVariables: []
+        } satisfies NodeData,
         className: `shadow-lg rounded-lg border ${sidebarItem.className}`
       };
 
