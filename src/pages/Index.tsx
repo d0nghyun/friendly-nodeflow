@@ -96,11 +96,17 @@ const FlowCanvas = () => {
       if (sourceNode.type === 'variablesNode' && targetNode.type === 'codeBlockNode') {
         setNodes(nds => nds.map(node => {
           if (node.id === targetNode.id) {
+            const sourceVariables = sourceNode.data.variables || {};
             return {
               ...node,
               data: {
                 ...node.data,
-                inputVariables: sourceNode.data.variables || []
+                label: node.data.label,
+                inputVariables: Object.entries(sourceVariables).map(([name, value]) => ({
+                  name,
+                  type: typeof value,
+                  value: String(value)
+                }))
               }
             };
           }
@@ -114,6 +120,7 @@ const FlowCanvas = () => {
               ...node,
               data: {
                 ...node.data,
+                label: node.data.label,
                 inputVariables: sourceData.outputVariables || []
               }
             };
@@ -156,8 +163,8 @@ const FlowCanvas = () => {
             system: {},
             global: {}
           },
-          inputVariables: [],
-          outputVariables: []
+          inputVariables: [] as Array<{ name: string; type: string; value?: string }>,
+          outputVariables: [] as Array<{ name: string; type: string }>
         } satisfies NodeData,
         className: `shadow-lg rounded-lg border ${sidebarItem.className}`
       };
