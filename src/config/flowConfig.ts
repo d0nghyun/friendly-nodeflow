@@ -1,5 +1,5 @@
 
-import { SidebarItem, CustomNode } from '../types/flow';
+import { SidebarItem } from '../types/flow';
 
 export const sidebarItems: SidebarItem[] = [
   { 
@@ -34,15 +34,16 @@ export const sidebarItems: SidebarItem[] = [
   }
 ];
 
-export const initialNodes: CustomNode[] = [
+export const initialNodes = [
   {
     id: 'start-1',
     type: 'default',
     data: { 
       label: 'Start',
-      variables: [],
-      inputVariables: [],
-      outputVariables: []
+      variables: {
+        system: {},
+        global: {}
+      }
     },
     position: { x: 250, y: 50 },
     className: 'bg-blue-50 shadow-lg rounded-lg border border-blue-200'

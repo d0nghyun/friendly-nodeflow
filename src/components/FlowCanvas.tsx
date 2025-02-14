@@ -1,5 +1,5 @@
 
-import { ReactFlow, Background, Controls, MiniMap, useNodesState, useEdgesState, addEdge, BackgroundVariant, useReactFlow, Panel } from '@xyflow/react';
+import { ReactFlow, Background, Controls, MiniMap, useNodesState, useEdgesState, addEdge, BackgroundVariant, Node, useReactFlow, Panel } from '@xyflow/react';
 import '@xyflow/react/dist/style.css';
 import { useState, useCallback } from 'react';
 import { Plus, AlignHorizontalJustifyCenterIcon } from "lucide-react";
@@ -15,7 +15,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { useToast } from "@/components/ui/use-toast";
 import { sidebarItems, initialNodes } from '../config/flowConfig';
-import { NodeData, CustomNode } from '../types/flow';
+import { NodeData } from '../types/flow';
 
 const nodeTypes = {
   variablesNode: VariablesNode,
@@ -24,9 +24,9 @@ const nodeTypes = {
 };
 
 const FlowCanvas = () => {
-  const [nodes, setNodes, onNodesChange] = useNodesState<CustomNode>(initialNodes);
+  const [nodes, setNodes, onNodesChange] = useNodesState(initialNodes);
   const [edges, setEdges, onEdgesChange] = useEdgesState([]);
-  const [selectedNode, setSelectedNode] = useState<CustomNode | null>(null);
+  const [selectedNode, setSelectedNode] = useState<Node | null>(null);
   const [isDragging, setIsDragging] = useState(false);
   const [draggedItem, setDraggedItem] = useState<string | null>(null);
   const reactFlowInstance = useReactFlow();
@@ -40,44 +40,40 @@ const FlowCanvas = () => {
 
     if (sourceNode && targetNode) {
       if (sourceNode.type === 'variablesNode' && targetNode.type === 'codeBlockNode') {
-        setNodes((nds) => 
-          nds.map((node) => {
-            if (node.id === targetNode.id) {
-              const updatedData: NodeData = {
+        setNodes(nds => nds.map(node => {
+          if (node.id === targetNode.id) {
+            // Use all variables from the source node
+            return {
+              ...node,
+              data: {
                 ...node.data,
                 label: node.data.label,
-                inputVariables: sourceNode.data.variables
-              };
-              return {
-                ...node,
-                data: updatedData,
-              };
-            }
-            return node;
-          })
-        );
+                inputVariables: sourceNode.data.variables || []
+              }
+            };
+          }
+          return node;
+        }));
       } else if (sourceNode.type === 'codeBlockNode' && targetNode.type === 'loadNode') {
-        setNodes((nds) =>
-          nds.map((node) => {
-            if (node.id === targetNode.id) {
-              const updatedData: NodeData = {
+        setNodes(nds => nds.map(node => {
+          if (node.id === targetNode.id) {
+            const sourceData = sourceNode.data as NodeData;
+            return {
+              ...node,
+              data: {
                 ...node.data,
                 label: node.data.label,
-                inputVariables: sourceNode.data.outputVariables
-              };
-              return {
-                ...node,
-                data: updatedData,
-              };
-            }
-            return node;
-          })
-        );
+                inputVariables: sourceData.outputVariables || []
+              }
+            };
+          }
+          return node;
+        }));
       }
     }
   }, [nodes, setNodes]);
 
-  const onNodeClick = useCallback((_: React.MouseEvent, node: CustomNode) => {
+  const onNodeClick = useCallback((_: React.MouseEvent, node: Node) => {
     setSelectedNode(node);
   }, []);
 
@@ -104,20 +100,20 @@ const FlowCanvas = () => {
         y: event.clientY - reactFlowBounds.top,
       });
 
-      const newNode: CustomNode = {
+      const newNode = {
         id: `${type}-${nodes.length + 1}`,
         type,
         position,
-        data: {
+        data: { 
           label: sidebarItem.label,
           variables: [],
-          inputVariables: [],
-          outputVariables: []
-        },
+          inputVariables: [] as Array<{ name: string; type: string; value?: string }>,
+          outputVariables: [] as Array<{ name: string; type: string }>
+        } satisfies NodeData,
         className: `shadow-lg rounded-lg border ${sidebarItem.className}`
       };
 
-      setNodes((nds) => [...nds, newNode]);
+      setNodes((nds) => nds.concat(newNode));
     }
   };
 
