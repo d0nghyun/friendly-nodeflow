@@ -186,10 +186,17 @@ const FlowCanvas = () => {
 
     // Ensure data has all required properties and correct types
     const nodeData: NodeData = {
-      label: selectedNode.data.label || 'Untitled',
-      variables: selectedNode.data.variables || { system: {}, global: {} },
-      inputVariables: selectedNode.data.inputVariables || [],
-      outputVariables: selectedNode.data.outputVariables || []
+      label: String(selectedNode.data.label || 'Untitled'),
+      variables: {
+        system: (selectedNode.data.variables?.system as Record<string, unknown>) || {},
+        global: (selectedNode.data.variables?.global as Record<string, unknown>) || {}
+      },
+      inputVariables: Array.isArray(selectedNode.data.inputVariables) 
+        ? selectedNode.data.inputVariables 
+        : [],
+      outputVariables: Array.isArray(selectedNode.data.outputVariables)
+        ? selectedNode.data.outputVariables
+        : []
     };
 
     return (
