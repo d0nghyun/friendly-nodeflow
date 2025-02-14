@@ -187,9 +187,9 @@ const FlowCanvas = () => {
     // Ensure data has the required label property for CodeBlockData
     const nodeData = {
       ...selectedNode.data,
-      label: selectedNode.data.label || 'Untitled',
-      inputVariables: selectedNode.data.inputVariables || [],
-      outputVariables: selectedNode.data.outputVariables || []
+      label: (selectedNode.data.label as string) || 'Untitled',
+      inputVariables: (selectedNode.data.inputVariables as Array<{ name: string; type: string; value?: string }>) || [],
+      outputVariables: (selectedNode.data.outputVariables as Array<{ name: string; type: string }>) || []
     };
 
     return (
