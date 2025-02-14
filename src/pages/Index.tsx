@@ -188,8 +188,8 @@ const FlowCanvas = () => {
     const nodeData: NodeData = {
       label: String(selectedNode.data.label || 'Untitled'),
       variables: {
-        system: (selectedNode.data.variables?.system as Record<string, unknown>) || {},
-        global: (selectedNode.data.variables?.global as Record<string, unknown>) || {}
+        system: ((selectedNode.data.variables as { system: Record<string, unknown> })?.system) || {},
+        global: ((selectedNode.data.variables as { global: Record<string, unknown> })?.global) || {}
       },
       inputVariables: Array.isArray(selectedNode.data.inputVariables) 
         ? selectedNode.data.inputVariables 
