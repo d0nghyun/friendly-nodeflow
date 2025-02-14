@@ -1,5 +1,5 @@
 
-import { ReactFlow, Background, Controls, MiniMap, useNodesState, useEdgesState, addEdge } from '@xyflow/react';
+import { ReactFlow, Background, Controls, MiniMap, useNodesState, useEdgesState, addEdge, BackgroundVariant } from '@xyflow/react';
 import '@xyflow/react/dist/style.css';
 import { useState } from 'react';
 import { PanelLeft } from 'lucide-react';
@@ -70,7 +70,7 @@ const Index = () => {
           className="bg-gray-50"
           fitView
         >
-          <Background color="#ccc" variant="dot" />
+          <Background color="#ccc" variant={BackgroundVariant.Dots} />
           <Controls className="bg-white shadow-lg border border-gray-200" />
           <MiniMap className="bg-white shadow-lg border border-gray-200" />
         </ReactFlow>
