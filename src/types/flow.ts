@@ -7,7 +7,7 @@ export interface Variable {
   value?: string;
 }
 
-export interface NodeData {
+export interface NodeData extends Record<string, any> {
   label: string;
   variables: Variable[];
   inputVariables: Array<{

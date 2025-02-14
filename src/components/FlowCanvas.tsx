@@ -1,5 +1,5 @@
 
-import { ReactFlow, Background, Controls, MiniMap, useNodesState, useEdgesState, addEdge, BackgroundVariant, Node, useReactFlow, Panel } from '@xyflow/react';
+import { ReactFlow, Background, Controls, MiniMap, useNodesState, useEdgesState, addEdge, BackgroundVariant, useReactFlow, Panel } from '@xyflow/react';
 import '@xyflow/react/dist/style.css';
 import { useState, useCallback } from 'react';
 import { Plus, AlignHorizontalJustifyCenterIcon } from "lucide-react";
@@ -24,7 +24,7 @@ const nodeTypes = {
 };
 
 const FlowCanvas = () => {
-  const [nodes, setNodes, onNodesChange] = useNodesState<NodeData>(initialNodes);
+  const [nodes, setNodes, onNodesChange] = useNodesState<CustomNode>(initialNodes);
   const [edges, setEdges, onEdgesChange] = useEdgesState([]);
   const [selectedNode, setSelectedNode] = useState<CustomNode | null>(null);
   const [isDragging, setIsDragging] = useState(false);
@@ -117,7 +117,7 @@ const FlowCanvas = () => {
         className: `shadow-lg rounded-lg border ${sidebarItem.className}`
       };
 
-      setNodes((nds) => nds.concat(newNode));
+      setNodes((nds) => [...nds, newNode]);
     }
   };
 
