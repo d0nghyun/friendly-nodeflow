@@ -62,17 +62,23 @@ const initialNodes = [
   }
 ];
 
+interface NodeData {
+  label: string;
+  variables: any;
+  inputVariables?: any[];
+  outputVariables?: any[];
+}
+
 const FlowCanvas = () => {
   const [nodes, setNodes, onNodesChange] = useNodesState(initialNodes);
   const [edges, setEdges, onEdgesChange] = useEdgesState([]);
   const [sidebarOpen, setSidebarOpen] = useState(true);
   const [selectedNode, setSelectedNode] = useState<Node | null>(null);
-  const { project } = useReactFlow();
+  const reactFlowInstance = useReactFlow();
 
   const onConnect = useCallback((params: any) => {
     setEdges((eds) => addEdge(params, eds));
     
-    // Update target node data based on source node type
     const sourceNode = nodes.find(node => node.id === params.source);
     const targetNode = nodes.find(node => node.id === params.target);
 
@@ -107,6 +113,10 @@ const FlowCanvas = () => {
     }
   }, [nodes, setNodes]);
 
+  const onNodeClick = useCallback((_: React.MouseEvent, node: Node) => {
+    setSelectedNode(node);
+  }, []);
+
   const onDragStart = (event: React.DragEvent, nodeType: string) => {
     event.dataTransfer.setData('application/reactflow', nodeType);
     event.dataTransfer.effectAllowed = 'move';
@@ -120,7 +130,7 @@ const FlowCanvas = () => {
     const sidebarItem = sidebarItems.find(item => item.type === type);
 
     if (reactFlowBounds && sidebarItem) {
-      const position = project({
+      const position = reactFlowInstance.project({
         x: event.clientX - reactFlowBounds.left,
         y: event.clientY - reactFlowBounds.top,
       });
@@ -131,8 +141,11 @@ const FlowCanvas = () => {
         position,
         data: { 
           label: sidebarItem.label,
-          variables: []
-        },
+          variables: {
+            system: {},
+            global: {}
+          }
+        } as NodeData,
         className: `shadow-lg rounded-lg border ${sidebarItem.className}`
       };
 
@@ -162,7 +175,6 @@ const FlowCanvas = () => {
 
   return (
     <div className="h-screen w-full bg-gray-50 flex">
-      {/* Sidebar */}
       <div className={`bg-white border-r border-gray-200 transition-all duration-300 ease-in-out ${sidebarOpen ? 'w-64' : 'w-0'}`}>
         <div className="p-4">
           <h2 className="text-lg font-semibold mb-4">Node Types</h2>
@@ -182,7 +194,6 @@ const FlowCanvas = () => {
         </div>
       </div>
 
-      {/* Main Content */}
       <div className="flex-1 relative">
         <button
           onClick={() => setSidebarOpen(!sidebarOpen)}
@@ -210,7 +221,6 @@ const FlowCanvas = () => {
         </ReactFlow>
       </div>
 
-      {/* Node Detail Panel */}
       {renderNodeDetail()}
     </div>
   );
