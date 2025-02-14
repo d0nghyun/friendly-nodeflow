@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from "@/components/ui/select";
 import { PlayIcon } from "lucide-react";
+import { Handle, Position } from '@xyflow/react';
 
 export default function CodeBlockNode({ data }: { data: any }) {
   const [pythonCode, setPythonCode] = useState(`# Python script
@@ -27,6 +28,9 @@ import pandas as pd
   return (
     <Card className="min-w-[300px]">
       <CardContent className="flex flex-col gap-4 p-4">
+        <Handle type="target" position={Position.Top} className="w-2 h-2" />
+        <Handle type="source" position={Position.Bottom} className="w-2 h-2" />
+        
         <div className="flex justify-between items-center">
           <p className="text-lg font-semibold">{data.label}</p>
           <Select value={selectedImage} onValueChange={setSelectedImage}>

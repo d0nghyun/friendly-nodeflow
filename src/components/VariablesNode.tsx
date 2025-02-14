@@ -1,16 +1,26 @@
+
 import { useState } from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from "@/components/ui/select";
 import { Dialog, DialogTrigger, DialogContent, DialogTitle, DialogDescription } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { Handle, Position } from '@xyflow/react';
+
+interface Variable {
+  name: string;
+  type: string;
+  source: string;
+  value?: string;
+  files?: string[];
+}
 
 export default function VariablesNode({ data }: { data: any }) {
-  const [variables, setVariables] = useState([]);
+  const [variables, setVariables] = useState<Variable[]>([]);
   const [isAddDialogOpen, setIsAddDialogOpen] = useState(false);
   const [selectedType, setSelectedType] = useState("");
   const [selectedSource, setSelectedSource] = useState("S3");
-  const [selectedFiles, setSelectedFiles] = useState([]);
+  const [selectedFiles, setSelectedFiles] = useState<string[]>([]);
   const [stringValue, setStringValue] = useState("");
   const [variableName, setVariableName] = useState("");
 
@@ -55,7 +65,10 @@ export default function VariablesNode({ data }: { data: any }) {
 
   return (
     <Card className="min-w-[300px]">
-      <CardContent className="flex flex-col gap-4 p-4">
+      <CardContent className="p-4">
+        <Handle type="target" position={Position.Top} className="w-2 h-2" />
+        <Handle type="source" position={Position.Bottom} className="w-2 h-2" />
+        
         <div className="flex justify-between items-center">
           <p className="text-lg font-semibold">{data.label}</p>
           <Dialog open={isAddDialogOpen} onOpenChange={setIsAddDialogOpen}>

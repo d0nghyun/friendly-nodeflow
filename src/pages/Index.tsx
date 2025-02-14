@@ -1,14 +1,16 @@
 
-import { ReactFlow, Background, Controls, MiniMap, useNodesState, useEdgesState, addEdge, BackgroundVariant } from '@xyflow/react';
+import { ReactFlow, Background, Controls, MiniMap, useNodesState, useEdgesState, addEdge, BackgroundVariant, Node } from '@xyflow/react';
 import '@xyflow/react/dist/style.css';
 import { useState } from 'react';
 import { PanelLeft } from 'lucide-react';
 import VariablesNode from '../components/VariablesNode';
 import CodeBlockNode from '../components/CodeBlockNode';
+import LoadNode from '../components/LoadNode';
 
 const nodeTypes = {
   variablesNode: VariablesNode,
-  codeBlockNode: CodeBlockNode
+  codeBlockNode: CodeBlockNode,
+  loadNode: LoadNode
 };
 
 const sidebarItems = [
@@ -31,7 +33,7 @@ const sidebarItems = [
     className: 'bg-purple-50 border-purple-200'
   },
   { 
-    type: 'load', 
+    type: 'loadNode', 
     label: 'Load Node', 
     description: 'Upload data to S3',
     className: 'bg-yellow-50 border-yellow-200'
@@ -64,8 +66,13 @@ const Index = () => {
   const [nodes, setNodes, onNodesChange] = useNodesState(initialNodes);
   const [edges, setEdges, onEdgesChange] = useEdgesState([]);
   const [sidebarOpen, setSidebarOpen] = useState(true);
+  const [selectedNode, setSelectedNode] = useState<Node | null>(null);
 
   const onConnect = (params: any) => setEdges((eds) => addEdge(params, eds));
+
+  const onNodeClick = (_: React.MouseEvent, node: Node) => {
+    setSelectedNode(node);
+  };
 
   const onDragStart = (event: React.DragEvent, nodeType: string) => {
     event.dataTransfer.setData('application/reactflow', nodeType);
@@ -89,7 +96,13 @@ const Index = () => {
         id: `${type}-${nodes.length + 1}`,
         type,
         position,
-        data: { label: sidebarItem.label },
+        data: { 
+          label: sidebarItem.label,
+          variables: {
+            system: {},
+            global: {}
+          }
+        },
         className: `shadow-lg rounded-lg border ${sidebarItem.className}`
       };
 
@@ -100,6 +113,21 @@ const Index = () => {
   const onDragOver = (event: React.DragEvent) => {
     event.preventDefault();
     event.dataTransfer.dropEffect = 'move';
+  };
+
+  const renderNodeDetail = () => {
+    if (!selectedNode) return null;
+
+    const NodeComponent = nodeTypes[selectedNode.type as keyof typeof nodeTypes];
+    if (!NodeComponent) return null;
+
+    return (
+      <div className="fixed right-0 top-0 h-screen w-96 bg-white shadow-lg border-l border-gray-200 overflow-y-auto">
+        <div className="p-4">
+          <NodeComponent data={selectedNode.data} />
+        </div>
+      </div>
+    );
   };
 
   return (
@@ -139,6 +167,7 @@ const Index = () => {
           onNodesChange={onNodesChange}
           onEdgesChange={onEdgesChange}
           onConnect={onConnect}
+          onNodeClick={onNodeClick}
           onDrop={onDrop}
           onDragOver={onDragOver}
           nodeTypes={nodeTypes}
@@ -150,6 +179,9 @@ const Index = () => {
           <MiniMap className="bg-white shadow-lg border border-gray-200" />
         </ReactFlow>
       </div>
+
+      {/* Node Detail Panel */}
+      {renderNodeDetail()}
     </div>
   );
 };
