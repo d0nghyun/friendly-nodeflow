@@ -1,19 +1,20 @@
 
+import { Node } from '@xyflow/react';
+
+export interface Variable {
+  name: string;
+  type: string;
+  value?: string;
+}
+
 export interface NodeData {
   label: string;
   variables: {
     system: Record<string, unknown>;
     global: Record<string, unknown>;
   };
-  inputVariables: Array<{
-    name: string;
-    type: string;
-    value?: string;
-  }>;
-  outputVariables: Array<{
-    name: string;
-    type: string;
-  }>;
+  inputVariables: Variable[];
+  outputVariables: Variable[];
 }
 
 export interface SidebarItem {
@@ -28,3 +29,5 @@ export interface NodeProps {
   isPanel?: boolean;
   onSave?: (data: NodeData) => void;
 }
+
+export type CustomNode = Node<NodeData>;
