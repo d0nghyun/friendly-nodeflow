@@ -9,18 +9,29 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from "@/components/ui/select";
 import { Dialog, DialogTrigger, DialogContent, DialogTitle } from "@/components/ui/dialog";
 import { FolderIcon } from "lucide-react";
+import { NodeData } from "@/types/flow";
 
 interface LoadNodeProps {
-  data: any;
+  data: NodeData;
   isPanel?: boolean;
+  onSave?: (data: NodeData) => void;
 }
 
-const NodeContent = ({ data }: { data: any }) => (
+interface UploadItem {
+  variable: string;
+  location: string;
+}
+
+interface StorageMapping {
+  [key: string]: string;
+}
+
+const NodeContent = ({ data }: { data: NodeData }) => (
   <div className="bg-white p-2 rounded-lg shadow-sm border border-gray-200 min-w-[150px]">
     <Handle type="target" position={Position.Left} className="w-2 h-2" />
     <div className="text-sm font-medium mb-2">{data.label}</div>
     <div className="flex flex-wrap gap-1">
-      {data.inputVariables?.map((variable: any, index: number) => (
+      {data.inputVariables?.map((variable, index) => (
         <Badge key={index} variant="outline" className="text-xs">
           {variable.name}
         </Badge>
@@ -29,24 +40,22 @@ const NodeContent = ({ data }: { data: any }) => (
   </div>
 );
 
-const PanelContent = ({ data }: { data: any }) => {
+const PanelContent = ({ data, onSave }: { data: NodeData; onSave?: (data: NodeData) => void }) => {
   const [uploadSource, setUploadSource] = useState("");
-  const [storageMapping, setStorageMapping] = useState<Record<string, string>>({});
+  const [storageMapping, setStorageMapping] = useState<StorageMapping>({});
   const [showStorageMapping, setShowStorageMapping] = useState(false);
-  const [uploadedData, setUploadedData] = useState<Array<{ variable: string, location: string }>>([]);
+  const [uploadedData, setUploadedData] = useState<UploadItem[]>([]);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [isFolderDialogOpen, setIsFolderDialogOpen] = useState(false);
   const [selectedVariable, setSelectedVariable] = useState("");
   const folderOptions = ["sample1/", "sample1/data", "sample2/", "sample2/results"];
 
   useEffect(() => {
-    if (data.inputVariables) {
-      const newMapping: Record<string, string> = {};
-      data.inputVariables.forEach((variable: any) => {
-        newMapping[variable.name] = '';
-      });
-      setStorageMapping(newMapping);
-    }
+    const newMapping: StorageMapping = {};
+    data.inputVariables?.forEach((variable) => {
+      newMapping[variable.name] = '';
+    });
+    setStorageMapping(newMapping);
   }, [data.inputVariables]);
 
   const handleStorageChange = (variable: string, value: string) => {
@@ -71,8 +80,17 @@ const PanelContent = ({ data }: { data: any }) => {
   };
 
   const handleAddUpload = () => {
-    const newUploads = Object.entries(storageMapping).map(([variable, location]) => ({ variable, location }));
+    const newUploads = Object.entries(storageMapping)
+      .filter(([, location]) => location !== '') // 값이 있는 매핑만 추가
+      .map(([variable, location]) => ({ variable, location }));
+    
     setUploadedData((prev) => [...prev, ...newUploads]);
+    if (onSave) {
+      onSave({
+        ...data,
+        uploadedData: [...uploadedData, ...newUploads]
+      });
+    }
     setShowStorageMapping(false);
     setIsDialogOpen(false);
   };
@@ -94,7 +112,7 @@ const PanelContent = ({ data }: { data: any }) => {
                 </TableRow>
               </TableHeader>
               <TableBody>
-                {data.inputVariables?.map((variable: any, index: number) => (
+                {data.inputVariables?.map((variable, index) => (
                   <TableRow key={index}>
                     <TableCell>{variable.name}</TableCell>
                     <TableCell>{variable.value || 'N/A'}</TableCell>
@@ -112,7 +130,9 @@ const PanelContent = ({ data }: { data: any }) => {
               <p className="text-lg font-medium">Upload</p>
               <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
                 <DialogTrigger asChild>
-                  <Button className="bg-blue-500 text-white p-2 rounded ml-4">+</Button>
+                  <Button variant="secondary" size="icon">
+                    <span className="text-xl font-bold">+</span>
+                  </Button>
                 </DialogTrigger>
                 <DialogContent>
                   <DialogTitle>Configure Upload Source</DialogTitle>
@@ -132,28 +152,35 @@ const PanelContent = ({ data }: { data: any }) => {
                         <p className="text-lg font-medium mb-2">Storage Mapping</p>
                         <Table>
                           <TableBody>
-                            {data.inputVariables?.map((variable: any, index: number) => (
+                            {data.inputVariables?.map((variable, index) => (
                               <TableRow key={index}>
                                 <TableCell>{variable.name}</TableCell>
                                 <TableCell className="flex items-center gap-2">
                                   <Input
-                                    className="w-full p-2"
                                     value={storageMapping[variable.name] || ""}
                                     onChange={(e) => handleStorageChange(variable.name, e.target.value)}
                                   />
-                                  <Dialog open={isFolderDialogOpen} onOpenChange={setIsFolderDialogOpen}>
+                                  <Dialog open={isFolderDialogOpen && selectedVariable === variable.name} onOpenChange={setIsFolderDialogOpen}>
                                     <DialogTrigger asChild>
-                                      <Button className="p-2" onClick={() => handleFolderSelect(variable.name)}>
-                                        <FolderIcon className="w-5 h-5" />
+                                      <Button variant="outline" size="icon" onClick={() => handleFolderSelect(variable.name)}>
+                                        <FolderIcon className="h-4 w-4" />
                                       </Button>
                                     </DialogTrigger>
                                     <DialogContent>
                                       <DialogTitle>Select a Folder</DialogTitle>
-                                      {folderOptions.map((folder) => (
-                                        <Button key={folder} className="w-full text-left p-2" onClick={() => handleFolderChoice(folder)}>
-                                          {folder}
-                                        </Button>
-                                      ))}
+                                      <div className="flex flex-col gap-2 mt-4">
+                                        {folderOptions.map((folder) => (
+                                          <Button
+                                            key={folder}
+                                            variant="outline"
+                                            className="justify-start"
+                                            onClick={() => handleFolderChoice(folder)}
+                                          >
+                                            <FolderIcon className="mr-2 h-4 w-4" />
+                                            {folder}
+                                          </Button>
+                                        ))}
+                                      </div>
                                     </DialogContent>
                                   </Dialog>
                                 </TableCell>
@@ -161,7 +188,9 @@ const PanelContent = ({ data }: { data: any }) => {
                             ))}
                           </TableBody>
                         </Table>
-                        <Button className="mt-4 bg-green-500 text-white p-2 rounded" onClick={handleAddUpload}>Add Upload</Button>
+                        <Button className="mt-4 w-full" onClick={handleAddUpload}>
+                          Add Upload
+                        </Button>
                       </CardContent>
                     </Card>
                   )}
@@ -197,6 +226,6 @@ const PanelContent = ({ data }: { data: any }) => {
   );
 };
 
-export default function LoadNode({ data, isPanel = false }: LoadNodeProps) {
-  return isPanel ? <PanelContent data={data} /> : <NodeContent data={data} />;
+export default function LoadNode({ data, isPanel = false, onSave }: LoadNodeProps) {
+  return isPanel ? <PanelContent data={data} onSave={onSave} /> : <NodeContent data={data} />;
 }
