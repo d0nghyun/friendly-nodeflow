@@ -1,5 +1,5 @@
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Handle, Position } from '@xyflow/react';
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent } from "@/components/ui/card";
@@ -7,6 +7,7 @@ import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from "@
 import { Dialog, DialogTrigger, DialogContent, DialogTitle, DialogDescription } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { NodeData } from "@/types/flow";
 
 interface Variable {
   name: string;
@@ -17,12 +18,13 @@ interface Variable {
 }
 
 interface VariablesNodeProps {
-  data: any;
+  data: NodeData;
   isPanel?: boolean;
+  onSave?: (data: NodeData) => void;
 }
 
-const NodeContent = ({ data }: { data: any }) => {
-  const [variables] = useState<Variable[]>([]);
+const NodeContent = ({ data }: { data: NodeData }) => {
+  const variables = (data.variables?.system as Variable[]) || [];
 
   return (
     <div className="bg-white p-2 rounded-lg shadow-sm border border-gray-200 min-w-[150px]">
@@ -40,14 +42,18 @@ const NodeContent = ({ data }: { data: any }) => {
   );
 };
 
-const PanelContent = ({ data }: { data: any }) => {
-  const [variables, setVariables] = useState<Variable[]>([]);
+const PanelContent = ({ data, onSave }: { data: NodeData; onSave?: (data: NodeData) => void }) => {
+  const [variables, setVariables] = useState<Variable[]>((data.variables?.system as Variable[]) || []);
   const [isAddDialogOpen, setIsAddDialogOpen] = useState(false);
   const [selectedType, setSelectedType] = useState("");
   const [selectedSource, setSelectedSource] = useState("S3");
   const [selectedFiles, setSelectedFiles] = useState<string[]>([]);
   const [stringValue, setStringValue] = useState("");
   const [variableName, setVariableName] = useState("");
+
+  useEffect(() => {
+    setVariables((data.variables?.system as Variable[]) || []);
+  }, [data.variables?.system]);
 
   const handleTypeChange = (type: string) => {
     setSelectedType(type);
@@ -78,7 +84,19 @@ const PanelContent = ({ data }: { data: any }) => {
         newVariable.files = [...selectedFiles];
       }
       
-      setVariables((prevVariables) => [...prevVariables, newVariable]);
+      const updatedVariables = [...variables, newVariable];
+      setVariables(updatedVariables);
+      
+      if (onSave) {
+        onSave({
+          ...data,
+          variables: {
+            ...data.variables,
+            system: updatedVariables
+          }
+        });
+      }
+
       setSelectedType("");
       setSelectedSource("S3");
       setSelectedFiles([]);
@@ -199,6 +217,6 @@ const PanelContent = ({ data }: { data: any }) => {
   );
 };
 
-export default function VariablesNode({ data, isPanel = false }: VariablesNodeProps) {
-  return isPanel ? <PanelContent data={data} /> : <NodeContent data={data} />;
+export default function VariablesNode({ data, isPanel = false, onSave }: VariablesNodeProps) {
+  return isPanel ? <PanelContent data={data} onSave={onSave} /> : <NodeContent data={data} />;
 }
