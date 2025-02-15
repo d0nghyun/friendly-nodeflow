@@ -1,4 +1,3 @@
-
 import { ReactFlow, Background, Controls, MiniMap, useNodesState, useEdgesState, addEdge, BackgroundVariant, useReactFlow } from '@xyflow/react';
 import '@xyflow/react/dist/style.css';
 import { useState, useCallback, useRef } from 'react';
@@ -38,6 +37,19 @@ const FlowCanvas = () => {
           }
           return node;
         }));
+      } else if (sourceNode.type === 'variablesNode' && targetNode.type === 'loadNode') {
+        setNodes(nds => nds.map(node => {
+          if (node.id === targetNode.id) {
+            return {
+              ...node,
+              data: {
+                ...node.data,
+                inputVariables: mapVariablesToInputs(sourceNode.data.variables.system)
+              }
+            };
+          }
+          return node;
+        }));
       } else if (sourceNode.type === 'codeBlockNode' && targetNode.type === 'loadNode') {
         setNodes(nds => nds.map(node => {
           if (node.id === targetNode.id) {
@@ -54,6 +66,70 @@ const FlowCanvas = () => {
       }
     }
   }, [nodes, setNodes]);
+
+  const updateConnectedNodes = useCallback((updatedNode: CustomNode) => {
+    const connectedEdges = edges.filter(edge => edge.source === updatedNode.id);
+    
+    connectedEdges.forEach(edge => {
+      const targetNode = nodes.find(node => node.id === edge.target);
+      if (targetNode) {
+        if (updatedNode.type === 'variablesNode' && 
+           (targetNode.type === 'codeBlockNode' || targetNode.type === 'loadNode')) {
+          setNodes(nds => nds.map(node => {
+            if (node.id === targetNode.id) {
+              return {
+                ...node,
+                data: {
+                  ...node.data,
+                  inputVariables: mapVariablesToInputs(updatedNode.data.variables.system)
+                }
+              };
+            }
+            return node;
+          }));
+        } else if (updatedNode.type === 'codeBlockNode' && targetNode.type === 'loadNode') {
+          setNodes(nds => nds.map(node => {
+            if (node.id === targetNode.id) {
+              return {
+                ...node,
+                data: {
+                  ...node.data,
+                  inputVariables: updatedNode.data.outputVariables
+                }
+              };
+            }
+            return node;
+          }));
+        }
+      }
+    });
+  }, [edges, nodes, setNodes]);
+
+  const handleSaveNode = useCallback((nodeId: string, newData: NodeData) => {
+    setNodes(nds => {
+      const updatedNodes = nds.map(node => {
+        if (node.id === nodeId) {
+          const updatedNode = {
+            ...node,
+            data: {
+              ...node.data,
+              ...newData
+            }
+          };
+          // 노드 데이터가 변경되면 연결된 노드들도 업데이트
+          setTimeout(() => updateConnectedNodes(updatedNode), 0);
+          return updatedNode;
+        }
+        return node;
+      });
+      return updatedNodes;
+    });
+    
+    toast({
+      title: "변경사항이 저장되었습니다",
+      duration: 2000,
+    });
+  }, [setNodes, toast, updateConnectedNodes]);
 
   const onNodeClick = useCallback((event: React.MouseEvent, node: CustomNode) => {
     event.stopPropagation();
@@ -103,25 +179,6 @@ const FlowCanvas = () => {
     setNodes(nodes => alignNodesHorizontally(nodes));
     toast({
       title: "노드들이 수평으로 정렬되었습니다",
-      duration: 2000,
-    });
-  }, [setNodes, toast]);
-
-  const handleSaveNode = useCallback((nodeId: string, newData: NodeData) => {
-    setNodes(nds => nds.map(node => {
-      if (node.id === nodeId) {
-        return {
-          ...node,
-          data: {
-            ...node.data,
-            ...newData
-          }
-        };
-      }
-      return node;
-    }));
-    toast({
-      title: "변경사항이 저장되었습니다",
       duration: 2000,
     });
   }, [setNodes, toast]);
