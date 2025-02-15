@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from "react";
 import { Handle, Position } from '@xyflow/react';
 import { Badge } from "@/components/ui/badge";
@@ -85,8 +86,8 @@ const PanelContent = ({ data, onSave }: NodeProps) => {
 
         <div className="bg-gray-50 rounded-lg p-4">
           <div className="flex justify-between items-center mb-2">
-            <Select value={selectedImage} onValueChange={setSelectedImage} className="w-32">
-              <SelectTrigger className="text-xs h-8">
+            <Select value={selectedImage} onValueChange={setSelectedImage}>
+              <SelectTrigger className="text-xs h-8 w-32">
                 <SelectValue placeholder="Python Image" />
               </SelectTrigger>
               <SelectContent>
