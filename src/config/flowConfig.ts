@@ -1,51 +1,56 @@
 
-import { SidebarItem } from '../types/flow';
+import { CustomNode, SidebarItem } from '@/types/flow';
 
 export const sidebarItems: SidebarItem[] = [
-  { 
-    type: 'start', 
-    label: 'Start Node', 
-    description: 'Define system and global variables',
-    className: 'bg-blue-50 border-blue-200'
+  {
+    type: 'variablesNode',
+    label: 'Variables',
+    description: 'Node for managing variables',
+    className: 'bg-blue-500'
   },
-  { 
-    type: 'variablesNode', 
-    label: 'Variable Node', 
-    description: 'Select and configure variables',
-    className: 'bg-green-50 border-green-200'
+  {
+    type: 'codeBlockNode',
+    label: 'Code Block',
+    description: 'Node for code execution',
+    className: 'bg-green-500'
   },
-  { 
-    type: 'codeBlockNode', 
-    label: 'Code Node', 
-    description: 'Execute code with templates',
-    className: 'bg-purple-50 border-purple-200'
-  },
-  { 
-    type: 'loadNode', 
-    label: 'Load Node', 
-    description: 'Upload data to S3',
-    className: 'bg-yellow-50 border-yellow-200'
-  },
-  { 
-    type: 'end', 
-    label: 'End Node', 
-    description: 'Workflow completion',
-    className: 'bg-red-50 border-red-200'
+  {
+    type: 'loadNode',
+    label: 'Load',
+    description: 'Node for loading data',
+    className: 'bg-purple-500'
   }
 ];
 
-export const initialNodes = [
+export const initialNodes: CustomNode[] = [
   {
-    id: 'start-1',
-    type: 'default',
-    data: { 
-      label: 'Start',
+    id: 'variables-1',
+    type: 'variablesNode',
+    position: { x: 100, y: 100 },
+    data: {
+      label: 'Variables',
       variables: {
         system: {},
         global: {}
-      }
+      },
+      inputVariables: [],
+      outputVariables: []
     },
-    position: { x: 250, y: 50 },
-    className: 'bg-blue-50 shadow-lg rounded-lg border border-blue-200'
+    className: 'shadow-lg rounded-lg border bg-blue-500'
+  },
+  {
+    id: 'codeblock-1',
+    type: 'codeBlockNode',
+    position: { x: 400, y: 100 },
+    data: {
+      label: 'Code Block',
+      variables: {
+        system: {},
+        global: {}
+      },
+      inputVariables: [],
+      outputVariables: []
+    },
+    className: 'shadow-lg rounded-lg border bg-green-500'
   }
 ];

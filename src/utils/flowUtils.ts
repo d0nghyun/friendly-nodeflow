@@ -1,6 +1,6 @@
 
 import { Node } from '@xyflow/react';
-import { NodeData, CustomNode } from '@/types/flow';
+import { NodeData, CustomNode, Variable } from '@/types/flow';
 
 export const createNodeFromType = (
   type: string,
