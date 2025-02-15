@@ -1,7 +1,7 @@
 
 import { ReactFlow, Background, Controls, MiniMap, useNodesState, useEdgesState, addEdge, BackgroundVariant, useReactFlow } from '@xyflow/react';
 import '@xyflow/react/dist/style.css';
-import { useState, useCallback } from 'react';
+import { useState, useCallback, useRef } from 'react';
 import { useToast } from "@/components/ui/use-toast";
 import { sidebarItems, initialNodes } from '../config/flowConfig';
 import { NodeData, CustomNode } from '../types/flow';
@@ -16,6 +16,7 @@ const FlowCanvas = () => {
   const [selectedNode, setSelectedNode] = useState<CustomNode | null>(null);
   const [isDragging, setIsDragging] = useState(false);
   const [draggedItem, setDraggedItem] = useState<string | null>(null);
+  const reactFlowWrapper = useRef<HTMLDivElement>(null);
   const reactFlowInstance = useReactFlow();
   const { toast } = useToast();
 
@@ -73,8 +74,7 @@ const FlowCanvas = () => {
     setIsDragging(false);
     setDraggedItem(null);
 
-    // 반드시 ReactFlow 컴포넌트의 바운딩 박스를 가져와야 합니다
-    const reactFlowBounds = reactFlowInstance.getViewportElement()?.getBoundingClientRect();
+    const reactFlowBounds = reactFlowWrapper.current?.getBoundingClientRect();
     const type = event.dataTransfer.getData('application/reactflow');
     const sidebarItem = sidebarItems.find(item => item.type === type);
 
@@ -124,7 +124,7 @@ const FlowCanvas = () => {
 
   return (
     <div className="h-screen w-full bg-gray-50 flex">
-      <div className="flex-1 relative overflow-hidden">
+      <div ref={reactFlowWrapper} className="flex-1 relative overflow-hidden">
         <ReactFlow
           nodes={nodes}
           edges={edges}
