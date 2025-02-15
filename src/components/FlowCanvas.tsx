@@ -1,4 +1,3 @@
-
 import { ReactFlow, Background, Controls, MiniMap, useNodesState, useEdgesState, addEdge, BackgroundVariant, useReactFlow } from '@xyflow/react';
 import '@xyflow/react/dist/style.css';
 import { useState, useCallback, useRef } from 'react';
@@ -14,8 +13,6 @@ const FlowCanvas = () => {
   const [nodes, setNodes, onNodesChange] = useNodesState<CustomNode>(initialNodes);
   const [edges, setEdges, onEdgesChange] = useEdgesState([]);
   const [selectedNode, setSelectedNode] = useState<CustomNode | null>(null);
-  const [isDragging, setIsDragging] = useState(false);
-  const [draggedItem, setDraggedItem] = useState<string | null>(null);
   const reactFlowWrapper = useRef<HTMLDivElement>(null);
   const reactFlowInstance = useReactFlow();
   const { toast } = useToast();
@@ -61,17 +58,13 @@ const FlowCanvas = () => {
     setSelectedNode(node);
   }, []);
 
-  const onDragStart = (event: React.DragEvent<HTMLDivElement>, nodeType: string) => {
+  const onDragStart = useCallback((event: React.DragEvent<HTMLDivElement>, nodeType: string) => {
     event.dataTransfer.setData('application/reactflow', nodeType);
     event.dataTransfer.effectAllowed = 'move';
-    setIsDragging(true);
-    setDraggedItem(nodeType);
-  };
+  }, []);
 
   const onDrop = useCallback((event: React.DragEvent) => {
     event.preventDefault();
-    setIsDragging(false);
-    setDraggedItem(null);
 
     const reactFlowBounds = reactFlowWrapper.current?.getBoundingClientRect();
     const type = event.dataTransfer.getData('application/reactflow');
@@ -123,10 +116,7 @@ const FlowCanvas = () => {
 
   return (
     <div className="h-screen w-full bg-gray-50 flex">
-      <div 
-        ref={reactFlowWrapper} 
-        className="flex-1 relative"
-      >
+      <div ref={reactFlowWrapper} className="flex-1 relative">
         <ReactFlow
           nodes={nodes}
           edges={edges}
@@ -156,15 +146,6 @@ const FlowCanvas = () => {
         nodeTypes={nodeTypes}
         onSave={handleSaveNode}
       />
-
-      {isDragging && draggedItem && (
-        <div 
-          className="fixed top-0 left-0 pointer-events-none w-full h-full z-50 cursor-grabbing"
-          style={{
-            background: 'rgba(0, 0, 0, 0.1)'
-          }}
-        />
-      )}
     </div>
   );
 };

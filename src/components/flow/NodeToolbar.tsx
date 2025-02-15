@@ -16,7 +16,7 @@ interface NodeToolbarProps {
 
 export const NodeToolbar = ({ sidebarItems, onDragStart, onAlignHorizontally }: NodeToolbarProps) => (
   <div className="absolute left-4 top-4 z-10 flex gap-2">
-    <DropdownMenu>
+    <DropdownMenu modal={false}>
       <DropdownMenuTrigger asChild>
         <Button variant="default" size="icon" className="rounded-full w-12 h-12 shadow-lg">
           <Plus className="h-6 w-6" />
@@ -25,21 +25,14 @@ export const NodeToolbar = ({ sidebarItems, onDragStart, onAlignHorizontally }: 
       <DropdownMenuContent 
         align="start" 
         className="w-56"
-        onCloseAutoFocus={(e) => e.preventDefault()}
+        sideOffset={5}
       >
         {sidebarItems.map((item) => (
           <div
             key={item.type}
             className="flex items-center gap-2 px-2 py-1.5 cursor-grab hover:bg-gray-100 rounded-sm"
             draggable
-            onDragStart={(e) => {
-              e.stopPropagation();
-              onDragStart(e, item.type);
-            }}
-            onDragEnd={(e) => {
-              e.stopPropagation();
-              e.preventDefault();
-            }}
+            onDragStart={(e) => onDragStart(e, item.type)}
           >
             <div className={`w-2 h-2 rounded-full ${item.className.replace('bg-', 'bg-')}`} />
             <span>{item.label}</span>
