@@ -5,6 +5,7 @@ import { AddVariableDialog } from "./variables/AddVariableDialog";
 import { VariablesTable } from "./variables/VariablesTable";
 import { VariablesNodeProps, Variable } from "./variables/types";
 import { getInitialVariables, arrayToRecord } from "./variables/utils";
+import { NodeData } from "@/types/flow";
 
 const PanelContent = ({ data, onSave }: { data: NodeData; onSave?: (data: NodeData) => void }) => {
   const [variables, setVariables] = useState<Variable[]>(getInitialVariables(data));
