@@ -1,6 +1,6 @@
 
 import { Node } from '@xyflow/react';
-import { NodeData, Variable } from '@/types/flow';
+import { NodeData, CustomNode } from '@/types/flow';
 
 export const createNodeFromType = (
   type: string,
@@ -8,7 +8,7 @@ export const createNodeFromType = (
   position: { x: number; y: number },
   id: string,
   className: string
-): Node<NodeData> => ({
+): CustomNode => ({
   id,
   type,
   position,
@@ -31,7 +31,7 @@ export const mapVariablesToInputs = (variables: Record<string, unknown>): Variab
     value: String(value)
   }));
 
-export const alignNodesHorizontally = (nodes: Node[]): Node[] => {
+export const alignNodesHorizontally = (nodes: CustomNode[]): CustomNode[] => {
   const sortedNodes = [...nodes].sort((a, b) => a.position.x - b.position.x);
   const minX = sortedNodes[0]?.position.x || 0;
   const avgY = nodes.reduce((sum, node) => sum + node.position.y, 0) / nodes.length;
