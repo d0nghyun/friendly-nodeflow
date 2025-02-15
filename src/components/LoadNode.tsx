@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from "react";
 import { Handle, Position } from '@xyflow/react';
 import { Badge } from "@/components/ui/badge";
@@ -26,19 +25,27 @@ interface StorageMapping {
   [key: string]: string;
 }
 
-const NodeContent = ({ data }: { data: NodeData }) => (
-  <div className="bg-white p-2 rounded-lg shadow-sm border border-gray-200 min-w-[150px]">
-    <Handle type="target" position={Position.Left} className="w-2 h-2" />
-    <div className="text-sm font-medium mb-2">{data.label}</div>
-    <div className="flex flex-wrap gap-1">
-      {data.inputVariables?.map((variable, index) => (
-        <Badge key={index} variant="outline" className="text-xs">
-          {variable.name}
-        </Badge>
-      ))}
+const NodeContent = ({ data }: { data: NodeData }) => {
+  const [variables, setVariables] = useState(data.inputVariables || []);
+
+  useEffect(() => {
+    setVariables(data.inputVariables || []);
+  }, [data.inputVariables]);
+
+  return (
+    <div className="bg-white p-2 rounded-lg shadow-sm border border-gray-200 min-w-[150px]">
+      <Handle type="target" position={Position.Left} className="w-2 h-2" />
+      <div className="text-sm font-medium mb-2">{data.label}</div>
+      <div className="flex flex-wrap gap-1">
+        {variables.map((variable, index) => (
+          <Badge key={index} variant="outline" className="text-xs">
+            {variable.name}
+          </Badge>
+        ))}
+      </div>
     </div>
-  </div>
-);
+  );
+};
 
 const PanelContent = ({ data, onSave }: { data: NodeData; onSave?: (data: NodeData) => void }) => {
   const [uploadSource, setUploadSource] = useState("");
@@ -49,11 +56,13 @@ const PanelContent = ({ data, onSave }: { data: NodeData; onSave?: (data: NodeDa
   const [isFolderDialogOpen, setIsFolderDialogOpen] = useState(false);
   const [selectedVariable, setSelectedVariable] = useState("");
   const folderOptions = ["sample1/", "sample1/data", "sample2/", "sample2/results"];
+  const [variables, setVariables] = useState(data.inputVariables || []);
 
   useEffect(() => {
+    setVariables(data.inputVariables || []);
     const newMapping: StorageMapping = {};
     data.inputVariables?.forEach((variable) => {
-      newMapping[variable.name] = '';
+      newMapping[variable.name] = storageMapping[variable.name] || '';
     });
     setStorageMapping(newMapping);
   }, [data.inputVariables]);
@@ -112,7 +121,7 @@ const PanelContent = ({ data, onSave }: { data: NodeData; onSave?: (data: NodeDa
                 </TableRow>
               </TableHeader>
               <TableBody>
-                {data.inputVariables?.map((variable, index) => (
+                {variables.map((variable, index) => (
                   <TableRow key={index}>
                     <TableCell>{variable.name}</TableCell>
                     <TableCell>{variable.value || 'N/A'}</TableCell>
@@ -152,7 +161,7 @@ const PanelContent = ({ data, onSave }: { data: NodeData; onSave?: (data: NodeDa
                         <p className="text-lg font-medium mb-2">Storage Mapping</p>
                         <Table>
                           <TableBody>
-                            {data.inputVariables?.map((variable, index) => (
+                            {variables.map((variable, index) => (
                               <TableRow key={index}>
                                 <TableCell>{variable.name}</TableCell>
                                 <TableCell className="flex items-center gap-2">

@@ -43,7 +43,11 @@ const getInitialVariables = (data: NodeData): Variable[] => {
 };
 
 const NodeContent = ({ data }: { data: NodeData }) => {
-  const variables = getInitialVariables(data);
+  const [variables, setVariables] = useState(getInitialVariables(data));
+
+  useEffect(() => {
+    setVariables(getInitialVariables(data));
+  }, [data.variables?.system]);
 
   return (
     <div className="bg-white p-2 rounded-lg shadow-sm border border-gray-200 min-w-[150px]">
