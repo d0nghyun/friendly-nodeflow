@@ -105,133 +105,127 @@ const PanelContent = ({ data, onSave }: { data: NodeData; onSave?: (data: NodeDa
   };
 
   return (
-    <Card className="w-full max-w-4xl p-6 border rounded-lg">
-      <CardContent className="flex flex-col gap-6">
-        <p className="text-2xl font-bold">Load</p>
+    <div className="space-y-4">
+      <div className="text-sm font-medium text-gray-900 mb-4">Load</div>
 
-        <Card className="w-full p-4 border rounded-lg">
-          <CardContent>
-            <p className="text-lg font-medium mb-2">Input Variables</p>
+      <div className="bg-gray-50 rounded-lg p-4">
+        <p className="text-xs font-medium text-gray-700 mb-2">Input Variables</p>
+        <Table>
+          <TableHeader>
+            <TableRow>
+              <TableHead className="text-xs">Variable</TableHead>
+              <TableHead className="text-xs">Value</TableHead>
+              <TableHead className="text-xs">Type</TableHead>
+            </TableRow>
+          </TableHeader>
+          <TableBody>
+            {variables.map((variable, index) => (
+              <TableRow key={index}>
+                <TableCell className="text-xs">{variable.name}</TableCell>
+                <TableCell className="text-xs">{variable.value || 'N/A'}</TableCell>
+                <TableCell className="text-xs">{variable.type}</TableCell>
+              </TableRow>
+            ))}
+          </TableBody>
+        </Table>
+      </div>
+
+      <div className="bg-gray-50 rounded-lg p-4">
+        <div className="flex justify-between items-center mb-4">
+          <p className="text-xs font-medium text-gray-700">Upload</p>
+          <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
+            <DialogTrigger asChild>
+              <Button variant="outline" size="sm" className="h-8">
+                <span className="text-xs">Add Upload</span>
+              </Button>
+            </DialogTrigger>
+            <DialogContent className="max-w-md">
+              <DialogTitle className="text-sm">Configure Upload Source</DialogTitle>
+              <Select value={uploadSource} onValueChange={handleUploadSourceChange}>
+                <SelectTrigger className="min-w-[150px] mt-4">
+                  <SelectValue placeholder="Select Source" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="s3">S3</SelectItem>
+                  <SelectItem value="cm">CM</SelectItem>
+                  <SelectItem value="sm">SM</SelectItem>
+                </SelectContent>
+              </Select>
+              {showStorageMapping && (
+                <Card className="w-full p-4 border rounded-lg mt-4">
+                  <CardContent>
+                    <p className="text-lg font-medium mb-2">Storage Mapping</p>
+                    <Table>
+                      <TableBody>
+                        {variables.map((variable, index) => (
+                          <TableRow key={index}>
+                            <TableCell>{variable.name}</TableCell>
+                            <TableCell className="flex items-center gap-2">
+                              <Input
+                                value={storageMapping[variable.name] || ""}
+                                onChange={(e) => handleStorageChange(variable.name, e.target.value)}
+                              />
+                              <Dialog open={isFolderDialogOpen && selectedVariable === variable.name} onOpenChange={setIsFolderDialogOpen}>
+                                <DialogTrigger asChild>
+                                  <Button variant="outline" size="icon" onClick={() => handleFolderSelect(variable.name)}>
+                                    <FolderIcon className="h-4 w-4" />
+                                  </Button>
+                                </DialogTrigger>
+                                <DialogContent>
+                                  <DialogTitle>Select a Folder</DialogTitle>
+                                  <div className="flex flex-col gap-2 mt-4">
+                                    {folderOptions.map((folder) => (
+                                      <Button
+                                        key={folder}
+                                        variant="outline"
+                                        className="justify-start"
+                                        onClick={() => handleFolderChoice(folder)}
+                                      >
+                                        <FolderIcon className="mr-2 h-4 w-4" />
+                                        {folder}
+                                      </Button>
+                                    ))}
+                                  </div>
+                                </DialogContent>
+                              </Dialog>
+                            </TableCell>
+                          </TableRow>
+                        ))}
+                      </TableBody>
+                    </Table>
+                    <Button className="mt-4 w-full" onClick={handleAddUpload}>
+                      Add Upload
+                    </Button>
+                  </CardContent>
+                </Card>
+              )}
+            </DialogContent>
+          </Dialog>
+        </div>
+
+        {uploadedData.length > 0 && (
+          <div className="mt-4">
+            <p className="text-xs font-medium text-gray-700 mb-2">Uploaded Variables</p>
             <Table>
               <TableHeader>
                 <TableRow>
-                  <TableHead>Variable</TableHead>
-                  <TableHead>Value</TableHead>
-                  <TableHead>Type</TableHead>
+                  <TableHead className="text-xs">Variable</TableHead>
+                  <TableHead className="text-xs">Storage Location</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
-                {variables.map((variable, index) => (
+                {uploadedData.map((item, index) => (
                   <TableRow key={index}>
-                    <TableCell>{variable.name}</TableCell>
-                    <TableCell>{variable.value || 'N/A'}</TableCell>
-                    <TableCell>{variable.type}</TableCell>
+                    <TableCell className="text-xs">{item.variable}</TableCell>
+                    <TableCell className="text-xs">{item.location}</TableCell>
                   </TableRow>
                 ))}
               </TableBody>
             </Table>
-          </CardContent>
-        </Card>
-
-        <Card className="w-full p-4 border rounded-lg">
-          <CardContent>
-            <div className="flex justify-between items-center mb-4">
-              <p className="text-lg font-medium">Upload</p>
-              <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
-                <DialogTrigger asChild>
-                  <Button variant="secondary" size="icon">
-                    <span className="text-xl font-bold">+</span>
-                  </Button>
-                </DialogTrigger>
-                <DialogContent>
-                  <DialogTitle>Configure Upload Source</DialogTitle>
-                  <Select value={uploadSource} onValueChange={handleUploadSourceChange}>
-                    <SelectTrigger className="min-w-[150px] mt-4">
-                      <SelectValue placeholder="Select Source" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="s3">S3</SelectItem>
-                      <SelectItem value="cm">CM</SelectItem>
-                      <SelectItem value="sm">SM</SelectItem>
-                    </SelectContent>
-                  </Select>
-                  {showStorageMapping && (
-                    <Card className="w-full p-4 border rounded-lg mt-4">
-                      <CardContent>
-                        <p className="text-lg font-medium mb-2">Storage Mapping</p>
-                        <Table>
-                          <TableBody>
-                            {variables.map((variable, index) => (
-                              <TableRow key={index}>
-                                <TableCell>{variable.name}</TableCell>
-                                <TableCell className="flex items-center gap-2">
-                                  <Input
-                                    value={storageMapping[variable.name] || ""}
-                                    onChange={(e) => handleStorageChange(variable.name, e.target.value)}
-                                  />
-                                  <Dialog open={isFolderDialogOpen && selectedVariable === variable.name} onOpenChange={setIsFolderDialogOpen}>
-                                    <DialogTrigger asChild>
-                                      <Button variant="outline" size="icon" onClick={() => handleFolderSelect(variable.name)}>
-                                        <FolderIcon className="h-4 w-4" />
-                                      </Button>
-                                    </DialogTrigger>
-                                    <DialogContent>
-                                      <DialogTitle>Select a Folder</DialogTitle>
-                                      <div className="flex flex-col gap-2 mt-4">
-                                        {folderOptions.map((folder) => (
-                                          <Button
-                                            key={folder}
-                                            variant="outline"
-                                            className="justify-start"
-                                            onClick={() => handleFolderChoice(folder)}
-                                          >
-                                            <FolderIcon className="mr-2 h-4 w-4" />
-                                            {folder}
-                                          </Button>
-                                        ))}
-                                      </div>
-                                    </DialogContent>
-                                  </Dialog>
-                                </TableCell>
-                              </TableRow>
-                            ))}
-                          </TableBody>
-                        </Table>
-                        <Button className="mt-4 w-full" onClick={handleAddUpload}>
-                          Add Upload
-                        </Button>
-                      </CardContent>
-                    </Card>
-                  )}
-                </DialogContent>
-              </Dialog>
-            </div>
-
-            {uploadedData.length > 0 && (
-              <div className="mt-4">
-                <p className="text-lg font-medium mb-2">Uploaded Variables</p>
-                <Table>
-                  <TableHeader>
-                    <TableRow>
-                      <TableHead>Variable</TableHead>
-                      <TableHead>Storage Location</TableHead>
-                    </TableRow>
-                  </TableHeader>
-                  <TableBody>
-                    {uploadedData.map((item, index) => (
-                      <TableRow key={index}>
-                        <TableCell>{item.variable}</TableCell>
-                        <TableCell>{item.location}</TableCell>
-                      </TableRow>
-                    ))}
-                  </TableBody>
-                </Table>
-              </div>
-            )}
-          </CardContent>
-        </Card>
-      </CardContent>
-    </Card>
+          </div>
+        )}
+      </div>
+    </div>
   );
 };
 

@@ -57,81 +57,73 @@ const PanelContent = ({ data, onSave }: NodeProps) => {
   };
 
   return (
-    <Card className="w-full max-w-4xl p-6 border rounded-lg">
-      <CardContent className="flex flex-col gap-6">
-        <p className="text-2xl font-bold">Code</p>
+    <div className="space-y-4">
+      <div className="text-sm font-medium text-gray-900 mb-4">Code Block</div>
 
-        <Card className="w-full p-4 border rounded-lg">
-          <CardContent>
-            <p className="text-lg font-medium mb-2">Variables</p>
-            <Table>
-              <TableHeader>
-                <TableRow>
-                  <TableHead>Variable</TableHead>
-                  <TableHead>Value</TableHead>
-                  <TableHead>Type</TableHead>
+      <div className="space-y-4">
+        <div className="bg-gray-50 rounded-lg p-4">
+          <p className="text-xs font-medium text-gray-700 mb-2">Variables</p>
+          <Table>
+            <TableHeader>
+              <TableRow>
+                <TableHead className="text-xs">Variable</TableHead>
+                <TableHead className="text-xs">Value</TableHead>
+                <TableHead className="text-xs">Type</TableHead>
+              </TableRow>
+            </TableHeader>
+            <TableBody>
+              {data.inputVariables?.map((variable, index) => (
+                <TableRow key={index}>
+                  <TableCell className="text-xs">{variable.name}</TableCell>
+                  <TableCell className="text-xs">{variable.value || 'N/A'}</TableCell>
+                  <TableCell className="text-xs">{variable.type}</TableCell>
                 </TableRow>
-              </TableHeader>
-              <TableBody>
-                {data.inputVariables?.map((variable, index) => (
-                  <TableRow key={index}>
-                    <TableCell>{variable.name}</TableCell>
-                    <TableCell>{variable.value || 'N/A'}</TableCell>
-                    <TableCell>{variable.type}</TableCell>
-                  </TableRow>
-                ))}
-              </TableBody>
-            </Table>
-          </CardContent>
-        </Card>
+              ))}
+            </TableBody>
+          </Table>
+        </div>
 
-        <Card className="w-full p-4 border rounded-lg">
-          <CardContent>
-            <div className="flex justify-between items-center mb-2">
-              <Select value={selectedImage} onValueChange={setSelectedImage}>
-                <SelectTrigger className="min-w-[150px]">
-                  <SelectValue placeholder="Select Python Image" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="python:3.8">python:3.8</SelectItem>
-                  <SelectItem value="python:3.9">python:3.9</SelectItem>
-                  <SelectItem value="python:3.10">python:3.10</SelectItem>
-                </SelectContent>
-              </Select>
-              
-              <Button onClick={executeCode} className="bg-blue-500 text-white p-2 rounded">
-                <PlayIcon className="w-6 h-6" />
-              </Button>
-            </div>
-            <div className="w-full h-64 p-4 text-lg font-mono bg-gray-100 border rounded-lg overflow-auto">
-              <pre>{pythonCode}</pre>
-            </div>
-          </CardContent>
-        </Card>
+        <div className="bg-gray-50 rounded-lg p-4">
+          <div className="flex justify-between items-center mb-2">
+            <Select value={selectedImage} onValueChange={setSelectedImage} className="w-32">
+              <SelectTrigger className="text-xs h-8">
+                <SelectValue placeholder="Python Image" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="python:3.8">python:3.8</SelectItem>
+                <SelectItem value="python:3.9">python:3.9</SelectItem>
+                <SelectItem value="python:3.10">python:3.10</SelectItem>
+              </SelectContent>
+            </Select>
+            
+            <Button onClick={executeCode} size="sm" className="h-8">
+              <PlayIcon className="w-4 h-4" />
+            </Button>
+          </div>
+          <div className="w-full h-48 p-3 text-xs font-mono bg-white border rounded-lg overflow-auto">
+            <pre>{pythonCode}</pre>
+          </div>
+        </div>
 
-        <Card className="w-full p-4 border rounded-lg">
-          <CardContent>
-            <p className="text-lg font-medium mb-2">Return</p>
-            <pre className="bg-white p-3 rounded text-sm overflow-auto max-h-40">{output}</pre>
-          </CardContent>
-        </Card>
+        <div className="bg-gray-50 rounded-lg p-4">
+          <p className="text-xs font-medium text-gray-700 mb-2">Return</p>
+          <pre className="bg-white p-2 rounded text-xs overflow-auto max-h-32 border">{output}</pre>
+        </div>
 
-        <Card className="w-full p-4 border rounded-lg">
-          <CardContent>
-            <p className="text-lg font-medium mb-2">Output Variables</p>
-            <Input 
-              className="w-full p-3 text-lg" 
-              value={outputVariables.map(v => v.name).join(", ")} 
-              onChange={(e) => {
-                const names = e.target.value.split(",").map(n => n.trim());
-                setOutputVariables(names.map(name => ({ name, type: "unknown" })));
-              }}
-              placeholder="Enter output variables..."
-            />
-          </CardContent>
-        </Card>
-      </CardContent>
-    </Card>
+        <div className="bg-gray-50 rounded-lg p-4">
+          <p className="text-xs font-medium text-gray-700 mb-2">Output Variables</p>
+          <Input 
+            className="text-xs h-8" 
+            value={outputVariables.map(v => v.name).join(", ")} 
+            onChange={(e) => {
+              const names = e.target.value.split(",").map(n => n.trim());
+              setOutputVariables(names.map(name => ({ name, type: "unknown" })));
+            }}
+            placeholder="Enter output variables..."
+          />
+        </div>
+      </div>
+    </div>
   );
 };
 
