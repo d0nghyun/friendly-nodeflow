@@ -68,12 +68,13 @@ const FlowCanvas = () => {
     setDraggedItem(nodeType);
   };
 
-  const onDrop = (event: React.DragEvent) => {
+  const onDrop = useCallback((event: React.DragEvent) => {
     event.preventDefault();
     setIsDragging(false);
     setDraggedItem(null);
 
-    const reactFlowBounds = document.querySelector('.react-flow')?.getBoundingClientRect();
+    // 반드시 ReactFlow 컴포넌트의 바운딩 박스를 가져와야 합니다
+    const reactFlowBounds = reactFlowInstance.getViewportElement()?.getBoundingClientRect();
     const type = event.dataTransfer.getData('application/reactflow');
     const sidebarItem = sidebarItems.find(item => item.type === type);
 
@@ -93,7 +94,7 @@ const FlowCanvas = () => {
 
       setNodes((nds) => [...nds, newNode]);
     }
-  };
+  }, [reactFlowInstance, nodes, setNodes]);
 
   const onDragOver = useCallback((event: React.DragEvent) => {
     event.preventDefault();
@@ -123,7 +124,7 @@ const FlowCanvas = () => {
 
   return (
     <div className="h-screen w-full bg-gray-50 flex">
-      <div className="flex-1 relative">
+      <div className="flex-1 relative overflow-hidden">
         <ReactFlow
           nodes={nodes}
           edges={edges}
