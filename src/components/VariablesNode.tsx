@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from "react";
 import { Handle, Position } from '@xyflow/react';
 import { Badge } from "@/components/ui/badge";
@@ -23,12 +22,24 @@ interface VariablesNodeProps {
   onSave?: (data: NodeData) => void;
 }
 
+const arrayToRecord = (variables: Variable[]): Record<string, unknown> => {
+  return variables.reduce((acc, variable) => ({
+    ...acc,
+    [variable.name]: variable
+  }), {});
+};
+
+const recordToArray = (record: Record<string, unknown>): Variable[] => {
+  if (!record) return [];
+  return Object.values(record).map(value => value as Variable);
+};
+
 const getInitialVariables = (data: NodeData): Variable[] => {
   const systemVariables = data.variables?.system;
   if (Array.isArray(systemVariables)) {
     return systemVariables as Variable[];
   }
-  return [];
+  return recordToArray(systemVariables as Record<string, unknown>);
 };
 
 const NodeContent = ({ data }: { data: NodeData }) => {
@@ -100,7 +111,7 @@ const PanelContent = ({ data, onSave }: { data: NodeData; onSave?: (data: NodeDa
           ...data,
           variables: {
             ...data.variables,
-            system: updatedVariables
+            system: arrayToRecord(updatedVariables)
           }
         });
       }
