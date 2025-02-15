@@ -23,8 +23,16 @@ interface VariablesNodeProps {
   onSave?: (data: NodeData) => void;
 }
 
+const getInitialVariables = (data: NodeData): Variable[] => {
+  const systemVariables = data.variables?.system;
+  if (Array.isArray(systemVariables)) {
+    return systemVariables as Variable[];
+  }
+  return [];
+};
+
 const NodeContent = ({ data }: { data: NodeData }) => {
-  const variables = (data.variables?.system as Variable[]) || [];
+  const variables = getInitialVariables(data);
 
   return (
     <div className="bg-white p-2 rounded-lg shadow-sm border border-gray-200 min-w-[150px]">
@@ -43,7 +51,7 @@ const NodeContent = ({ data }: { data: NodeData }) => {
 };
 
 const PanelContent = ({ data, onSave }: { data: NodeData; onSave?: (data: NodeData) => void }) => {
-  const [variables, setVariables] = useState<Variable[]>((data.variables?.system as Variable[]) || []);
+  const [variables, setVariables] = useState<Variable[]>(getInitialVariables(data));
   const [isAddDialogOpen, setIsAddDialogOpen] = useState(false);
   const [selectedType, setSelectedType] = useState("");
   const [selectedSource, setSelectedSource] = useState("S3");
@@ -52,7 +60,7 @@ const PanelContent = ({ data, onSave }: { data: NodeData; onSave?: (data: NodeDa
   const [variableName, setVariableName] = useState("");
 
   useEffect(() => {
-    setVariables((data.variables?.system as Variable[]) || []);
+    setVariables(getInitialVariables(data));
   }, [data.variables?.system]);
 
   const handleTypeChange = (type: string) => {
