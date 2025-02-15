@@ -1,12 +1,15 @@
+
 import { useState, useEffect } from "react";
 import { Handle, Position } from '@xyflow/react';
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent } from "@/components/ui/card";
 import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from "@/components/ui/select";
-import { Dialog, DialogTrigger, DialogContent, DialogTitle, DialogDescription } from "@/components/ui/dialog";
+import { Dialog, DialogTrigger, DialogContent, DialogTitle } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { NodeData } from "@/types/flow";
+import { Plus } from "lucide-react";
 
 interface Variable {
   name: string;
@@ -136,33 +139,26 @@ const PanelContent = ({ data, onSave }: { data: NodeData; onSave?: (data: NodeDa
   };
 
   return (
-    <Card className="w-full max-w-4xl p-6 border rounded-lg shadow-md">
-      <CardContent className="flex flex-col gap-6">
+    <div className="space-y-4">
+      <div className="text-sm font-medium text-gray-900 mb-4">Variables</div>
+
+      <div className="space-y-4">
         <div className="flex justify-between items-center">
-          <p className="text-xl font-semibold">Variables</p>
+          <p className="text-xs font-medium text-gray-700">Variable List</p>
           <Dialog open={isAddDialogOpen} onOpenChange={setIsAddDialogOpen}>
             <DialogTrigger asChild>
-              <Button 
-                className="text-base px-4 py-2 bg-blue-500 text-white rounded"
-                onClick={() => {
-                  setSelectedType("");
-                  setSelectedSource("S3");
-                  setSelectedFiles([]);
-                  setStringValue("");
-                  setVariableName("");
-                }}
-              >
-                + Add Variable
+              <Button variant="outline" size="sm" className="h-8">
+                <Plus className="h-4 w-4 mr-1" />
+                <span className="text-xs">Add Variable</span>
               </Button>
             </DialogTrigger>
-            <DialogContent>
-              <DialogTitle>Add Variable</DialogTitle>
-              <DialogDescription>Provide a name and select a type.</DialogDescription>
-              <div className="flex flex-col gap-4">
-                <div className="flex gap-4 items-center w-full">
+            <DialogContent className="max-w-md">
+              <DialogTitle className="text-sm font-medium mb-4">Add New Variable</DialogTitle>
+              <div className="space-y-4">
+                <div className="flex gap-4 items-center">
                   <Select value={selectedType} onValueChange={handleTypeChange}>
-                    <SelectTrigger className="min-w-[150px]">
-                      <SelectValue placeholder="Type" />
+                    <SelectTrigger className="text-xs h-8 flex-1">
+                      <SelectValue placeholder="Select Type" />
                     </SelectTrigger>
                     <SelectContent>
                       <SelectItem value="Data">Data</SelectItem>
@@ -171,17 +167,17 @@ const PanelContent = ({ data, onSave }: { data: NodeData; onSave?: (data: NodeDa
                     </SelectContent>
                   </Select>
                   <Input 
-                    value={variableName} 
-                    onChange={(e) => setVariableName(e.target.value)} 
+                    value={variableName}
+                    onChange={(e) => setVariableName(e.target.value)}
                     placeholder="Variable name"
-                    className="flex-1 text-lg p-3 min-w-[300px]"
+                    className="text-xs h-8 flex-1"
                   />
                 </div>
 
                 {(selectedType === "Data" || selectedType === "Data List") && (
                   <Select value={selectedSource} onValueChange={setSelectedSource}>
-                    <SelectTrigger className="min-w-[150px]">
-                      <SelectValue placeholder="Source" />
+                    <SelectTrigger className="text-xs h-8">
+                      <SelectValue placeholder="Select Source" />
                     </SelectTrigger>
                     <SelectContent>
                       <SelectItem value="S3">S3</SelectItem>
@@ -193,50 +189,79 @@ const PanelContent = ({ data, onSave }: { data: NodeData; onSave?: (data: NodeDa
 
                 {selectedType === "String" && (
                   <Input 
-                    value={stringValue} 
-                    onChange={(e) => setStringValue(e.target.value)} 
+                    value={stringValue}
+                    onChange={(e) => setStringValue(e.target.value)}
                     placeholder="Enter value"
-                    className="w-full text-lg p-3"
+                    className="text-xs h-8"
                   />
                 )}
 
                 {selectedType && selectedSource === "S3" && (
-                  <>
-                    <p className="text-lg font-medium">Select Files</p>
-                    <div className="flex flex-wrap gap-4 bg-gray-200 p-4 rounded">
+                  <div className="space-y-2">
+                    <p className="text-xs font-medium text-gray-700">Select Files</p>
+                    <div className="grid grid-cols-1 gap-2 bg-gray-50 p-3 rounded-lg">
                       {["bareska/ftp/sample.csv", "bareska/ftp/another_file.csv"].map((file) => (
                         <button 
-                          key={file} 
-                          className={`px-4 py-2 rounded ${selectedFiles.includes(file) ? 'bg-blue-500 text-white' : 'bg-white border'}`} 
+                          key={file}
                           onClick={() => handleFileSelection(file)}
+                          className={`px-3 py-2 rounded text-xs text-left ${
+                            selectedFiles.includes(file)
+                              ? 'bg-blue-500 text-white'
+                              : 'bg-white border border-gray-200 text-gray-700 hover:bg-gray-50'
+                          }`}
                         >
                           {file}
                         </button>
                       ))}
                     </div>
-                  </>
+                  </div>
                 )}
-                <Button onClick={addVariable} className="mt-4 bg-green-500 text-white p-3 rounded text-lg">Add Variable</Button>
+                
+                <Button
+                  onClick={addVariable}
+                  className="w-full h-8 text-xs"
+                  disabled={!selectedType || !variableName}
+                >
+                  Add Variable
+                </Button>
               </div>
             </DialogContent>
           </Dialog>
         </div>
 
-        <div className="flex flex-col gap-4">
-          {variables.map((variable, index) => (
-            <div key={index} className="flex items-center justify-between border p-4 rounded-md bg-white shadow-sm text-lg">
-              <span className="font-medium text-gray-700 flex-1 truncate">{variable.name}</span>
-              {variable.type === "String" ? (
-                <span className="italic text-gray-600 flex-1 truncate">"{variable.value}"</span>
-              ) : (
-                <span className="truncate text-gray-500 flex-1">{variable.files?.length > 0 ? variable.files.join(", ") : "No files selected"}</span>
+        <div className="bg-gray-50 rounded-lg p-4">
+          <Table>
+            <TableHeader>
+              <TableRow>
+                <TableHead className="text-xs">Name</TableHead>
+                <TableHead className="text-xs">Type</TableHead>
+                <TableHead className="text-xs">Value/Files</TableHead>
+              </TableRow>
+            </TableHeader>
+            <TableBody>
+              {variables.map((variable, index) => (
+                <TableRow key={index}>
+                  <TableCell className="text-xs font-medium">{variable.name}</TableCell>
+                  <TableCell className="text-xs">{variable.type}</TableCell>
+                  <TableCell className="text-xs text-gray-500">
+                    {variable.type === "String" 
+                      ? variable.value 
+                      : variable.files?.join(", ") || "No files selected"}
+                  </TableCell>
+                </TableRow>
+              ))}
+              {variables.length === 0 && (
+                <TableRow>
+                  <TableCell colSpan={3} className="text-xs text-center text-gray-500 py-4">
+                    No variables added yet
+                  </TableCell>
+                </TableRow>
               )}
-              <span className="text-gray-500 text-lg">{variable.type}</span>
-            </div>
-          ))}
+            </TableBody>
+          </Table>
         </div>
-      </CardContent>
-    </Card>
+      </div>
+    </div>
   );
 };
 
