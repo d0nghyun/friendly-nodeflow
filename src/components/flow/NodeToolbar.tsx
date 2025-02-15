@@ -22,13 +22,24 @@ export const NodeToolbar = ({ sidebarItems, onDragStart, onAlignHorizontally }: 
           <Plus className="h-6 w-6" />
         </Button>
       </DropdownMenuTrigger>
-      <DropdownMenuContent align="start" className="w-56">
+      <DropdownMenuContent 
+        align="start" 
+        className="w-56"
+        onCloseAutoFocus={(e) => e.preventDefault()}
+      >
         {sidebarItems.map((item) => (
           <div
             key={item.type}
             className="flex items-center gap-2 px-2 py-1.5 cursor-grab hover:bg-gray-100 rounded-sm"
             draggable
-            onDragStart={(e) => onDragStart(e, item.type)}
+            onDragStart={(e) => {
+              e.stopPropagation();
+              onDragStart(e, item.type);
+            }}
+            onDragEnd={(e) => {
+              e.stopPropagation();
+              e.preventDefault();
+            }}
           >
             <div className={`w-2 h-2 rounded-full ${item.className.replace('bg-', 'bg-')}`} />
             <span>{item.label}</span>

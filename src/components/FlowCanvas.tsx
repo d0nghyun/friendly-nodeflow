@@ -62,7 +62,6 @@ const FlowCanvas = () => {
   }, []);
 
   const onDragStart = (event: React.DragEvent<HTMLDivElement>, nodeType: string) => {
-    event.stopPropagation();
     event.dataTransfer.setData('application/reactflow', nodeType);
     event.dataTransfer.effectAllowed = 'move';
     setIsDragging(true);
@@ -124,7 +123,10 @@ const FlowCanvas = () => {
 
   return (
     <div className="h-screen w-full bg-gray-50 flex">
-      <div ref={reactFlowWrapper} className="flex-1 relative overflow-hidden">
+      <div 
+        ref={reactFlowWrapper} 
+        className="flex-1 relative"
+      >
         <ReactFlow
           nodes={nodes}
           edges={edges}
