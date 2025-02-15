@@ -2,7 +2,7 @@
 import { ReactFlow, Background, Controls, MiniMap, useNodesState, useEdgesState, addEdge, BackgroundVariant, Node, useReactFlow } from '@xyflow/react';
 import '@xyflow/react/dist/style.css';
 import { useState, useCallback } from 'react';
-import { Plus } from "lucide-react";
+import { Plus, AlignHorizontalJustifyCenterIcon } from "lucide-react";
 import VariablesNode from './VariablesNode';
 import CodeBlockNode from './CodeBlockNode';
 import LoadNode from './LoadNode';
@@ -13,6 +13,7 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import { useToast } from "@/components/ui/use-toast";
 import { sidebarItems, initialNodes } from '../config/flowConfig';
 import { NodeData } from '../types/flow';
 
@@ -29,6 +30,7 @@ const FlowCanvas = () => {
   const [isDragging, setIsDragging] = useState(false);
   const [draggedItem, setDraggedItem] = useState<string | null>(null);
   const reactFlowInstance = useReactFlow();
+  const { toast } = useToast();
 
   const onConnect = useCallback((params: any) => {
     setEdges((eds) => addEdge(params, eds));
@@ -127,6 +129,41 @@ const FlowCanvas = () => {
     event.dataTransfer.dropEffect = 'move';
   };
 
+  const alignHorizontally = useCallback(() => {
+    const sortedNodes = [...nodes].sort((a, b) => a.position.x - b.position.x);
+    const minX = sortedNodes[0]?.position.x || 0;
+    const avgY = nodes.reduce((sum, node) => sum + node.position.y, 0) / nodes.length;
+    
+    setNodes(nodes.map((node, index) => ({
+      ...node,
+      position: {
+        x: minX + index * 200,
+        y: avgY
+      }
+    })));
+
+    toast({
+      title: "노드들이 수평으로 정렬되었습니다",
+      duration: 2000,
+    });
+  }, [nodes, setNodes, toast]);
+
+  const saveNodeChanges = useCallback((nodeId: string, newData: NodeData) => {
+    setNodes(nds => nds.map(node => {
+      if (node.id === nodeId) {
+        return {
+          ...node,
+          data: newData
+        };
+      }
+      return node;
+    }));
+    toast({
+      title: "변경사항이 저장되었습니다",
+      duration: 2000,
+    });
+  }, [setNodes, toast]);
+
   const renderNodeDetail = () => {
     if (!selectedNode) return null;
 
@@ -150,7 +187,11 @@ const FlowCanvas = () => {
     return (
       <div className="fixed right-0 top-0 h-screen w-96 bg-white shadow-lg border-l border-gray-200 overflow-y-auto">
         <div className="p-4">
-          <NodeComponent data={nodeData} isPanel={true} />
+          <NodeComponent 
+            data={nodeData} 
+            isPanel={true}
+            onSave={(newData: NodeData) => saveNodeChanges(selectedNode.id, newData)}
+          />
         </div>
       </div>
     );
@@ -172,7 +213,8 @@ const FlowCanvas = () => {
           className="bg-gray-50"
           fitView
         >
-          <div className="absolute left-4 top-4 z-10">
+          {/* 노드 추가 드롭다운과 정렬 버튼 */}
+          <div className="absolute left-4 top-4 z-10 flex gap-2">
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
                 <Button variant="default" size="icon" className="rounded-full w-12 h-12 shadow-lg">
@@ -193,7 +235,17 @@ const FlowCanvas = () => {
                 ))}
               </DropdownMenuContent>
             </DropdownMenu>
+
+            <Button
+              variant="default"
+              size="icon"
+              className="rounded-full w-12 h-12 shadow-lg"
+              onClick={alignHorizontally}
+            >
+              <AlignHorizontalJustifyCenterIcon className="h-6 w-6" />
+            </Button>
           </div>
+
           <Background color="#ccc" variant={BackgroundVariant.Dots} />
           <Controls className="bg-white shadow-lg border border-gray-200" />
           <MiniMap className="bg-white shadow-lg border border-gray-200" />
