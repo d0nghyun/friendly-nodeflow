@@ -1,3 +1,4 @@
+
 import { ReactFlow, Background, Controls, MiniMap, useNodesState, useEdgesState, addEdge, BackgroundVariant, useReactFlow } from '@xyflow/react';
 import '@xyflow/react/dist/style.css';
 import { useState, useCallback, useRef } from 'react';
@@ -54,8 +55,13 @@ const FlowCanvas = () => {
     }
   }, [nodes, setNodes]);
 
-  const onNodeClick = useCallback((_: React.MouseEvent, node: CustomNode) => {
+  const onNodeClick = useCallback((event: React.MouseEvent, node: CustomNode) => {
+    event.stopPropagation();
     setSelectedNode(node);
+  }, []);
+
+  const onPaneClick = useCallback(() => {
+    setSelectedNode(null);
   }, []);
 
   const onDragStart = useCallback((event: React.DragEvent<HTMLDivElement>, nodeType: string) => {
@@ -104,7 +110,13 @@ const FlowCanvas = () => {
   const handleSaveNode = useCallback((nodeId: string, newData: NodeData) => {
     setNodes(nds => nds.map(node => {
       if (node.id === nodeId) {
-        return { ...node, data: newData };
+        return {
+          ...node,
+          data: {
+            ...node.data,
+            ...newData
+          }
+        };
       }
       return node;
     }));
@@ -124,6 +136,7 @@ const FlowCanvas = () => {
           onEdgesChange={onEdgesChange}
           onConnect={onConnect}
           onNodeClick={onNodeClick}
+          onPaneClick={onPaneClick}
           onDrop={onDrop}
           onDragOver={onDragOver}
           nodeTypes={nodeTypes}

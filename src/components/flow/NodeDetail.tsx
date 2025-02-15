@@ -16,6 +16,7 @@ export const NodeDetail = ({ selectedNode, nodeTypes, onSave }: NodeDetailProps)
   if (!NodeComponent) return null;
 
   const nodeData: NodeData = {
+    ...selectedNode.data,
     label: String(selectedNode.data.label || 'Untitled'),
     variables: {
       system: ((selectedNode.data.variables as { system: Record<string, unknown> })?.system) || {},
