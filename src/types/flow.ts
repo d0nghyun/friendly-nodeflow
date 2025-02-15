@@ -1,16 +1,16 @@
 
 export interface NodeData {
   label: string;
-  variables?: {
+  variables: {
     system: Record<string, unknown>;
     global: Record<string, unknown>;
   };
-  inputVariables?: Array<{
+  inputVariables: Array<{
     name: string;
     type: string;
     value?: string;
   }>;
-  outputVariables?: Array<{
+  outputVariables: Array<{
     name: string;
     type: string;
   }>;
@@ -21,4 +21,10 @@ export interface SidebarItem {
   label: string;
   description: string;
   className: string;
+}
+
+export interface NodeProps {
+  data: NodeData;
+  isPanel?: boolean;
+  onSave?: (data: NodeData) => void;
 }

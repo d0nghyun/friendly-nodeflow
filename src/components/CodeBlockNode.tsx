@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from "react";
 import { Handle, Position } from '@xyflow/react';
 import { Badge } from "@/components/ui/badge";
@@ -8,30 +7,9 @@ import { Input } from "@/components/ui/input";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from "@/components/ui/select";
 import { PlayIcon } from "lucide-react";
+import { NodeProps } from "@/types/flow";
 
-interface OutputVariable {
-  name: string;
-  type: string;
-}
-
-interface Variable {
-  name: string;
-  type: string;
-  value?: string;
-}
-
-interface CodeBlockData {
-  label: string;
-  inputVariables?: Variable[];
-  outputVariables?: OutputVariable[];
-}
-
-interface CodeBlockNodeProps {
-  data: CodeBlockData;
-  isPanel?: boolean;
-}
-
-const NodeContent = ({ data }: { data: CodeBlockData }) => (
+const NodeContent = ({ data }: NodeProps) => (
   <div className="bg-white p-2 rounded-lg shadow-sm border border-gray-200 min-w-[150px]">
     <Handle type="target" position={Position.Left} className="w-2 h-2" />
     <Handle type="source" position={Position.Right} className="w-2 h-2" />
@@ -53,8 +31,8 @@ const NodeContent = ({ data }: { data: CodeBlockData }) => (
   </div>
 );
 
-const PanelContent = ({ data }: { data: CodeBlockData }) => {
-  const [outputVariables, setOutputVariables] = useState<OutputVariable[]>(data.outputVariables || []);
+const PanelContent = ({ data, onSave }: NodeProps) => {
+  const [outputVariables, setOutputVariables] = useState(data.outputVariables);
   const [pythonCode, setPythonCode] = useState(`# Python script\n`);
   const [output, setOutput] = useState("");
   const [selectedImage, setSelectedImage] = useState("python:3.9");
@@ -70,6 +48,12 @@ const PanelContent = ({ data }: { data: CodeBlockData }) => {
 
   const executeCode = () => {
     setOutput("Code execution simulation completed");
+    if (onSave) {
+      onSave({
+        ...data,
+        outputVariables
+      });
+    }
   };
 
   return (
@@ -151,6 +135,6 @@ const PanelContent = ({ data }: { data: CodeBlockData }) => {
   );
 };
 
-export default function CodeBlockNode({ data, isPanel = false }: CodeBlockNodeProps) {
-  return isPanel ? <PanelContent data={data} /> : <NodeContent data={data} />;
+export default function CodeBlockNode({ data, isPanel = false, onSave }: NodeProps) {
+  return isPanel ? <PanelContent data={data} onSave={onSave} /> : <NodeContent data={data} />;
 }
