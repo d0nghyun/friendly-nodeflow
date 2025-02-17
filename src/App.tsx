@@ -27,6 +27,7 @@ const App = () => {
             <Routes>
               <Route path="/" element={<Index />} />
               <Route path="/drive" element={<Drive />} />
+              <Route path="/:workspace/:workflow" element={<Index />} />
               <Route path="*" element={<NotFound />} />
             </Routes>
           </AppShell>
