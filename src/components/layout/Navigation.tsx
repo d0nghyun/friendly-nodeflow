@@ -8,7 +8,7 @@ export const Navigation = () => {
 
   const tabs = [
     {
-      name: isInWorkspace ? "Workspace" : "Workspaces",
+      name: isInWorkspace ? "Workspace" : "Workspace",
       icon: Grid,
       path: "/workspaces"
     },

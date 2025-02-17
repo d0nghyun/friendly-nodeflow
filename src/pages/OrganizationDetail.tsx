@@ -34,7 +34,7 @@ import type { Organization, OrganizationMember } from "@/types/organization";
 
 const OrganizationDetail = () => {
   const { organizationId } = useParams();
-  const [activeTab, setActiveTab] = useState("members");
+  const [activeTab, setActiveTab] = useState("workspaces");
   const [searchQuery, setSearchQuery] = useState("");
 
   const organization: Organization & { members: OrganizationMember[], drives: any[], workspaces: any[] } = {
@@ -149,7 +149,7 @@ const OrganizationDetail = () => {
         </div>
       </div>
 
-      <Tabs value={activeTab} onValueChange={setActiveTab}>
+      <Tabs defaultValue="workspaces" value={activeTab} onValueChange={setActiveTab}>
         <TabsList>
           <TabsTrigger value="workspaces" className="gap-2">
             <Grid className="h-4 w-4" />

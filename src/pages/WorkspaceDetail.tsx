@@ -44,7 +44,7 @@ import {
 
 const WorkspaceDetail = () => {
   const { workspaceId } = useParams();
-  const [activeTab, setActiveTab] = useState("members");
+  const [activeTab, setActiveTab] = useState("workflows");
 
   const workspace = {
     id: workspaceId,
@@ -117,11 +117,11 @@ const WorkspaceDetail = () => {
         </div>
       </div>
 
-      <Tabs value={activeTab} onValueChange={setActiveTab}>
+      <Tabs defaultValue="workflows" value={activeTab} onValueChange={setActiveTab}>
         <TabsList>
           <TabsTrigger value="workflows" className="gap-2">
             <Grid className="h-4 w-4" />
-            Workflows
+            Workflow
           </TabsTrigger>
           <TabsTrigger value="members" className="gap-2">
             <Users className="h-4 w-4" />
