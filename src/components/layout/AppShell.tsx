@@ -1,6 +1,6 @@
 
 import { ReactNode } from "react";
-import { ListChecks, HardDrive, User, Settings, ChevronDown, Folder, Grid } from "lucide-react";
+import { HardDrive, User, Settings, ChevronDown, Folder, Grid } from "lucide-react";
 import { Link, useLocation } from "react-router-dom";
 import {
   DropdownMenu,
@@ -19,11 +19,6 @@ export function AppShell({ children }: AppShellProps) {
   const location = useLocation();
 
   const tabs = [
-    {
-      name: "Workflow",
-      icon: ListChecks,
-      path: "/"
-    },
     {
       name: "Drive",
       icon: HardDrive,
