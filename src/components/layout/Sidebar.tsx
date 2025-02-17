@@ -51,7 +51,7 @@ export const Sidebar = () => {
         <OrganizationSelector />
       </div>
       <ShadcnSidebar className="flex-1">
-        <SidebarContent>
+        <SidebarContent className="pt-14 -mt-14">
           <div className="flex-1 p-4 space-y-6 overflow-y-auto">
             {workspaces.map((workspace) => (
               <Collapsible
