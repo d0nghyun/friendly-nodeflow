@@ -5,7 +5,9 @@ import FlowCanvas from '../components/FlowCanvas';
 const Index = () => {
   return (
     <ReactFlowProvider>
-      <FlowCanvas />
+      <div className="w-full h-full">
+        <FlowCanvas />
+      </div>
     </ReactFlowProvider>
   );
 };
