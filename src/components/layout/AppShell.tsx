@@ -15,7 +15,9 @@ export function AppShell({ children }: AppShellProps) {
   return (
     <SidebarProvider>
       <div className="min-h-screen flex w-full">
-        <Sidebar />
+        <div className="flex">
+          <Sidebar />
+        </div>
         <div className="flex-1 flex flex-col">
           <header className="h-14 border-b px-4 flex items-center justify-between bg-white">
             <div className="flex items-center gap-4">
