@@ -1,10 +1,13 @@
 
+import { ReactFlowProvider } from '@xyflow/react';
 import FlowCanvas from "@/components/FlowCanvas";
 
 const WorkflowDetail = () => {
   return (
     <div className="h-full">
-      <FlowCanvas />
+      <ReactFlowProvider>
+        <FlowCanvas />
+      </ReactFlowProvider>
     </div>
   );
 };
