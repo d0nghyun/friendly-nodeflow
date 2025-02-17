@@ -11,6 +11,7 @@ import NotFound from "./pages/NotFound";
 import Workspaces from "./pages/Workspaces";
 import WorkspaceDetail from "./pages/WorkspaceDetail";
 import OrganizationDetail from "./pages/OrganizationDetail";
+import WorkflowDetail from "./pages/WorkflowDetail";
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -33,7 +34,7 @@ const App = () => {
               <Route path="/drive" element={<Drive />} />
               <Route path="/workspaces" element={<Workspaces />} />
               <Route path="/workspace/:workspaceId" element={<WorkspaceDetail />} />
-              <Route path="/:workspaceId/:workflowId" element={<Index />} />
+              <Route path="/:workspaceId/:workflowId" element={<WorkflowDetail />} />
               <Route path="*" element={<NotFound />} />
             </Routes>
           </AppShell>
