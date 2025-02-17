@@ -33,7 +33,7 @@ const App = () => {
               <Route path="/drive" element={<Drive />} />
               <Route path="/workspaces" element={<Workspaces />} />
               <Route path="/workspace/:workspaceId" element={<WorkspaceDetail />} />
-              <Route path="/:workspace/:workflow" element={<Index />} />
+              <Route path="/:workspaceId/:workflowId" element={<Index />} />
               <Route path="*" element={<NotFound />} />
             </Routes>
           </AppShell>
