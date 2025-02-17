@@ -20,6 +20,11 @@ export function AppShell({ children }: AppShellProps) {
 
   const tabs = [
     {
+      name: "Workspaces",
+      icon: Grid,
+      path: "/workspaces"
+    },
+    {
       name: "Drive",
       icon: HardDrive,
       path: "/drive"
