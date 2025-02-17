@@ -32,15 +32,16 @@ const PanelContent = ({ data, onSave }: { data: NodeData; onSave?: (data: NodeDa
 
   return (
     <div className="space-y-4">
-      <div className="text-sm font-medium text-gray-900 mb-4">Variables</div>
+      <div className="text-sm font-medium text-gray-900 mb-4">Variable</div>
 
       <div className="space-y-4">
         <div className="flex justify-between items-center">
-          <p className="text-xs font-medium text-gray-700">Variable List</p>
+          <p className="text-xs font-medium text-gray-700">Output Variable</p>
           <AddVariableDialog 
             isOpen={isAddDialogOpen}
             onOpenChange={setIsAddDialogOpen}
             onAdd={handleAddVariable}
+            disabled={variables.length > 0}
           />
         </div>
 

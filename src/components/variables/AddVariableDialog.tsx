@@ -11,9 +11,10 @@ interface AddVariableDialogProps {
   isOpen: boolean;
   onOpenChange: (open: boolean) => void;
   onAdd: (variable: Variable) => void;
+  disabled?: boolean;
 }
 
-export const AddVariableDialog = ({ isOpen, onOpenChange, onAdd }: AddVariableDialogProps) => {
+export const AddVariableDialog = ({ isOpen, onOpenChange, onAdd, disabled }: AddVariableDialogProps) => {
   const [selectedType, setSelectedType] = useState("");
   const [selectedSource, setSelectedSource] = useState("S3");
   const [selectedFiles, setSelectedFiles] = useState<string[]>([]);
@@ -68,7 +69,12 @@ export const AddVariableDialog = ({ isOpen, onOpenChange, onAdd }: AddVariableDi
   return (
     <Dialog open={isOpen} onOpenChange={onOpenChange}>
       <DialogTrigger asChild>
-        <Button variant="outline" size="sm" className="h-8">
+        <Button 
+          variant="outline" 
+          size="sm" 
+          className="h-8"
+          disabled={disabled}
+        >
           <Plus className="h-4 w-4 mr-1" />
           <span className="text-xs">Add Variable</span>
         </Button>

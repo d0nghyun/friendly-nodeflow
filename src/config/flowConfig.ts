@@ -4,13 +4,13 @@ import { CustomNode, SidebarItem } from '@/types/flow';
 export const sidebarItems: SidebarItem[] = [
   {
     type: 'variablesNode',
-    label: 'Variables',
-    description: 'Node for managing variables',
+    label: 'Variable',
+    description: 'Node for managing variable',
     className: 'bg-blue-500'
   },
   {
     type: 'codeBlockNode',
-    label: 'Code Block',
+    label: 'Code',
     description: 'Node for code execution',
     className: 'bg-green-500'
   },
@@ -28,7 +28,7 @@ export const initialNodes: CustomNode[] = [
     type: 'variablesNode',
     position: { x: 100, y: 100 },
     data: {
-      label: 'Variables',
+      label: 'Variable',
       variables: {
         system: {},
         global: {}
@@ -43,7 +43,7 @@ export const initialNodes: CustomNode[] = [
     type: 'codeBlockNode',
     position: { x: 400, y: 100 },
     data: {
-      label: 'Code Block',
+      label: 'Code',
       variables: {
         system: {},
         global: {}
