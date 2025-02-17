@@ -16,17 +16,32 @@ const PanelContent = ({ data, onSave }: { data: NodeData; onSave?: (data: NodeDa
   }, [data.variables?.system]);
 
   const handleAddVariable = (newVariable: Variable) => {
-    const updatedVariables = [...variables, newVariable];
-    setVariables(updatedVariables);
-    
-    if (onSave) {
-      onSave({
-        ...data,
-        variables: {
-          ...data.variables,
-          system: arrayToRecord(updatedVariables)
-        }
-      });
+    // 하나의 노드 블록은 하나의 변수만 선언할 수 있음
+    if (variables.length > 0) {
+      const updatedVariables = [newVariable];
+      setVariables(updatedVariables);
+      
+      if (onSave) {
+        onSave({
+          ...data,
+          variables: {
+            ...data.variables,
+            system: arrayToRecord(updatedVariables)
+          }
+        });
+      }
+    } else {
+      setVariables([newVariable]);
+      
+      if (onSave) {
+        onSave({
+          ...data,
+          variables: {
+            ...data.variables,
+            system: arrayToRecord([newVariable])
+          }
+        });
+      }
     }
   };
 
@@ -41,6 +56,7 @@ const PanelContent = ({ data, onSave }: { data: NodeData; onSave?: (data: NodeDa
             isOpen={isAddDialogOpen}
             onOpenChange={setIsAddDialogOpen}
             onAdd={handleAddVariable}
+            isDisabled={variables.length > 0}
           />
         </div>
 

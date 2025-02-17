@@ -11,9 +11,10 @@ interface AddVariableDialogProps {
   isOpen: boolean;
   onOpenChange: (open: boolean) => void;
   onAdd: (variable: Variable) => void;
+  isDisabled?: boolean;
 }
 
-export const AddVariableDialog = ({ isOpen, onOpenChange, onAdd }: AddVariableDialogProps) => {
+export const AddVariableDialog = ({ isOpen, onOpenChange, onAdd, isDisabled }: AddVariableDialogProps) => {
   const [selectedType, setSelectedType] = useState("");
   const [selectedSource, setSelectedSource] = useState("S3");
   const [selectedFiles, setSelectedFiles] = useState<string[]>([]);
@@ -25,7 +26,9 @@ export const AddVariableDialog = ({ isOpen, onOpenChange, onAdd }: AddVariableDi
     const defaultNames = {
       "Data": "var_data",
       "Data List": "var_data_list",
-      "String": "var_str"
+      "String": "var_str",
+      "CM": "cm_name",
+      "S3": "s3_path"
     };
     setVariableName(defaultNames[type as keyof typeof defaultNames] || "var_unknown");
     if (type === "Data" || type === "Data List") {
@@ -68,7 +71,12 @@ export const AddVariableDialog = ({ isOpen, onOpenChange, onAdd }: AddVariableDi
   return (
     <Dialog open={isOpen} onOpenChange={onOpenChange}>
       <DialogTrigger asChild>
-        <Button variant="outline" size="sm" className="h-8">
+        <Button 
+          variant="outline" 
+          size="sm" 
+          className="h-8"
+          disabled={isDisabled}
+        >
           <Plus className="h-4 w-4 mr-1" />
           <span className="text-xs">Add Variable</span>
         </Button>
@@ -82,6 +90,8 @@ export const AddVariableDialog = ({ isOpen, onOpenChange, onAdd }: AddVariableDi
                 <SelectValue placeholder="Select Type" />
               </SelectTrigger>
               <SelectContent>
+                <SelectItem value="CM">CM</SelectItem>
+                <SelectItem value="S3">S3</SelectItem>
                 <SelectItem value="Data">Data</SelectItem>
                 <SelectItem value="Data List">Data List</SelectItem>
                 <SelectItem value="String">String</SelectItem>
@@ -117,7 +127,7 @@ export const AddVariableDialog = ({ isOpen, onOpenChange, onAdd }: AddVariableDi
             />
           )}
 
-          {selectedType && selectedSource === "S3" && (
+          {(selectedType === "S3" || selectedSource === "S3") && (
             <div className="space-y-2">
               <p className="text-xs font-medium text-gray-700">Select Files</p>
               <div className="grid grid-cols-1 gap-2 bg-gray-50 p-3 rounded-lg">
