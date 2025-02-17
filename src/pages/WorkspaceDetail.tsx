@@ -1,4 +1,3 @@
-
 import { useParams, Link } from "react-router-dom";
 import { useState } from "react";
 import { 
@@ -45,7 +44,7 @@ import {
 
 const WorkspaceDetail = () => {
   const { workspaceId } = useParams();
-  const [activeTab, setActiveTab] = useState("files");
+  const [activeTab, setActiveTab] = useState("members");
 
   const workspace = {
     id: workspaceId,
@@ -120,61 +119,15 @@ const WorkspaceDetail = () => {
 
       <Tabs value={activeTab} onValueChange={setActiveTab}>
         <TabsList>
-          <TabsTrigger value="files" className="gap-2">
-            <FolderOpen className="h-4 w-4" />
-            Files
+          <TabsTrigger value="workflows" className="gap-2">
+            <Grid className="h-4 w-4" />
+            Workflows
           </TabsTrigger>
           <TabsTrigger value="members" className="gap-2">
             <Users className="h-4 w-4" />
             Members
           </TabsTrigger>
-          <TabsTrigger value="workflows" className="gap-2">
-            <Grid className="h-4 w-4" />
-            Workflows
-          </TabsTrigger>
         </TabsList>
-
-        <TabsContent value="files" className="mt-6">
-          <div className="flex justify-between mb-4">
-            <h2 className="text-lg font-semibold">Files & Drives</h2>
-            {(isAdmin || isMember) && (
-              <Button className="gap-2">
-                <FolderPlus className="h-4 w-4" />
-                New Drive
-              </Button>
-            )}
-          </div>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {workspace.drives.map((drive) => (
-              <Card key={drive.id} className="group">
-                <CardHeader className="flex flex-row items-start justify-between space-y-0">
-                  <CardTitle className="text-base flex gap-2 items-center">
-                    <FolderOpen className="h-4 w-4 text-gray-500" />
-                    {drive.name}
-                  </CardTitle>
-                  <DropdownMenu>
-                    <DropdownMenuTrigger asChild>
-                      <Button variant="ghost" size="icon" className="h-8 w-8 opacity-0 group-hover:opacity-100">
-                        <MoreVertical className="h-4 w-4" />
-                      </Button>
-                    </DropdownMenuTrigger>
-                    <DropdownMenuContent align="end">
-                      <DropdownMenuItem>Rename</DropdownMenuItem>
-                      <DropdownMenuItem>Share</DropdownMenuItem>
-                      <DropdownMenuItem className="text-red-600">Delete</DropdownMenuItem>
-                    </DropdownMenuContent>
-                  </DropdownMenu>
-                </CardHeader>
-                <CardContent>
-                  <CardDescription>{drive.description}</CardDescription>
-                  <div className="mt-2 text-sm text-gray-500">
-                    Owner: {drive.owner}
-                  </div>
-                </CardContent>
-              </Card>
-            ))}
-          </div>
-        </TabsContent>
 
         <TabsContent value="members" className="mt-6">
           <div className="flex justify-between mb-4">

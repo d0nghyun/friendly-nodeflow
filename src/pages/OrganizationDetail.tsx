@@ -1,4 +1,3 @@
-
 import { useParams, Link } from "react-router-dom";
 import { useState } from "react";
 import { 
@@ -9,7 +8,8 @@ import {
   Grid, 
   FolderOpen,
   UserPlus,
-  Search
+  Search,
+  HardDrive
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -37,7 +37,6 @@ const OrganizationDetail = () => {
   const [activeTab, setActiveTab] = useState("members");
   const [searchQuery, setSearchQuery] = useState("");
 
-  // 임시 데이터
   const organization: Organization & { members: OrganizationMember[], drives: any[], workspaces: any[] } = {
     id: organizationId!,
     name: "Qore - Quantit",
@@ -152,17 +151,17 @@ const OrganizationDetail = () => {
 
       <Tabs value={activeTab} onValueChange={setActiveTab}>
         <TabsList>
+          <TabsTrigger value="workspaces" className="gap-2">
+            <Grid className="h-4 w-4" />
+            Workspace
+          </TabsTrigger>
+          <TabsTrigger value="drives" className="gap-2">
+            <HardDrive className="h-4 w-4" />
+            Drive
+          </TabsTrigger>
           <TabsTrigger value="members" className="gap-2">
             <Users className="h-4 w-4" />
             Members
-          </TabsTrigger>
-          <TabsTrigger value="workspaces" className="gap-2">
-            <Grid className="h-4 w-4" />
-            Workspaces
-          </TabsTrigger>
-          <TabsTrigger value="drives" className="gap-2">
-            <FolderOpen className="h-4 w-4" />
-            Drives
           </TabsTrigger>
         </TabsList>
 

@@ -4,10 +4,11 @@ import { Link, useLocation } from "react-router-dom";
 
 export const Navigation = () => {
   const location = useLocation();
+  const isInWorkspace = location.pathname.includes('/workspace/');
 
   const tabs = [
     {
-      name: "Workspaces",
+      name: isInWorkspace ? "Workspace" : "Workspaces",
       icon: Grid,
       path: "/workspaces"
     },
