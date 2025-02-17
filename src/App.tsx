@@ -10,6 +10,7 @@ import Drive from "./pages/Drive";
 import NotFound from "./pages/NotFound";
 import Workspaces from "./pages/Workspaces";
 import WorkspaceDetail from "./pages/WorkspaceDetail";
+import OrganizationDetail from "./pages/OrganizationDetail";
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -28,6 +29,7 @@ const App = () => {
           <AppShell>
             <Routes>
               <Route path="/" element={<Index />} />
+              <Route path="/organization/:organizationId" element={<OrganizationDetail />} />
               <Route path="/drive" element={<Drive />} />
               <Route path="/workspaces" element={<Workspaces />} />
               <Route path="/workspace/:workspaceId" element={<WorkspaceDetail />} />
