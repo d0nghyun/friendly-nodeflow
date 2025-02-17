@@ -47,7 +47,7 @@ export const Sidebar = () => {
       </div>
       <ShadcnSidebar className="flex-1">
         <SidebarContent className="pt-14 -mt-14">
-          <div className="flex-1 p-4 space-y-6 overflow-y-auto my-[50px]">
+          <div className="flex-1 p-4 space-y-6 overflow-y-auto my-[56px]">
             {workspaces.map(workspace => <Collapsible key={workspace.id} open={expandedWorkspaces.includes(workspace.id)} onOpenChange={() => toggleWorkspace(workspace.id)}>
                 <CollapsibleTrigger className="flex items-center gap-2 text-gray-600 w-full hover:bg-gray-50 rounded p-1">
                   {expandedWorkspaces.includes(workspace.id) ? <ChevronDown className="h-4 w-4" /> : <ChevronRight className="h-4 w-4" />}
