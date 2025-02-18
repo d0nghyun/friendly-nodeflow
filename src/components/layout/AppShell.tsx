@@ -16,12 +16,10 @@ export function AppShell({ children }: AppShellProps) {
 
   return (
     <div className="min-h-screen flex w-full">
-      <div className="border-r">
-        <div className="h-14 border-b px-4 flex items-center bg-white">
-          <OrganizationSelector />
-        </div>
-        {isWorkspacePage && <Sidebar />}
+      <div className="h-14 border-r border-b px-4 flex items-center bg-white">
+        <OrganizationSelector />
       </div>
+      {isWorkspacePage && <Sidebar />}
       <div className="flex-1 flex flex-col">
         <header className="h-14 border-b px-4 flex items-center justify-between bg-white">
           <div className="flex items-center gap-4">
