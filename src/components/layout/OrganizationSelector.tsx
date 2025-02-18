@@ -1,13 +1,15 @@
 
 import { ChevronDown } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { Link, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import { useState } from "react";
+import type { Organization } from "@/types/organization";
 
 export const OrganizationSelector = () => {
   const navigate = useNavigate();
@@ -27,15 +29,21 @@ export const OrganizationSelector = () => {
     }
   ];
 
+  const [selectedOrg, setSelectedOrg] = useState(organizations[0]);
+
+  const handleOrgSelect = (org: typeof organizations[0]) => {
+    setSelectedOrg(org);
+    navigate('/');
+  };
+
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
         <Button 
           variant="ghost" 
           className="flex items-center gap-2 px-0 font-semibold hover:bg-gray-50"
-          onClick={() => navigate('/')}
         >
-          <span className="text-lg">Qore - Quantit</span>
+          <span className="text-lg">{selectedOrg.name}</span>
           <ChevronDown className="h-4 w-4" />
         </Button>
       </DropdownMenuTrigger>
@@ -44,7 +52,7 @@ export const OrganizationSelector = () => {
           <DropdownMenuItem 
             key={org.id} 
             className="cursor-pointer"
-            onClick={() => navigate('/')}
+            onClick={() => handleOrgSelect(org)}
           >
             {org.name}
           </DropdownMenuItem>
