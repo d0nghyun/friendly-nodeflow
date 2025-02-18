@@ -35,7 +35,7 @@ export const UserMenu = () => {
           </div>
         </div>
         <DropdownMenuSeparator />
-        <DropdownMenuItem className="cursor-pointer" onClick={() => navigate('/organization/qore')}>
+        <DropdownMenuItem className="cursor-pointer" onClick={() => navigate('/')}>
           <Building className="mr-2 h-4 w-4" />
           <span>Organizations</span>
         </DropdownMenuItem>

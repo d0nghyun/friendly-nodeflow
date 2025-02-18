@@ -1,7 +1,6 @@
 
 import { HardDrive, Grid } from "lucide-react";
 import { Link, useLocation } from "react-router-dom";
-import { OrganizationSelector } from "./OrganizationSelector";
 
 export const Navigation = () => {
   const location = useLocation();
@@ -41,9 +40,6 @@ export const Navigation = () => {
           </Link>
         );
       })}
-      <div className="ml-2">
-        <OrganizationSelector />
-      </div>
     </div>
   );
 };
