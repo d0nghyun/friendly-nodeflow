@@ -15,8 +15,8 @@ const Workspaces = () => {
       ]
     },
     {
-      id: "marketing",
-      name: "Marketing",
+      id: "quanda",
+      name: "Quanda",
       description: "Marketing campaigns and automation",
       workflows: [
         { id: "flow3", name: "Email Campaign" },
@@ -24,8 +24,8 @@ const Workspaces = () => {
       ]
     },
     {
-      id: "sales",
-      name: "Sales",
+      id: "model",
+      name: "Model",
       description: "Sales processes and pipeline management",
       workflows: [
         { id: "flow5", name: "Lead Generation" },
