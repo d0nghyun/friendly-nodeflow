@@ -1,36 +1,12 @@
-import { useParams, Link } from "react-router-dom";
+
+import { useParams } from "react-router-dom";
 import { useState } from "react";
-import { 
-  ChevronLeft, 
-  Pencil, 
-  Trash2, 
-  Users, 
-  Grid, 
-  FolderOpen,
-  UserPlus,
-  Search,
-  HardDrive,
-  MoreHorizontal
-} from "lucide-react";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
+import { Grid, Users, HardDrive } from "lucide-react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/components/ui/table";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { OrganizationHeader } from "@/components/organization/OrganizationHeader";
+import { MembersList } from "@/components/organization/MembersList";
+import { WorkspacesList } from "@/components/organization/WorkspacesList";
+import { DrivesList } from "@/components/organization/DrivesList";
 import type { Organization, OrganizationMember } from "@/types/organization";
 
 const OrganizationDetail = () => {
@@ -115,40 +91,7 @@ const OrganizationDetail = () => {
 
   return (
     <div className="p-6">
-      <div className="mb-6">
-        <Link to="/">
-          <Button variant="ghost" className="gap-2 mb-4">
-            <ChevronLeft className="h-4 w-4" />
-            Back to Organizations
-          </Button>
-        </Link>
-
-        <div className="flex items-start justify-between">
-          <div>
-            <h1 className="text-2xl font-bold">{organization.name}</h1>
-            <p className="text-gray-500 mt-1">{organization.description}</p>
-            <div className="flex gap-4 mt-2 text-sm text-gray-500">
-              <span>Owner: {organization.owner.name}</span>
-              <span>Created: {organization.createdAt}</span>
-              <span>{organization.membersCount} members</span>
-            </div>
-          </div>
-          <div className="flex gap-2">
-            {isAdmin && (
-              <Button variant="outline" className="gap-2">
-                <Pencil className="h-4 w-4" />
-                Edit
-              </Button>
-            )}
-            {isOwner && (
-              <Button variant="outline" className="gap-2 text-red-600 hover:text-red-600">
-                <Trash2 className="h-4 w-4" />
-                Delete Organization
-              </Button>
-            )}
-          </div>
-        </div>
-      </div>
+      <OrganizationHeader organization={organization} />
 
       <Tabs defaultValue="workspaces" value={activeTab} onValueChange={setActiveTab}>
         <TabsList>
@@ -167,153 +110,20 @@ const OrganizationDetail = () => {
         </TabsList>
 
         <TabsContent value="members" className="mt-6">
-          <div className="flex justify-between items-center mb-4">
-            <div className="flex items-center gap-4 flex-1">
-              <h2 className="text-lg font-semibold">Organization Members</h2>
-              <div className="max-w-sm flex-1">
-                <div className="relative">
-                  <Search className="absolute left-2 top-2.5 h-4 w-4 text-gray-500" />
-                  <Input
-                    placeholder="Search members..."
-                    className="pl-8"
-                    value={searchQuery}
-                    onChange={(e) => setSearchQuery(e.target.value)}
-                  />
-                </div>
-              </div>
-            </div>
-            {isAdmin && (
-              <Button className="gap-2">
-                <UserPlus className="h-4 w-4" />
-                Invite Member
-              </Button>
-            )}
-          </div>
-          <Table>
-            <TableHeader>
-              <TableRow>
-                <TableHead>Name</TableHead>
-                <TableHead>Email</TableHead>
-                <TableHead>Role</TableHead>
-                <TableHead>Joined</TableHead>
-                <TableHead className="w-[100px]"></TableHead>
-              </TableRow>
-            </TableHeader>
-            <TableBody>
-              {filteredMembers.map((member) => (
-                <TableRow key={member.id}>
-                  <TableCell className="font-medium">{member.name}</TableCell>
-                  <TableCell>{member.email}</TableCell>
-                  <TableCell>
-                    {isAdmin && member.role !== "owner" ? (
-                      <Select defaultValue={member.role}>
-                        <SelectTrigger className="w-[120px]">
-                          <SelectValue />
-                        </SelectTrigger>
-                        <SelectContent>
-                          <SelectItem value="admin">Admin</SelectItem>
-                          <SelectItem value="member">Member</SelectItem>
-                        </SelectContent>
-                      </Select>
-                    ) : (
-                      <span className="capitalize">{member.role}</span>
-                    )}
-                  </TableCell>
-                  <TableCell>{member.joinedAt}</TableCell>
-                  <TableCell>
-                    {isAdmin && member.role !== "owner" && (
-                      <Button variant="ghost" size="sm" className="text-red-600 hover:text-red-600">
-                        Remove
-                      </Button>
-                    )}
-                  </TableCell>
-                </TableRow>
-              ))}
-            </TableBody>
-          </Table>
+          <MembersList 
+            members={filteredMembers}
+            isAdmin={isAdmin}
+            searchQuery={searchQuery}
+            onSearchChange={setSearchQuery}
+          />
         </TabsContent>
 
         <TabsContent value="workspaces" className="mt-6">
-          <div className="flex justify-between mb-4">
-            <h2 className="text-lg font-semibold">Workspaces</h2>
-            <Button className="gap-2">
-              <Grid className="h-4 w-4" />
-              New Workspace
-            </Button>
-          </div>
-          <Table>
-            <TableHeader>
-              <TableRow>
-                <TableHead>Name</TableHead>
-                <TableHead>Description</TableHead>
-                <TableHead>Members</TableHead>
-                <TableHead className="w-[100px]"></TableHead>
-              </TableRow>
-            </TableHeader>
-            <TableBody>
-              {organization.workspaces.map((workspace) => (
-                <TableRow key={workspace.id}>
-                  <TableCell>
-                    <Link to={`/workspace/${workspace.id}`} className="flex items-center gap-2 hover:text-blue-600">
-                      <Grid className="h-4 w-4" />
-                      {workspace.name}
-                    </Link>
-                  </TableCell>
-                  <TableCell>{workspace.description}</TableCell>
-                  <TableCell>
-                    <div className="flex items-center gap-2">
-                      <Users className="h-4 w-4" />
-                      {workspace.membersCount}
-                    </div>
-                  </TableCell>
-                  <TableCell>
-                    <Button variant="ghost" size="sm">
-                      <MoreHorizontal className="h-4 w-4" />
-                    </Button>
-                  </TableCell>
-                </TableRow>
-              ))}
-            </TableBody>
-          </Table>
+          <WorkspacesList workspaces={organization.workspaces} />
         </TabsContent>
 
         <TabsContent value="drives" className="mt-6">
-          <div className="flex justify-between mb-4">
-            <h2 className="text-lg font-semibold">Organization Drives</h2>
-            <Button className="gap-2">
-              <FolderOpen className="h-4 w-4" />
-              New Drive
-            </Button>
-          </div>
-          <Table>
-            <TableHeader>
-              <TableRow>
-                <TableHead>Name</TableHead>
-                <TableHead>Description</TableHead>
-                <TableHead>Owner</TableHead>
-                <TableHead className="w-[100px]"></TableHead>
-              </TableRow>
-            </TableHeader>
-            <TableBody>
-              {organization.drives.map((drive) => (
-                <TableRow key={drive.id}>
-                  <TableCell>
-                    <Link to={`/drive/${drive.id}`} className="flex items-center gap-2 hover:text-blue-600">
-                      <FolderOpen className="h-4 w-4" />
-                      {drive.name}
-                    </Link>
-                  </TableCell>
-                  <TableCell>{drive.description}</TableCell>
-                  <TableCell>{drive.owner}</TableCell>
-                  <TableCell>
-                    <Button variant="ghost" size="sm">
-                      <MoreHorizontal className="h-4 w-4" />
-                    </Button>
-                  </TableCell>
-                </TableRow>
-              ))}
-            </TableBody>
-          </Table>
+          <DrivesList drives={organization.drives} />
         </TabsContent>
       </Tabs>
     </div>
