@@ -1,6 +1,7 @@
 
 import { File, Folder, Globe, MoreHorizontal, Users } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { Checkbox } from "@/components/ui/checkbox";
 import {
   Table,
   TableBody,
@@ -22,14 +23,30 @@ interface FileItem {
 
 interface FilesListProps {
   files: FileItem[];
+  selectedFiles: number[];
+  onFileSelect: (fileId: number) => void;
+  onFolderOpen?: (fileId: number) => void;
 }
 
-export const FilesList = ({ files }: FilesListProps) => {
+export const FilesList = ({ 
+  files, 
+  selectedFiles, 
+  onFileSelect,
+  onFolderOpen 
+}: FilesListProps) => {
   return (
     <div className="flex-1 p-4">
       <Table>
         <TableHeader>
           <TableRow>
+            <TableHead className="w-[40px]">
+              <Checkbox 
+                checked={selectedFiles.length === files.length}
+                onCheckedChange={(checked) => {
+                  files.forEach(file => onFileSelect(file.id));
+                }}
+              />
+            </TableHead>
             <TableHead>Name</TableHead>
             <TableHead>Modified</TableHead>
             <TableHead>Owner</TableHead>
@@ -40,7 +57,16 @@ export const FilesList = ({ files }: FilesListProps) => {
           {files.map((file) => (
             <TableRow key={file.id}>
               <TableCell>
-                <div className="flex items-center gap-2">
+                <Checkbox 
+                  checked={selectedFiles.includes(file.id)}
+                  onCheckedChange={() => onFileSelect(file.id)}
+                />
+              </TableCell>
+              <TableCell>
+                <div 
+                  className="flex items-center gap-2 cursor-pointer"
+                  onClick={() => file.type === 'folder' && onFolderOpen?.(file.id)}
+                >
                   {file.type === 'folder' ? (
                     <Folder className="h-4 w-4 text-gray-400" />
                   ) : (
