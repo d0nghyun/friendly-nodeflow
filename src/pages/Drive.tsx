@@ -1,4 +1,5 @@
 
+import { useState } from 'react';
 import { 
   ChevronLeft, 
   Search, 
@@ -7,10 +8,12 @@ import {
   File, 
   Folder,
   ChevronRight,
-  Globe
+  Globe,
+  HardDrive
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
+import { Card, CardHeader, CardTitle, CardDescription, CardContent } from '@/components/ui/card';
 import {
   Table,
   TableBody,
@@ -19,29 +22,29 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table';
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger,
-} from '@/components/ui/dropdown-menu';
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from '@/components/ui/dialog';
 
 const Drive = () => {
-  const breadcrumbs = [
-    { name: 'Organization', path: '/organization' },
-    { name: 'Drive', path: '/drive' },
-    { name: 'Quanda', path: '/drive/quanda' },
-    { name: 'cm', path: '/drive/quanda/cm' },
+  const [selectedDrive, setSelectedDrive] = useState<string | null>(null);
+
+  // 드라이브 목록
+  const drives = [
+    {
+      id: "drive1",
+      name: "Company Documents",
+      description: "Shared company resources",
+      owner: "John Doe",
+      membersCount: 15
+    },
+    {
+      id: "drive2",
+      name: "Marketing Assets",
+      description: "Brand assets and materials",
+      owner: "Jane Smith",
+      membersCount: 8
+    }
   ];
 
+  // 파일 목록
   const files = [
     { 
       id: 1, 
@@ -72,114 +75,79 @@ const Drive = () => {
     },
   ];
 
-  const members = [
-    { id: 1, name: 'John Doe', email: 'john@example.com', role: 'Editor' },
-    { id: 2, name: 'Jane Smith', email: 'jane@example.com', role: 'Viewer' },
-    { id: 3, name: 'Mike Johnson', email: 'mike@example.com', role: 'Browser' },
-  ];
+  if (!selectedDrive) {
+    return (
+      <div className="p-6">
+        <div className="flex justify-between items-center mb-6">
+          <div>
+            <h1 className="text-2xl font-bold">Drives</h1>
+            <p className="text-gray-500">Access your organization's shared drives</p>
+          </div>
+          <Button className="gap-2">
+            <HardDrive className="h-4 w-4" />
+            New Drive
+          </Button>
+        </div>
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          {drives.map((drive) => (
+            <Card 
+              key={drive.id}
+              className="hover:shadow-lg transition-shadow cursor-pointer"
+              onClick={() => setSelectedDrive(drive.id)}
+            >
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2">
+                  <HardDrive className="h-5 w-5 text-gray-500" />
+                  {drive.name}
+                </CardTitle>
+                <CardDescription>{drive.description}</CardDescription>
+              </CardHeader>
+              <CardContent>
+                <div className="flex items-center gap-4 text-sm text-gray-500">
+                  <div className="flex items-center gap-1">
+                    <Users className="h-4 w-4" />
+                    {drive.membersCount} members
+                  </div>
+                  <div>Owner: {drive.owner}</div>
+                </div>
+              </CardContent>
+            </Card>
+          ))}
+        </div>
+      </div>
+    );
+  }
 
+  // 탐색기 뷰
   return (
     <div className="w-full h-full flex flex-col">
-      {/* Header */}
       <div className="border-b bg-white p-4">
         <div className="flex items-center justify-between mb-4">
-          <div className="flex items-center gap-4">
-            <Button variant="ghost" size="icon">
+          <div className="flex items-center gap-2">
+            <Button 
+              variant="ghost" 
+              size="icon"
+              onClick={() => setSelectedDrive(null)}
+            >
               <ChevronLeft className="h-4 w-4" />
             </Button>
-            <div className="flex items-center gap-2">
-              {breadcrumbs.map((item, index) => (
-                <div key={item.path} className="flex items-center">
-                  <Button 
-                    variant="ghost" 
-                    className="text-sm font-medium text-gray-600 hover:text-gray-900"
-                  >
-                    {item.name}
-                  </Button>
-                  {index < breadcrumbs.length - 1 && (
-                    <ChevronRight className="h-4 w-4 text-gray-400" />
-                  )}
-                </div>
-              ))}
-            </div>
+            <h2 className="text-lg font-semibold">
+              {drives.find(d => d.id === selectedDrive)?.name}
+            </h2>
           </div>
           <div className="flex items-center gap-2">
             <div className="relative w-64">
               <Search className="absolute left-2 top-2.5 h-4 w-4 text-gray-500" />
               <Input placeholder="Search files..." className="pl-8" />
             </div>
-            <Dialog>
-              <DialogTrigger asChild>
-                <Button variant="outline" className="gap-2">
-                  <Users className="h-4 w-4" />
-                  Share
-                </Button>
-              </DialogTrigger>
-              <DialogContent>
-                <DialogHeader>
-                  <DialogTitle>Share "cm" folder</DialogTitle>
-                </DialogHeader>
-                <div className="mt-4">
-                  <div className="flex items-center justify-between mb-4">
-                    <div className="flex items-center gap-2">
-                      <Globe className="h-4 w-4 text-gray-500" />
-                      <span className="text-sm text-gray-600">Public access</span>
-                    </div>
-                    <Button variant="outline" size="sm">
-                      Change
-                    </Button>
-                  </div>
-                  <div className="space-y-4">
-                    {members.map((member) => (
-                      <div key={member.id} className="flex items-center justify-between">
-                        <div className="flex items-center gap-3">
-                          <div className="h-8 w-8 rounded-full bg-gray-100 flex items-center justify-center">
-                            <span className="text-sm font-medium">
-                              {member.name.charAt(0)}
-                            </span>
-                          </div>
-                          <div>
-                            <div className="text-sm font-medium">{member.name}</div>
-                            <div className="text-xs text-gray-500">{member.email}</div>
-                          </div>
-                        </div>
-                        <DropdownMenu>
-                          <DropdownMenuTrigger asChild>
-                            <Button variant="outline" size="sm">
-                              {member.role}
-                            </Button>
-                          </DropdownMenuTrigger>
-                          <DropdownMenuContent align="end">
-                            <DropdownMenuItem>Editor</DropdownMenuItem>
-                            <DropdownMenuItem>Viewer</DropdownMenuItem>
-                            <DropdownMenuItem>Browser</DropdownMenuItem>
-                            <DropdownMenuSeparator />
-                            <DropdownMenuItem className="text-red-600">
-                              Remove
-                            </DropdownMenuItem>
-                          </DropdownMenuContent>
-                        </DropdownMenu>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-              </DialogContent>
-            </Dialog>
           </div>
         </div>
       </div>
 
-      {/* Content */}
       <div className="flex-1 p-4">
         <Table>
           <TableHeader>
             <TableRow>
-              <TableHead className="w-[40px]">
-                <input 
-                  type="checkbox" 
-                  className="rounded border-gray-300 text-blue-600 focus:ring-blue-500"
-                />
-              </TableHead>
               <TableHead>Name</TableHead>
               <TableHead>Modified</TableHead>
               <TableHead>Owner</TableHead>
@@ -189,12 +157,6 @@ const Drive = () => {
           <TableBody>
             {files.map((file) => (
               <TableRow key={file.id}>
-                <TableCell>
-                  <input 
-                    type="checkbox" 
-                    className="rounded border-gray-300 text-blue-600 focus:ring-blue-500"
-                  />
-                </TableCell>
                 <TableCell>
                   <div className="flex items-center gap-2">
                     {file.type === 'folder' ? (

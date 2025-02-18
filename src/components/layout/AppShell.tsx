@@ -12,8 +12,9 @@ interface AppShellProps {
 
 export function AppShell({ children }: AppShellProps) {
   const location = useLocation();
-  const showSidebar = location.pathname.startsWith('/workspace/') || 
-                      location.pathname.match(/^\/[^/]+\/[^/]+$/); // Matches /:workspaceId/:workflowId
+  const showSidebar = (location.pathname.startsWith('/workspace/') || 
+                      location.pathname.match(/^\/[^/]+\/[^/]+$/)) && 
+                      !location.pathname.startsWith('/organization'); // Exclude organization pages
 
   return (
     <div className="min-h-screen flex flex-col w-full">

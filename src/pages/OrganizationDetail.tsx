@@ -9,7 +9,8 @@ import {
   FolderOpen,
   UserPlus,
   Search,
-  HardDrive
+  HardDrive,
+  MoreHorizontal
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -240,27 +241,40 @@ const OrganizationDetail = () => {
               New Workspace
             </Button>
           </div>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {organization.workspaces.map((workspace) => (
-              <Link key={workspace.id} to={`/workspace/${workspace.id}`}>
-                <Card className="hover:shadow-lg transition-shadow cursor-pointer">
-                  <CardHeader>
-                    <CardTitle className="flex items-center gap-2">
-                      <Grid className="h-5 w-5 text-gray-500" />
+          <Table>
+            <TableHeader>
+              <TableRow>
+                <TableHead>Name</TableHead>
+                <TableHead>Description</TableHead>
+                <TableHead>Members</TableHead>
+                <TableHead className="w-[100px]"></TableHead>
+              </TableRow>
+            </TableHeader>
+            <TableBody>
+              {organization.workspaces.map((workspace) => (
+                <TableRow key={workspace.id}>
+                  <TableCell>
+                    <Link to={`/workspace/${workspace.id}`} className="flex items-center gap-2 hover:text-blue-600">
+                      <Grid className="h-4 w-4" />
                       {workspace.name}
-                    </CardTitle>
-                    <CardDescription>{workspace.description}</CardDescription>
-                  </CardHeader>
-                  <CardContent>
-                    <div className="flex items-center gap-2 text-sm text-gray-500">
+                    </Link>
+                  </TableCell>
+                  <TableCell>{workspace.description}</TableCell>
+                  <TableCell>
+                    <div className="flex items-center gap-2">
                       <Users className="h-4 w-4" />
-                      {workspace.membersCount} members
+                      {workspace.membersCount}
                     </div>
-                  </CardContent>
-                </Card>
-              </Link>
-            ))}
-          </div>
+                  </TableCell>
+                  <TableCell>
+                    <Button variant="ghost" size="sm">
+                      <MoreHorizontal className="h-4 w-4" />
+                    </Button>
+                  </TableCell>
+                </TableRow>
+              ))}
+            </TableBody>
+          </Table>
         </TabsContent>
 
         <TabsContent value="drives" className="mt-6">
@@ -271,24 +285,35 @@ const OrganizationDetail = () => {
               New Drive
             </Button>
           </div>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {organization.drives.map((drive) => (
-              <Card key={drive.id} className="hover:shadow-lg transition-shadow cursor-pointer">
-                <CardHeader>
-                  <CardTitle className="flex items-center gap-2">
-                    <FolderOpen className="h-5 w-5 text-gray-500" />
-                    {drive.name}
-                  </CardTitle>
-                  <CardDescription>{drive.description}</CardDescription>
-                </CardHeader>
-                <CardContent>
-                  <div className="text-sm text-gray-500">
-                    Owner: {drive.owner}
-                  </div>
-                </CardContent>
-              </Card>
-            ))}
-          </div>
+          <Table>
+            <TableHeader>
+              <TableRow>
+                <TableHead>Name</TableHead>
+                <TableHead>Description</TableHead>
+                <TableHead>Owner</TableHead>
+                <TableHead className="w-[100px]"></TableHead>
+              </TableRow>
+            </TableHeader>
+            <TableBody>
+              {organization.drives.map((drive) => (
+                <TableRow key={drive.id}>
+                  <TableCell>
+                    <Link to={`/drive/${drive.id}`} className="flex items-center gap-2 hover:text-blue-600">
+                      <FolderOpen className="h-4 w-4" />
+                      {drive.name}
+                    </Link>
+                  </TableCell>
+                  <TableCell>{drive.description}</TableCell>
+                  <TableCell>{drive.owner}</TableCell>
+                  <TableCell>
+                    <Button variant="ghost" size="sm">
+                      <MoreHorizontal className="h-4 w-4" />
+                    </Button>
+                  </TableCell>
+                </TableRow>
+              ))}
+            </TableBody>
+          </Table>
         </TabsContent>
       </Tabs>
     </div>
