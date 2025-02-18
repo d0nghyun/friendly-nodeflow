@@ -1,7 +1,6 @@
 
 import { HardDrive, Grid } from "lucide-react";
 import { Link, useLocation } from "react-router-dom";
-import { OrganizationSelector } from "./OrganizationSelector";
 
 export const Navigation = () => {
   const location = useLocation();
@@ -22,7 +21,6 @@ export const Navigation = () => {
 
   return (
     <div className="flex items-center gap-4">
-      <OrganizationSelector />
       {tabs.map((tab) => {
         const Icon = tab.icon;
         const isActive = location.pathname === tab.path;
