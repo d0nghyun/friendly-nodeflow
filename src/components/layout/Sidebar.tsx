@@ -3,6 +3,7 @@ import { Grid, ChevronDown, ChevronRight } from "lucide-react";
 import { Link, useLocation } from "react-router-dom";
 import { useState } from "react";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
+import { OrganizationSelector } from "./OrganizationSelector";
 
 export const Sidebar = () => {
   const location = useLocation();
@@ -50,6 +51,9 @@ export const Sidebar = () => {
 
   return (
     <div className="w-64 h-full border-r bg-white">
+      <div className="h-14 border-b px-4 flex items-center">
+        <OrganizationSelector />
+      </div>
       <div className="flex-1 p-4 space-y-6 overflow-y-auto">
         {workspaces.map(workspace => (
           <Collapsible
