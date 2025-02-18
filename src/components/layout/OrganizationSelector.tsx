@@ -9,7 +9,6 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { useState } from "react";
-import type { Organization } from "@/types/organization";
 
 export const OrganizationSelector = () => {
   const navigate = useNavigate();
@@ -33,7 +32,7 @@ export const OrganizationSelector = () => {
 
   const handleOrgSelect = (org: typeof organizations[0]) => {
     setSelectedOrg(org);
-    navigate('/');
+    navigate('/workspaces');
   };
 
   return (

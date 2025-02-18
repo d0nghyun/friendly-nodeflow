@@ -1,5 +1,5 @@
 
-import { User, Settings } from "lucide-react";
+import { User, Settings, Building } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
@@ -8,8 +8,11 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import { useNavigate } from "react-router-dom";
 
 export const UserMenu = () => {
+  const navigate = useNavigate();
+
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
@@ -32,6 +35,10 @@ export const UserMenu = () => {
           </div>
         </div>
         <DropdownMenuSeparator />
+        <DropdownMenuItem className="cursor-pointer" onClick={() => navigate('/organization/qore')}>
+          <Building className="mr-2 h-4 w-4" />
+          <span>Organizations</span>
+        </DropdownMenuItem>
         <DropdownMenuItem className="cursor-pointer">
           <User className="mr-2 h-4 w-4" />
           <span>Profile</span>
