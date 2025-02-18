@@ -16,8 +16,8 @@ export function AppShell({ children }: AppShellProps) {
 
   return (
     <div className="min-h-screen flex w-full">
-      <div className="flex flex-col">
-        <div className="h-14 border-r border-b px-4 flex items-center bg-white">
+      <div className="border-r">
+        <div className="h-14 border-b px-4 flex items-center bg-white">
           <OrganizationSelector />
         </div>
         {isWorkspacePage && <Sidebar />}
