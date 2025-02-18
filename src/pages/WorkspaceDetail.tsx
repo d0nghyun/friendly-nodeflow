@@ -1,4 +1,3 @@
-
 import { useParams, Link } from "react-router-dom";
 import { useState } from "react";
 import { 
@@ -8,8 +7,7 @@ import {
   Grid,
   Users,
   FolderOpen,
-  MoreHorizontal,
-  UserPlus
+  MoreHorizontal
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
