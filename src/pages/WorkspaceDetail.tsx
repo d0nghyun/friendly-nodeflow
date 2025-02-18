@@ -4,20 +4,21 @@ import {
   ChevronLeft, 
   Pencil, 
   Trash2, 
+  FolderPlus,
+  UserPlus,
   Grid,
   Users,
   FolderOpen,
-  MoreHorizontal
+  MoreVertical
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
+import { 
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 import {
   Table,
   TableBody,
@@ -33,6 +34,13 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 
 const WorkspaceDetail = () => {
   const { workspaceId } = useParams();
@@ -40,58 +48,35 @@ const WorkspaceDetail = () => {
 
   const workspace = {
     id: workspaceId,
-    name: "Quanda",
+    name: "Main Workspace",
     owner: "John Doe",
     createdAt: "2024-02-20",
-    description: "Quantit Data Engineering team",
+    description: "Core business processes and workflows",
     userRole: "admin", // admin, member, viewer
     drives: [
       { 
         id: "drive1", 
-        name: "Data Pipeline", 
-        description: "ETL 프로세스와 데이터 파이프라인 문서",
+        name: "Product Documentation", 
+        description: "Product specs and documentation",
         owner: "John Doe",
         shared: true
       },
       { 
         id: "drive2", 
-        name: "Architecture", 
-        description: "시스템 아키텍처 설계 문서",
+        name: "Design Assets", 
+        description: "UI/UX design files",
         owner: "Jane Smith",
         shared: false
       }
     ],
     members: [
-      { id: "1", name: "John Doe", email: "john@quantit.com", role: "admin", joinedAt: "2024-01-01" },
-      { id: "2", name: "Jane Smith", email: "jane@quantit.com", role: "member", joinedAt: "2024-01-15" },
-      { id: "3", name: "Mike Johnson", email: "mike@quantit.com", role: "member", joinedAt: "2024-02-01" }
+      { id: "1", name: "John Doe", email: "john@example.com", role: "admin", joinedAt: "2024-01-01" },
+      { id: "2", name: "Jane Smith", email: "jane@example.com", role: "member", joinedAt: "2024-01-15" },
+      { id: "3", name: "Mike Johnson", email: "mike@example.com", role: "member", joinedAt: "2024-02-01" }
     ],
     workflows: [
-      { id: "flow1", name: "Data Ingestion", description: "마켓 데이터 수집 파이프라인" },
-      { id: "flow2", name: "Data Processing", description: "데이터 전처리 및 정제" },
-      { id: "flow3", name: "Data Analytics", description: "데이터 분석 워크플로우" }
-    ]
-  };
-
-  const modelWorkspace = {
-    id: 'model',
-    name: "Model",
-    description: "Quant Modeling",
-    workflows: [
-      { id: "flow4", name: "Model Development", description: "퀀트 모델 개발 프로세스" },
-      { id: "flow5", name: "Backtesting", description: "모델 백테스팅 워크플로우" },
-      { id: "flow6", name: "Model Deployment", description: "모델 배포 및 모니터링" }
-    ]
-  };
-
-  const dipWorkspace = {
-    id: 'dip',
-    name: "DIP",
-    description: "Digital investing platform",
-    workflows: [
-      { id: "flow7", name: "Portfolio Management", description: "포트폴리오 관리 자동화" },
-      { id: "flow8", name: "Risk Analysis", description: "리스크 분석 프로세스" },
-      { id: "flow9", name: "Trade Execution", description: "거래 실행 워크플로우" }
+      { id: "flow1", name: "User Onboarding", description: "Customer onboarding automation" },
+      { id: "flow2", name: "Payment Processing", description: "Payment handling workflow" }
     ]
   };
 
