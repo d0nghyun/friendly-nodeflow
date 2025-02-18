@@ -12,7 +12,8 @@ interface AppShellProps {
 
 export function AppShell({ children }: AppShellProps) {
   const location = useLocation();
-  const isWorkspacePage = location.pathname.startsWith('/workspace/');
+  const showSidebar = location.pathname.startsWith('/workspace/') || 
+                      location.pathname.match(/^\/[^/]+\/[^/]+$/); // Matches /:workspaceId/:workflowId
 
   return (
     <div className="min-h-screen flex flex-col w-full">
@@ -26,7 +27,7 @@ export function AppShell({ children }: AppShellProps) {
         </div>
       </header>
       <div className="flex flex-1">
-        {isWorkspacePage && <Sidebar />}
+        {showSidebar && <Sidebar />}
         <main className="flex-1">
           {children}
         </main>
