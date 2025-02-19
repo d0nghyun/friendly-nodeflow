@@ -49,7 +49,8 @@ export const workspaces = [
         name: "Model Documentation", 
         description: "퀀트 모델 문서",
         owner: "Jane Smith",
-        shared: true
+        shared: true,
+        userRole: "editor" as const
       }
     ],
     members: [
@@ -75,7 +76,8 @@ export const workspaces = [
         name: "Platform Design", 
         description: "플랫폼 설계 문서",
         owner: "Mike Johnson",
-        shared: true
+        shared: true,
+        userRole: "viewer" as const
       }
     ],
     members: [
