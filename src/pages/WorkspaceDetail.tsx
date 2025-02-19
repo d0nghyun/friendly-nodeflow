@@ -47,6 +47,7 @@ const WorkspaceDetail = () => {
 
   const isAdmin = workspace.userRole === "admin";
   const isMember = workspace.userRole === "member";
+  const canModify = isAdmin || isMember;
 
   return (
     <div className="p-6">
@@ -97,12 +98,10 @@ const WorkspaceDetail = () => {
         <TabsContent value="members" className="mt-6">
           <div className="flex justify-between mb-4">
             <h2 className="text-lg font-semibold">Workspace Members</h2>
-            {isAdmin && (
-              <Button className="gap-2">
-                <UserPlus className="h-4 w-4" />
-                Invite Member
-              </Button>
-            )}
+            <Button disabled={!isAdmin} className="gap-2">
+              <UserPlus className="h-4 w-4" />
+              Invite Member
+            </Button>
           </div>
           <Table>
             <TableHeader>
@@ -128,7 +127,6 @@ const WorkspaceDetail = () => {
                         <SelectContent>
                           <SelectItem value="admin">Admin</SelectItem>
                           <SelectItem value="member">Member</SelectItem>
-                          <SelectItem value="viewer">Viewer</SelectItem>
                         </SelectContent>
                       </Select>
                     ) : (
@@ -152,40 +150,36 @@ const WorkspaceDetail = () => {
         <TabsContent value="workflows" className="mt-6">
           <div className="flex justify-between mb-4">
             <h2 className="text-lg font-semibold">Workflows</h2>
-            {(isAdmin || isMember) && (
-              <Button className="gap-2">
-                <Grid className="h-4 w-4" />
-                New Workflow
-              </Button>
-            )}
+            <Button disabled={!canModify} className="gap-2">
+              <Grid className="h-4 w-4" />
+              New Workflow
+            </Button>
           </div>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {workspace.workflows.map((workflow) => (
-              <Link key={workflow.id} to={`/${workspace.id}/${workflow.id}`}>
-                <Card className="hover:shadow-lg transition-shadow cursor-pointer">
-                  <CardHeader>
-                    <CardTitle className="flex items-center gap-2">
-                      <svg 
-                        width="20" 
-                        height="20" 
-                        viewBox="0 0 24 24" 
-                        fill="none" 
-                        stroke="currentColor" 
-                        strokeWidth="2" 
-                        strokeLinecap="round" 
-                        strokeLinejoin="round"
-                        className="text-gray-500"
-                      >
-                        <path d="M22 12c0 5.523-4.477 10-10 10S2 17.523 2 12 6.477 2 12 2s10 4.477 10 10z"/>
-                        <path d="M12 16v-4"/>
-                        <path d="M12 8h.01"/>
-                      </svg>
-                      {workflow.name}
-                    </CardTitle>
-                    <CardDescription>{workflow.description}</CardDescription>
-                  </CardHeader>
-                </Card>
-              </Link>
+              <Card key={workflow.id} className="hover:shadow-lg transition-shadow">
+                <CardHeader>
+                  <CardTitle className="flex items-center gap-2">
+                    <svg 
+                      width="20" 
+                      height="20" 
+                      viewBox="0 0 24 24" 
+                      fill="none" 
+                      stroke="currentColor" 
+                      strokeWidth="2" 
+                      strokeLinecap="round" 
+                      strokeLinejoin="round"
+                      className="text-gray-500"
+                    >
+                      <path d="M22 12c0 5.523-4.477 10-10 10S2 17.523 2 12 6.477 2 12 2s10 4.477 10 10z"/>
+                      <path d="M12 16v-4"/>
+                      <path d="M12 8h.01"/>
+                    </svg>
+                    {workflow.name}
+                  </CardTitle>
+                  <CardDescription>{workflow.description}</CardDescription>
+                </CardHeader>
+              </Card>
             ))}
           </div>
         </TabsContent>

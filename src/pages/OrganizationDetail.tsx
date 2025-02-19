@@ -3,19 +3,24 @@ import { useParams } from "react-router-dom";
 import { useState } from "react";
 import { Grid, Users, HardDrive } from "lucide-react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
 import { OrganizationHeader } from "@/components/organization/OrganizationHeader";
-import { MembersList } from "@/components/organization/MembersList";
-import { WorkspacesList } from "@/components/organization/WorkspacesList";
-import { DrivesList } from "@/components/organization/DrivesList";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import type { Organization, OrganizationMember } from "@/types/organization";
 import { workspaces } from "@/mocks/workspaceData";
 
 const OrganizationDetail = () => {
   const { organizationId } = useParams();
-  const [activeTab, setActiveTab] = useState("workspaces");
+  const [activeTab, setActiveTab] = useState("members");
   const [searchQuery, setSearchQuery] = useState("");
 
-  // 워크스페이스의 모든 드라이브를 하나의 배열로 통합
   const allDrives = workspaces.reduce((acc, workspace) => {
     return [...acc, ...workspace.drives];
   }, [] as typeof workspaces[0]['drives']);
@@ -80,37 +85,86 @@ const OrganizationDetail = () => {
     <div className="p-6">
       <OrganizationHeader organization={organization} />
 
-      <Tabs defaultValue="workspaces" value={activeTab} onValueChange={setActiveTab}>
+      <Tabs defaultValue="members" value={activeTab} onValueChange={setActiveTab}>
         <TabsList>
-          <TabsTrigger value="workspaces" className="gap-2">
-            <Grid className="h-4 w-4" />
-            Workspace
-          </TabsTrigger>
-          <TabsTrigger value="drives" className="gap-2">
-            <HardDrive className="h-4 w-4" />
-            Drive
-          </TabsTrigger>
           <TabsTrigger value="members" className="gap-2">
             <Users className="h-4 w-4" />
             Members
           </TabsTrigger>
+          <TabsTrigger value="workspaces" className="gap-2">
+            <Grid className="h-4 w-4" />
+            Workspaces
+          </TabsTrigger>
+          <TabsTrigger value="drives" className="gap-2">
+            <HardDrive className="h-4 w-4" />
+            Drives
+          </TabsTrigger>
         </TabsList>
 
         <TabsContent value="members" className="mt-6">
-          <MembersList 
-            members={filteredMembers}
-            isAdmin={isAdmin}
-            searchQuery={searchQuery}
-            onSearchChange={setSearchQuery}
-          />
+          <div className="space-y-6">
+            <div className="flex justify-between items-center">
+              <h2 className="text-lg font-semibold">Organization Members</h2>
+            </div>
+            <Table>
+              <TableHeader>
+                <TableRow>
+                  <TableHead>Name</TableHead>
+                  <TableHead>Email</TableHead>
+                  <TableHead>Role</TableHead>
+                  <TableHead>Joined</TableHead>
+                </TableRow>
+              </TableHeader>
+              <TableBody>
+                {filteredMembers.map((member) => (
+                  <TableRow key={member.id}>
+                    <TableCell className="font-medium">{member.name}</TableCell>
+                    <TableCell>{member.email}</TableCell>
+                    <TableCell className="capitalize">{member.role}</TableCell>
+                    <TableCell>{member.joinedAt}</TableCell>
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
+          </div>
         </TabsContent>
 
         <TabsContent value="workspaces" className="mt-6">
-          <WorkspacesList workspaces={organization.workspaces} />
+          <div className="space-y-6">
+            <h2 className="text-lg font-semibold">Workspaces</h2>
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+              {organization.workspaces.map((workspace) => (
+                <Card key={workspace.id}>
+                  <CardHeader>
+                    <CardTitle>{workspace.name}</CardTitle>
+                    <CardDescription>{workspace.description}</CardDescription>
+                  </CardHeader>
+                  <CardContent>
+                    <p className="text-sm text-gray-500">{workspace.membersCount} members</p>
+                  </CardContent>
+                </Card>
+              ))}
+            </div>
+          </div>
         </TabsContent>
 
         <TabsContent value="drives" className="mt-6">
-          <DrivesList drives={organization.drives} />
+          <div className="space-y-6">
+            <h2 className="text-lg font-semibold">Drives</h2>
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+              {organization.drives.map((drive) => (
+                <Card key={drive.id}>
+                  <CardHeader>
+                    <CardTitle>{drive.name}</CardTitle>
+                    <CardDescription>{drive.description}</CardDescription>
+                  </CardHeader>
+                  <CardContent>
+                    <p className="text-sm text-gray-500">Owner: {drive.owner}</p>
+                  </CardContent>
+                </Card>
+              ))}
+            </div>
+          </div>
         </TabsContent>
       </Tabs>
     </div>
