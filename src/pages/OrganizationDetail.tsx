@@ -1,6 +1,7 @@
+
 import { useParams } from "react-router-dom";
 import { useState } from "react";
-import { Grid, Users, HardDrive, UserPlus } from "lucide-react";
+import { Grid, Users, HardDrive, Calendar } from "lucide-react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import {
   Table,
@@ -10,34 +11,14 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from "@/components/ui/dialog";
-import { Input } from "@/components/ui/input";
-import { Button } from "@/components/ui/button";
 import { OrganizationHeader } from "@/components/organization/OrganizationHeader";
-import type { Organization, OrganizationMember, OrganizationRole } from "@/types/organization";
+import type { Organization, OrganizationMember } from "@/types/organization";
 import { workspaces } from "@/mocks/workspaceData";
 import { MembersList } from "@/components/members/MembersList";
 
 const OrganizationDetail = () => {
   const { organizationId } = useParams();
   const [activeTab, setActiveTab] = useState("members");
-  const [searchQuery, setSearchQuery] = useState("");
-  const [showInviteDialog, setShowInviteDialog] = useState(false);
-  const [inviteEmail, setInviteEmail] = useState("");
 
   const allDrives = workspaces.reduce((acc, workspace) => {
     return [...acc, ...workspace.drives];
@@ -84,27 +65,18 @@ const OrganizationDetail = () => {
       id: ws.id,
       name: ws.name,
       description: ws.description,
-      membersCount: ws.members.length
+      membersCount: ws.members.length,
+      createdAt: ws.createdAt
     })),
     drives: allDrives
   };
 
-  const isOwner = organization.userRole === "owner";
-  const isAdmin = organization.userRole === "admin" || isOwner;
-
-  const filteredMembers = organization.members.filter(member => 
-    member.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-    member.email.toLowerCase().includes(searchQuery.toLowerCase())
-  );
-
   const handleRoleChange = (memberId: string, newRole: string) => {
     console.log("Change role", { memberId, newRole });
-    // Here you would typically make an API call to update the role
   };
 
   const handleInviteMember = (email: string) => {
     console.log("Invite member:", email);
-    // Here you would typically make an API call to invite the member
   };
 
   return (
@@ -145,6 +117,7 @@ const OrganizationDetail = () => {
                 <TableRow>
                   <TableHead>Name</TableHead>
                   <TableHead>Description</TableHead>
+                  <TableHead>Created</TableHead>
                   <TableHead>Members</TableHead>
                 </TableRow>
               </TableHeader>
@@ -153,7 +126,18 @@ const OrganizationDetail = () => {
                   <TableRow key={workspace.id}>
                     <TableCell className="font-medium">{workspace.name}</TableCell>
                     <TableCell>{workspace.description}</TableCell>
-                    <TableCell>{workspace.membersCount} members</TableCell>
+                    <TableCell className="whitespace-nowrap">
+                      <span className="flex items-center gap-2">
+                        <Calendar className="h-4 w-4 text-gray-500" />
+                        {workspace.createdAt}
+                      </span>
+                    </TableCell>
+                    <TableCell>
+                      <span className="flex items-center gap-2">
+                        <Users className="h-4 w-4 text-gray-500" />
+                        {workspace.membersCount} members
+                      </span>
+                    </TableCell>
                   </TableRow>
                 ))}
               </TableBody>
@@ -169,7 +153,8 @@ const OrganizationDetail = () => {
                 <TableRow>
                   <TableHead>Name</TableHead>
                   <TableHead>Description</TableHead>
-                  <TableHead>Owner</TableHead>
+                  <TableHead>Created</TableHead>
+                  <TableHead>Members</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
@@ -177,7 +162,18 @@ const OrganizationDetail = () => {
                   <TableRow key={drive.id}>
                     <TableCell className="font-medium">{drive.name}</TableCell>
                     <TableCell>{drive.description}</TableCell>
-                    <TableCell>{drive.owner}</TableCell>
+                    <TableCell className="whitespace-nowrap">
+                      <span className="flex items-center gap-2">
+                        <Calendar className="h-4 w-4 text-gray-500" />
+                        {drive.createdAt || "N/A"}
+                      </span>
+                    </TableCell>
+                    <TableCell>
+                      <span className="flex items-center gap-2">
+                        <Users className="h-4 w-4 text-gray-500" />
+                        {drive.membersCount || "N/A"} members
+                      </span>
+                    </TableCell>
                   </TableRow>
                 ))}
               </TableBody>

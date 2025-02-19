@@ -137,22 +137,26 @@ export const MembersList = ({
             <div className="flex items-center gap-4">
               <div className="flex items-center gap-2">
                 <UserCheck className="h-4 w-4 text-gray-400" />
-                <Select
-                  value={member.role}
-                  onValueChange={(value) => handleRoleChange(member.id, value)}
-                  disabled={!canEditRoles}
-                >
-                  <SelectTrigger className="w-[110px]">
-                    <SelectValue />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {getAvailableRoles()?.map((role) => (
-                      <SelectItem key={role.value} value={role.value}>
-                        {role.label}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
+                {containerType === 'organization' && member.role === 'owner' ? (
+                  <span className="text-sm font-medium">Owner</span>
+                ) : (
+                  <Select
+                    value={member.role}
+                    onValueChange={(value) => handleRoleChange(member.id, value)}
+                    disabled={!canEditRoles || (containerType === 'organization' && member.role === 'owner')}
+                  >
+                    <SelectTrigger className="w-[110px]">
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {getAvailableRoles()?.map((role) => (
+                        <SelectItem key={role.value} value={role.value}>
+                          {role.label}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                )}
               </div>
               <span className="text-sm text-gray-500">
                 Joined {member.joinedAt}

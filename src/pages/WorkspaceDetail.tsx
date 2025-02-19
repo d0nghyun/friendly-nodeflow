@@ -6,17 +6,10 @@ import {
   Trash2, 
   Grid,
   Users,
-  UserPlus
+  Calendar
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
 import {
   Table,
   TableBody,
@@ -51,12 +44,10 @@ const WorkspaceDetail = () => {
 
   const handleRoleChange = (memberId: string, newRole: string) => {
     console.log("Change role", { memberId, newRole });
-    // Here you would typically make an API call to update the role
   };
 
   const handleInviteMember = (email: string) => {
     console.log("Invite member:", email);
-    // Here you would typically make an API call to invite the member
   };
 
   return (
@@ -74,8 +65,14 @@ const WorkspaceDetail = () => {
             <h1 className="text-2xl font-bold">{workspace.name}</h1>
             <p className="text-gray-500 mt-1">{workspace.description}</p>
             <div className="flex gap-4 mt-2 text-sm text-gray-500">
-              <span>Owner: {workspace.owner}</span>
-              <span>Created: {workspace.createdAt}</span>
+              <span className="flex items-center gap-2">
+                <Calendar className="h-4 w-4" />
+                Created: {workspace.createdAt}
+              </span>
+              <span className="flex items-center gap-2">
+                <Users className="h-4 w-4" />
+                {workspace.members.length} members
+              </span>
             </div>
           </div>
           <div className="flex gap-2">
