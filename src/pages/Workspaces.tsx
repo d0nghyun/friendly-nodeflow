@@ -3,39 +3,9 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Grid } from "lucide-react";
 import { Link } from "react-router-dom";
 import { Button } from '@/components/ui/button';
-
+import { workspaces } from '@/mocks/workspaceData';
 
 const Workspaces = () => {
-  const workspaces = [
-    {
-      id: "main",
-      name: "My Workspace",
-      description: "Core business processes and workflows",
-      workflows: [
-        { id: "flow1", name: "User Onboarding" },
-        { id: "flow2", name: "Payment Processing" }
-      ]
-    },
-    {
-      id: "quanda",
-      name: "Quanda",
-      description: "Marketing campaigns and automation",
-      workflows: [
-        { id: "flow3", name: "Email Campaign" },
-        { id: "flow4", name: "Social Media" }
-      ]
-    },
-    {
-      id: "model",
-      name: "Model",
-      description: "Sales processes and pipeline management",
-      workflows: [
-        { id: "flow5", name: "Lead Generation" },
-        { id: "flow6", name: "Deal Pipeline" }
-      ]
-    }
-  ];
-
   return (
     <div className="p-6">
       <div className="flex justify-between items-center mb-6">

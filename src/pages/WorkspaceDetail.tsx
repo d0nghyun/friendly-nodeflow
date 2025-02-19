@@ -1,24 +1,23 @@
+
 import { useParams, Link } from "react-router-dom";
 import { useState } from "react";
 import { 
   ChevronLeft, 
   Pencil, 
   Trash2, 
-  FolderPlus,
-  UserPlus,
   Grid,
   Users,
-  FolderOpen,
-  MoreVertical
+  UserPlus
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { 
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import {
   Table,
   TableBody,
@@ -34,51 +33,17 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
+import { getWorkspaceById } from "@/mocks/workspaceData";
 
 const WorkspaceDetail = () => {
   const { workspaceId } = useParams();
   const [activeTab, setActiveTab] = useState("workflows");
 
-  const workspace = {
-    id: workspaceId,
-    name: "Main Workspace",
-    owner: "John Doe",
-    createdAt: "2024-02-20",
-    description: "Core business processes and workflows",
-    userRole: "admin", // admin, member, viewer
-    drives: [
-      { 
-        id: "drive1", 
-        name: "Product Documentation", 
-        description: "Product specs and documentation",
-        owner: "John Doe",
-        shared: true
-      },
-      { 
-        id: "drive2", 
-        name: "Design Assets", 
-        description: "UI/UX design files",
-        owner: "Jane Smith",
-        shared: false
-      }
-    ],
-    members: [
-      { id: "1", name: "John Doe", email: "john@example.com", role: "admin", joinedAt: "2024-01-01" },
-      { id: "2", name: "Jane Smith", email: "jane@example.com", role: "member", joinedAt: "2024-01-15" },
-      { id: "3", name: "Mike Johnson", email: "mike@example.com", role: "member", joinedAt: "2024-02-01" }
-    ],
-    workflows: [
-      { id: "flow1", name: "User Onboarding", description: "Customer onboarding automation" },
-      { id: "flow2", name: "Payment Processing", description: "Payment handling workflow" }
-    ]
-  };
+  const workspace = getWorkspaceById(workspaceId || "");
+  
+  if (!workspace) {
+    return <div>Workspace not found</div>;
+  }
 
   const isAdmin = workspace.userRole === "admin";
   const isMember = workspace.userRole === "member";
