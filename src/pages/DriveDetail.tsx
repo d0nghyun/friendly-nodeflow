@@ -66,7 +66,7 @@ const DriveDetail = () => {
   };
 
   return (
-    <div className="flex h-[calc(100vh-3.5rem)]">
+    <div className="h-[calc(100vh-3.5rem)]">
       <FileExplorer 
         currentPath={currentPath}
         selectedFiles={selectedFiles}

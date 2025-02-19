@@ -1,33 +1,15 @@
 
 import { DriveList as DriveListComponent } from "@/components/drive/DriveList";
+import { workspaces } from "@/mocks/workspaceData";
 
 const DriveList = () => {
-  const drives = [
-    {
-      id: "1",
-      name: "Personal Drive",
-      description: "My personal documents and files",
-      owner: "John Doe",
-      shared: false,
-      membersCount: 1
-    },
-    {
-      id: "2",
-      name: "Team Projects",
-      description: "Collaborative workspace for team projects",
-      owner: "Jane Smith",
-      shared: true,
-      membersCount: 5
-    },
-    {
-      id: "3",
-      name: "Marketing Assets",
-      description: "Marketing materials and brand assets",
-      owner: "Marketing Team",
-      shared: true,
-      membersCount: 8
-    }
-  ];
+  // 모든 워크스페이스의 드라이브를 하나의 배열로 합치기
+  const drives = workspaces.flatMap(workspace => 
+    workspace.drives.map(drive => ({
+      ...drive,
+      membersCount: workspace.members.length
+    }))
+  );
 
   return <DriveListComponent drives={drives} />;
 };
