@@ -8,13 +8,14 @@ import { workspaces } from "@/mocks/workspaceData";
 export const Sidebar = () => {
   const location = useLocation();
   const { workspaceId, workflowId } = useParams();
-  const [expandedWorkspaces, setExpandedWorkspaces] = useState<string[]>([workspaceId || '']);
+  const [expandedWorkspaces, setExpandedWorkspaces] = useState<string[]>([]);
 
+  // workspaceId가 변경될 때마다 해당 워크스페이스를 펼침
   useEffect(() => {
     if (workspaceId && !expandedWorkspaces.includes(workspaceId)) {
       setExpandedWorkspaces(prev => [...prev, workspaceId]);
     }
-  }, [workspaceId, workflowId]); // workflowId도 의존성 배열에 추가
+  }, [workspaceId]);
 
   const toggleWorkspace = (workspaceId: string) => {
     setExpandedWorkspaces(prev => 
@@ -23,6 +24,11 @@ export const Sidebar = () => {
         : [...prev, workspaceId]
     );
   };
+
+  // 현재 경로에서 workspaceId와 workflowId 추출
+  const pathMatch = location.pathname.match(/^\/([^/]+)\/([^/]+)$/);
+  const currentWorkspaceId = pathMatch?.[1] || workspaceId;
+  const currentWorkflowId = pathMatch?.[2] || workflowId;
 
   return (
     <div className="w-64 h-[calc(100vh-3.5rem)] border-r bg-white">
@@ -41,7 +47,7 @@ export const Sidebar = () => {
             <CollapsibleContent>
               <div className="space-y-1 pl-6 mt-1">
                 {workspace.workflows.map(workflow => {
-                  const isActive = location.pathname === `/${workspace.id}/${workflow.id}`;
+                  const isActive = currentWorkspaceId === workspace.id && currentWorkflowId === workflow.id;
                   return (
                     <Link
                       key={workflow.id}
