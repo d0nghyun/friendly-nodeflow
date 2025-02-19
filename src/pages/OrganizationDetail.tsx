@@ -1,7 +1,8 @@
 
-import { useParams } from "react-router-dom";
+import { useParams, Link } from "react-router-dom";
 import { useState } from "react";
-import { Grid, Users, HardDrive, Calendar } from "lucide-react";
+import { Grid, Users, HardDrive, Calendar, ChevronLeft } from "lucide-react";
+import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import {
   Table,
@@ -81,6 +82,13 @@ const OrganizationDetail = () => {
 
   return (
     <div className="p-6">
+      <Link to="/organizations">
+        <Button variant="ghost" className="gap-2 mb-4">
+          <ChevronLeft className="h-4 w-4" />
+          Back to Organizations
+        </Button>
+      </Link>
+
       <OrganizationHeader organization={organization} />
 
       <Tabs defaultValue="members" value={activeTab} onValueChange={setActiveTab}>
