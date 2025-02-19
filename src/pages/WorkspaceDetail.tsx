@@ -1,4 +1,3 @@
-
 import { useParams, Link } from "react-router-dom";
 import { useState } from "react";
 import { 
@@ -157,29 +156,31 @@ const WorkspaceDetail = () => {
           </div>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {workspace.workflows.map((workflow) => (
-              <Card key={workflow.id} className="hover:shadow-lg transition-shadow">
-                <CardHeader>
-                  <CardTitle className="flex items-center gap-2">
-                    <svg 
-                      width="20" 
-                      height="20" 
-                      viewBox="0 0 24 24" 
-                      fill="none" 
-                      stroke="currentColor" 
-                      strokeWidth="2" 
-                      strokeLinecap="round" 
-                      strokeLinejoin="round"
-                      className="text-gray-500"
-                    >
-                      <path d="M22 12c0 5.523-4.477 10-10 10S2 17.523 2 12 6.477 2 12 2s10 4.477 10 10z"/>
-                      <path d="M12 16v-4"/>
-                      <path d="M12 8h.01"/>
-                    </svg>
-                    {workflow.name}
-                  </CardTitle>
-                  <CardDescription>{workflow.description}</CardDescription>
-                </CardHeader>
-              </Card>
+              <Link key={workflow.id} to={`/${workspace.id}/${workflow.id}`}>
+                <Card className="hover:shadow-lg transition-shadow">
+                  <CardHeader>
+                    <CardTitle className="flex items-center gap-2">
+                      <svg 
+                        width="20" 
+                        height="20" 
+                        viewBox="0 0 24 24" 
+                        fill="none" 
+                        stroke="currentColor" 
+                        strokeWidth="2" 
+                        strokeLinecap="round" 
+                        strokeLinejoin="round"
+                        className="text-gray-500"
+                      >
+                        <path d="M22 12c0 5.523-4.477 10-10 10S2 17.523 2 12 6.477 2 12 2s10 4.477 10 10z"/>
+                        <path d="M12 16v-4"/>
+                        <path d="M12 8h.01"/>
+                      </svg>
+                      {workflow.name}
+                    </CardTitle>
+                    <CardDescription>{workflow.description}</CardDescription>
+                  </CardHeader>
+                </Card>
+              </Link>
             ))}
           </div>
         </TabsContent>

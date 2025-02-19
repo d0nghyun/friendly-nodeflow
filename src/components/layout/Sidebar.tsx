@@ -1,14 +1,20 @@
 
 import { Grid, ChevronDown, ChevronRight } from "lucide-react";
 import { Link, useLocation, useParams } from "react-router-dom";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
 import { workspaces } from "@/mocks/workspaceData";
 
 export const Sidebar = () => {
   const location = useLocation();
-  const { workspaceId } = useParams();
+  const { workspaceId, workflowId } = useParams();
   const [expandedWorkspaces, setExpandedWorkspaces] = useState<string[]>([workspaceId || '']);
+
+  useEffect(() => {
+    if (workspaceId && !expandedWorkspaces.includes(workspaceId)) {
+      setExpandedWorkspaces(prev => [...prev, workspaceId]);
+    }
+  }, [workspaceId]);
 
   const toggleWorkspace = (workspaceId: string) => {
     setExpandedWorkspaces(prev => 

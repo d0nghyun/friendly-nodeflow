@@ -1,4 +1,3 @@
-
 import { useParams } from "react-router-dom";
 import { useState } from "react";
 import { Grid, Users, HardDrive } from "lucide-react";
@@ -62,14 +61,12 @@ const OrganizationDetail = () => {
         joinedAt: "2024-02-01"
       }
     ],
-    // workspaces 데이터를 중앙화된 데이터로 변경
     workspaces: workspaces.map(ws => ({
       id: ws.id,
       name: ws.name,
       description: ws.description,
       membersCount: ws.members.length
     })),
-    // drives 데이터를 중앙화된 데이터로 변경
     drives: allDrives
   };
 
@@ -132,38 +129,48 @@ const OrganizationDetail = () => {
         <TabsContent value="workspaces" className="mt-6">
           <div className="space-y-6">
             <h2 className="text-lg font-semibold">Workspaces</h2>
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-              {organization.workspaces.map((workspace) => (
-                <Card key={workspace.id}>
-                  <CardHeader>
-                    <CardTitle>{workspace.name}</CardTitle>
-                    <CardDescription>{workspace.description}</CardDescription>
-                  </CardHeader>
-                  <CardContent>
-                    <p className="text-sm text-gray-500">{workspace.membersCount} members</p>
-                  </CardContent>
-                </Card>
-              ))}
-            </div>
+            <Table>
+              <TableHeader>
+                <TableRow>
+                  <TableHead>Name</TableHead>
+                  <TableHead>Description</TableHead>
+                  <TableHead>Members</TableHead>
+                </TableRow>
+              </TableHeader>
+              <TableBody>
+                {organization.workspaces.map((workspace) => (
+                  <TableRow key={workspace.id}>
+                    <TableCell className="font-medium">{workspace.name}</TableCell>
+                    <TableCell>{workspace.description}</TableCell>
+                    <TableCell>{workspace.membersCount} members</TableCell>
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
           </div>
         </TabsContent>
 
         <TabsContent value="drives" className="mt-6">
           <div className="space-y-6">
             <h2 className="text-lg font-semibold">Drives</h2>
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-              {organization.drives.map((drive) => (
-                <Card key={drive.id}>
-                  <CardHeader>
-                    <CardTitle>{drive.name}</CardTitle>
-                    <CardDescription>{drive.description}</CardDescription>
-                  </CardHeader>
-                  <CardContent>
-                    <p className="text-sm text-gray-500">Owner: {drive.owner}</p>
-                  </CardContent>
-                </Card>
-              ))}
-            </div>
+            <Table>
+              <TableHeader>
+                <TableRow>
+                  <TableHead>Name</TableHead>
+                  <TableHead>Description</TableHead>
+                  <TableHead>Owner</TableHead>
+                </TableRow>
+              </TableHeader>
+              <TableBody>
+                {organization.drives.map((drive) => (
+                  <TableRow key={drive.id}>
+                    <TableCell className="font-medium">{drive.name}</TableCell>
+                    <TableCell>{drive.description}</TableCell>
+                    <TableCell>{drive.owner}</TableCell>
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
           </div>
         </TabsContent>
       </Tabs>
