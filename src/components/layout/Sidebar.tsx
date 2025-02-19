@@ -8,14 +8,20 @@ import { workspaces } from "@/mocks/workspaceData";
 export const Sidebar = () => {
   const location = useLocation();
   const { workspaceId, workflowId } = useParams();
-  const [expandedWorkspaces, setExpandedWorkspaces] = useState<string[]>([]);
+  // 초기 상태값에 현재 workspaceId가 있다면 포함시킴
+  const [expandedWorkspaces, setExpandedWorkspaces] = useState<string[]>(() => 
+    workspaceId ? [workspaceId] : []
+  );
 
-  // workspaceId가 변경될 때마다 해당 워크스페이스를 펼침
+  // URL이 변경될 때마다 현재 workspaceId를 확인하고 펼침
   useEffect(() => {
-    if (workspaceId && !expandedWorkspaces.includes(workspaceId)) {
-      setExpandedWorkspaces(prev => [...prev, workspaceId]);
+    const pathMatch = location.pathname.match(/^\/([^/]+)\/([^/]+)$/);
+    const currentWorkspaceId = pathMatch?.[1];
+    
+    if (currentWorkspaceId && !expandedWorkspaces.includes(currentWorkspaceId)) {
+      setExpandedWorkspaces(prev => [...prev, currentWorkspaceId]);
     }
-  }, [workspaceId]);
+  }, [location.pathname, expandedWorkspaces]);
 
   const toggleWorkspace = (workspaceId: string) => {
     setExpandedWorkspaces(prev => 
