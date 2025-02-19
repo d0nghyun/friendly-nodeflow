@@ -5,6 +5,8 @@ export interface Drive {
   description: string;
   shared: boolean;
   userRole: 'editor' | 'viewer';
+  createdAt?: string;
+  membersCount?: number;
 }
 
 export interface FileItem {

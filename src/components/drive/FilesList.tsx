@@ -10,16 +10,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-
-interface FileItem {
-  id: number;
-  name: string;
-  type: 'file' | 'folder';
-  modified: string;
-  owner: string;
-  shared: boolean;
-  public: boolean;
-}
+import type { FileItem } from "@/types/drive";
 
 interface FilesListProps {
   files: FileItem[];
@@ -49,7 +40,6 @@ export const FilesList = ({
             </TableHead>
             <TableHead>Name</TableHead>
             <TableHead>Modified</TableHead>
-            <TableHead>Owner</TableHead>
             <TableHead className="w-[100px]"></TableHead>
           </TableRow>
         </TableHeader>
@@ -82,7 +72,6 @@ export const FilesList = ({
                 </div>
               </TableCell>
               <TableCell>{file.modified}</TableCell>
-              <TableCell>{file.owner}</TableCell>
               <TableCell>
                 <Button variant="ghost" size="icon">
                   <MoreHorizontal className="h-4 w-4" />

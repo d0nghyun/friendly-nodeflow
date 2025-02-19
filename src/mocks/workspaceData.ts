@@ -12,17 +12,19 @@ export const workspaces = [
         id: "drive1", 
         name: "Data Pipeline", 
         description: "ETL 프로세스와 데이터 파이프라인 문서",
-        owner: "John Doe",
         shared: true,
-        userRole: "owner" as const
+        userRole: "editor" as const,
+        createdAt: "2024-02-20",
+        membersCount: 5
       },
       { 
         id: "drive2", 
         name: "Architecture", 
         description: "시스템 아키텍처 설계 문서",
-        owner: "Jane Smith",
         shared: false,
-        userRole: "editor" as const
+        userRole: "editor" as const,
+        createdAt: "2024-02-15",
+        membersCount: 3
       }
     ],
     members: [
@@ -48,9 +50,10 @@ export const workspaces = [
         id: "drive3", 
         name: "Model Documentation", 
         description: "퀀트 모델 문서",
-        owner: "Jane Smith",
         shared: true,
-        userRole: "editor" as const
+        userRole: "editor" as const,
+        createdAt: "2024-02-10",
+        membersCount: 4
       }
     ],
     members: [
@@ -75,9 +78,10 @@ export const workspaces = [
         id: "drive4", 
         name: "Platform Design", 
         description: "플랫폼 설계 문서",
-        owner: "Mike Johnson",
         shared: true,
-        userRole: "viewer" as const
+        userRole: "viewer" as const,
+        createdAt: "2024-02-05",
+        membersCount: 6
       }
     ],
     members: [
