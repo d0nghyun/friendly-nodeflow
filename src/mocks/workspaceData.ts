@@ -13,14 +13,16 @@ export const workspaces = [
         name: "Data Pipeline", 
         description: "ETL 프로세스와 데이터 파이프라인 문서",
         owner: "John Doe",
-        shared: true
+        shared: true,
+        userRole: "owner" as const
       },
       { 
         id: "drive2", 
         name: "Architecture", 
         description: "시스템 아키텍처 설계 문서",
         owner: "Jane Smith",
-        shared: false
+        shared: false,
+        userRole: "editor" as const
       }
     ],
     members: [

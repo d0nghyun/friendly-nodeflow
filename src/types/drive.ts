@@ -5,6 +5,7 @@ export interface Drive {
   description: string;
   owner: string;
   shared: boolean;
+  userRole: 'owner' | 'editor' | 'viewer';
 }
 
 export interface FileItem {
@@ -21,5 +22,6 @@ export interface Member {
   id: string;
   name: string;
   email: string;
-  role: 'editor' | 'viewer';
+  role: 'owner' | 'editor' | 'viewer';
+  joinedAt: string;
 }
