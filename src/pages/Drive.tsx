@@ -1,3 +1,4 @@
+
 import { useState } from 'react';
 import { HardDrive, Share, Trash2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -63,7 +64,7 @@ const Drive = () => {
           id: m.id,
           name: m.name,
           email: m.email,
-          role: m.role === 'admin' ? 'editor' : 'viewer'
+          role: m.role === 'admin' ? 'editor' as const : 'viewer' as const
         })) ?? []
     : [];
 
