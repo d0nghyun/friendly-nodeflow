@@ -1,14 +1,10 @@
 
 import { useState } from 'react';
-import { HardDrive, Share, Trash2 } from 'lucide-react';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { DriveCard } from '@/components/drive/DriveCard';
-import { ExplorerHeader } from '@/components/drive/ExplorerHeader';
-import { FilesList } from '@/components/drive/FilesList';
-import { DriveBreadcrumb } from '@/components/drive/DriveBreadcrumb';
+import { DriveList } from '@/components/drive/DriveList';
+import { FileExplorer } from '@/components/drive/FileExplorer';
 import { SharePanel } from '@/components/drive/SharePanel';
 import { workspaces } from '@/mocks/workspaceData';
+import type { FileItem } from '@/types/drive';
 
 const Drive = () => {
   const [selectedDrive, setSelectedDrive] = useState<string | null>(null);
@@ -26,11 +22,11 @@ const Drive = () => {
   }, [] as Array<typeof workspaces[0]['drives'][0] & { membersCount: number }>);
 
   // 파일 목록
-  const files = [
+  const files: FileItem[] = [
     { 
       id: 1, 
       name: 'Project Plan.pdf', 
-      type: 'file' as const,
+      type: 'file',
       modified: '2024-02-20',
       owner: 'John Doe',
       shared: true,
@@ -39,7 +35,7 @@ const Drive = () => {
     { 
       id: 2, 
       name: 'Assets', 
-      type: 'folder' as const,
+      type: 'folder',
       modified: '2024-02-19',
       owner: 'Jane Smith',
       shared: true,
@@ -48,7 +44,7 @@ const Drive = () => {
     { 
       id: 3, 
       name: 'Documentation', 
-      type: 'folder' as const,
+      type: 'folder',
       modified: '2024-02-18',
       owner: 'Mike Johnson',
       shared: false,
@@ -89,90 +85,31 @@ const Drive = () => {
     setCurrentPath(prev => prev.slice(0, pathIndex + 1));
   };
 
+  const handleDriveSelect = (driveId: string, driveName: string) => {
+    setSelectedDrive(driveId);
+    setCurrentPath([{ id: driveId, name: driveName }]);
+  };
+
   if (!selectedDrive) {
     return (
-      <div className="p-6">
-        <div className="flex justify-between items-center mb-6">
-          <div>
-            <h1 className="text-2xl font-bold">Drives</h1>
-            <p className="text-gray-500">Access your organization's shared drives</p>
-          </div>
-          <Button className="gap-2">
-            <HardDrive className="h-4 w-4" />
-            New Drive
-          </Button>
-        </div>
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {drives.map((drive) => (
-            <DriveCard 
-              key={drive.id}
-              drive={drive}
-              onClick={(id) => {
-                setSelectedDrive(id);
-                setCurrentPath([{ id, name: drive.name }]);
-              }}
-            />
-          ))}
-        </div>
-      </div>
+      <DriveList 
+        drives={drives}
+        onDriveSelect={handleDriveSelect}
+      />
     );
   }
 
   return (
     <div className="w-full h-full flex">
-      <div className="flex-1 flex flex-col">
-        <div className="border-b bg-white p-4">
-          <div className="flex items-center justify-between mb-4">
-            <div className="space-y-1">
-              <DriveBreadcrumb 
-                paths={currentPath}
-                onNavigate={handlePathNavigate}
-              />
-            </div>
-            <div className="flex items-center gap-2">
-              <Input 
-                placeholder="Search files..." 
-                className="w-64"
-              />
-              {selectedFiles.length > 0 ? (
-                <>
-                  <Button 
-                    variant="outline" 
-                    className="gap-2"
-                    onClick={() => setShowSharePanel(true)}
-                  >
-                    <Share className="h-4 w-4" />
-                    Share
-                  </Button>
-                  <Button 
-                    variant="outline" 
-                    className="gap-2 text-red-600 hover:text-red-600"
-                  >
-                    <Trash2 className="h-4 w-4" />
-                    Delete
-                  </Button>
-                </>
-              ) : (
-                <Button 
-                  variant="outline" 
-                  className="gap-2"
-                  onClick={() => setShowSharePanel(true)}
-                >
-                  <Share className="h-4 w-4" />
-                  Share
-                </Button>
-              )}
-            </div>
-          </div>
-        </div>
-
-        <FilesList 
-          files={files}
-          selectedFiles={selectedFiles}
-          onFileSelect={handleFileSelect}
-          onFolderOpen={handleFolderOpen}
-        />
-      </div>
+      <FileExplorer 
+        currentPath={currentPath}
+        selectedFiles={selectedFiles}
+        files={files}
+        onPathNavigate={handlePathNavigate}
+        onFileSelect={handleFileSelect}
+        onFolderOpen={handleFolderOpen}
+        onShareClick={() => setShowSharePanel(true)}
+      />
 
       {showSharePanel && (
         <SharePanel 
