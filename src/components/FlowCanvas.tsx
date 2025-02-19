@@ -61,7 +61,7 @@ const FlowCanvas = () => {
   }, []);
 
   return (
-    <div className="h-screen w-full bg-gray-50 flex">
+    <div className="h-full w-full bg-gray-50 flex">
       <div ref={reactFlowWrapper} className="flex-1 relative">
         <ReactFlow
           nodes={nodes}
@@ -76,6 +76,10 @@ const FlowCanvas = () => {
           nodeTypes={nodeTypes}
           className="bg-gray-50"
           fitView
+          fitViewOptions={{
+            padding: 0.2,
+            maxZoom: 1
+          }}
         >
           <NodeToolbar
             sidebarItems={sidebarItems}
