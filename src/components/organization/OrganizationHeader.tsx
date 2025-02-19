@@ -14,7 +14,7 @@ export const OrganizationHeader = ({ organization }: OrganizationHeaderProps) =>
 
   return (
     <div className="mb-6">
-      <Link to="/">
+      <Link to="/organizations">
         <Button variant="ghost" className="gap-2 mb-4">
           <ChevronLeft className="h-4 w-4" />
           Back to Organizations
