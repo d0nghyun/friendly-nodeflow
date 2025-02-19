@@ -1,4 +1,3 @@
-
 import { useState } from 'react';
 import { HardDrive, Share, Trash2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -8,6 +7,7 @@ import { ExplorerHeader } from '@/components/drive/ExplorerHeader';
 import { FilesList } from '@/components/drive/FilesList';
 import { DriveBreadcrumb } from '@/components/drive/DriveBreadcrumb';
 import { SharePanel } from '@/components/drive/SharePanel';
+import { workspaces } from '@/mocks/workspaceData';
 
 const Drive = () => {
   const [selectedDrive, setSelectedDrive] = useState<string | null>(null);
@@ -16,23 +16,13 @@ const Drive = () => {
   const [showSharePanel, setShowSharePanel] = useState(false);
   const [isPublic, setIsPublic] = useState(false);
 
-  // 드라이브 목록
-  const drives = [
-    {
-      id: "drive1",
-      name: "Company Documents",
-      description: "Shared company resources",
-      owner: "John Doe",
-      membersCount: 15
-    },
-    {
-      id: "drive2",
-      name: "Marketing Assets",
-      description: "Brand assets and materials",
-      owner: "Jane Smith",
-      membersCount: 8
-    }
-  ];
+  // 워크스페이스의 모든 드라이브를 하나의 배열로 통합
+  const drives = workspaces.reduce((acc, workspace) => {
+    return [...acc, ...workspace.drives.map(drive => ({
+      ...drive,
+      membersCount: workspace.members.length
+    }))];
+  }, [] as Array<typeof workspaces[0]['drives'][0] & { membersCount: number }>);
 
   // 파일 목록
   const files = [
@@ -65,21 +55,17 @@ const Drive = () => {
     },
   ];
 
-  // 멤버 목록
-  const members = [
-    {
-      id: "user1",
-      name: "John Doe",
-      email: "john@example.com",
-      role: "editor" as const
-    },
-    {
-      id: "user2",
-      name: "Jane Smith",
-      email: "jane@example.com",
-      role: "viewer" as const
-    }
-  ];
+  // 멤버 목록 - 현재 선택된 드라이브의 워크스페이스 멤버들을 사용
+  const members = selectedDrive 
+    ? workspaces
+        .find(ws => ws.drives.some(d => d.id === selectedDrive))
+        ?.members.map(m => ({
+          id: m.id,
+          name: m.name,
+          email: m.email,
+          role: m.role === 'admin' ? 'editor' : 'viewer'
+        })) ?? []
+    : [];
 
   const handleFileSelect = (fileId: number) => {
     setSelectedFiles(prev => {

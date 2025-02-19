@@ -8,11 +8,17 @@ import { MembersList } from "@/components/organization/MembersList";
 import { WorkspacesList } from "@/components/organization/WorkspacesList";
 import { DrivesList } from "@/components/organization/DrivesList";
 import type { Organization, OrganizationMember } from "@/types/organization";
+import { workspaces } from "@/mocks/workspaceData";
 
 const OrganizationDetail = () => {
   const { organizationId } = useParams();
   const [activeTab, setActiveTab] = useState("workspaces");
   const [searchQuery, setSearchQuery] = useState("");
+
+  // 워크스페이스의 모든 드라이브를 하나의 배열로 통합
+  const allDrives = workspaces.reduce((acc, workspace) => {
+    return [...acc, ...workspace.drives];
+  }, [] as typeof workspaces[0]['drives']);
 
   const organization: Organization & { members: OrganizationMember[], drives: any[], workspaces: any[] } = {
     id: organizationId!,
@@ -51,34 +57,15 @@ const OrganizationDetail = () => {
         joinedAt: "2024-02-01"
       }
     ],
-    workspaces: [
-      {
-        id: "ws1",
-        name: "Main Workspace",
-        description: "Core business processes",
-        membersCount: 8
-      },
-      {
-        id: "ws2",
-        name: "Marketing",
-        description: "Marketing campaigns and automation",
-        membersCount: 5
-      }
-    ],
-    drives: [
-      {
-        id: "drive1",
-        name: "Company Documents",
-        description: "Shared company resources",
-        owner: "John Doe"
-      },
-      {
-        id: "drive2",
-        name: "Marketing Assets",
-        description: "Brand assets and materials",
-        owner: "Jane Smith"
-      }
-    ]
+    // workspaces 데이터를 중앙화된 데이터로 변경
+    workspaces: workspaces.map(ws => ({
+      id: ws.id,
+      name: ws.name,
+      description: ws.description,
+      membersCount: ws.members.length
+    })),
+    // drives 데이터를 중앙화된 데이터로 변경
+    drives: allDrives
   };
 
   const isOwner = organization.userRole === "owner";
