@@ -1,13 +1,27 @@
 
 import { useState } from "react";
-import { useParams } from "react-router-dom";
+import { useParams, Link } from "react-router-dom";
+import { Pencil, Trash2, ChevronLeft, Calendar, User } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { FileExplorer } from "@/components/drive/FileExplorer";
 import { SharePanel } from "@/components/drive/SharePanel";
+import { workspaces } from "@/mocks/workspaceData";
 
 const DriveDetail = () => {
   const { driveId } = useParams();
   const [selectedFiles, setSelectedFiles] = useState<number[]>([]);
   const [showSharePanel, setShowSharePanel] = useState(false);
+  const [activeTab, setActiveTab] = useState("folders");
+
+  // Find the drive from workspaces mock data
+  const drive = workspaces.flatMap(workspace => 
+    workspace.drives.filter(drive => drive.id === driveId)
+  )[0];
+
+  if (!drive) {
+    return <div>Drive not found</div>;
+  }
 
   const files = [
     { 
@@ -66,16 +80,72 @@ const DriveDetail = () => {
   };
 
   return (
-    <div className="h-[calc(100vh-3.5rem)]">
-      <FileExplorer 
-        currentPath={currentPath}
-        selectedFiles={selectedFiles}
-        files={files}
-        onPathNavigate={handlePathNavigate}
-        onFileSelect={handleFileSelect}
-        onFolderOpen={handleFolderOpen}
-        onShareClick={handleShareClick}
-      />
+    <div className="p-6">
+      <div className="mb-6">
+        <Link to="/drive">
+          <Button variant="ghost" className="gap-2 mb-4">
+            <ChevronLeft className="h-4 w-4" />
+            Back to Drives
+          </Button>
+        </Link>
+
+        <div className="flex items-start justify-between">
+          <div>
+            <h1 className="text-2xl font-bold">{drive.name}</h1>
+            <p className="text-gray-500 mt-1">{drive.description}</p>
+            <div className="flex gap-4 mt-2 text-sm text-gray-500">
+              <span className="flex items-center gap-1">
+                <User className="h-4 w-4" />
+                Owner: {drive.owner}
+              </span>
+              <span className="flex items-center gap-1">
+                <Calendar className="h-4 w-4" />
+                Created: 2024-02-20
+              </span>
+            </div>
+          </div>
+          <div className="flex gap-2">
+            <Button variant="outline" className="gap-2">
+              <Pencil className="h-4 w-4" />
+              Edit
+            </Button>
+            <Button variant="outline" className="gap-2 text-red-600 hover:text-red-600">
+              <Trash2 className="h-4 w-4" />
+              Delete
+            </Button>
+          </div>
+        </div>
+      </div>
+
+      <Tabs defaultValue="folders" value={activeTab} onValueChange={setActiveTab}>
+        <TabsList>
+          <TabsTrigger value="folders">Folders</TabsTrigger>
+          <TabsTrigger value="members">Members</TabsTrigger>
+        </TabsList>
+
+        <TabsContent value="folders" className="mt-6">
+          <FileExplorer 
+            currentPath={currentPath}
+            selectedFiles={selectedFiles}
+            files={files}
+            onPathNavigate={handlePathNavigate}
+            onFileSelect={handleFileSelect}
+            onFolderOpen={handleFolderOpen}
+            onShareClick={handleShareClick}
+          />
+        </TabsContent>
+
+        <TabsContent value="members" className="mt-6">
+          <div className="flex justify-between mb-4">
+            <h2 className="text-lg font-semibold">Drive Members</h2>
+            <Button className="gap-2">
+              Add Member
+            </Button>
+          </div>
+          {/* Members list will be implemented here */}
+        </TabsContent>
+      </Tabs>
+
       <SharePanel 
         open={showSharePanel} 
         onOpenChange={setShowSharePanel} 
