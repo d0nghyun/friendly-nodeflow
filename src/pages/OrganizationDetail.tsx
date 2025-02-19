@@ -61,6 +61,8 @@ const OrganizationDetail = () => {
       id: ws.id,
       name: ws.name,
       description: ws.description,
+      members: ws.members,  // 추가: members 배열
+      drives: ws.drives,    // 추가: drives 배열
       membersCount: ws.members.length
     })),
     drives: allDrives

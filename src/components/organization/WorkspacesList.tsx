@@ -32,8 +32,12 @@ export const WorkspacesList = ({ workspaces, canCreate }: WorkspacesListProps) =
             </CardHeader>
             <CardContent>
               <div className="flex flex-col gap-2">
-                <div className="text-sm text-gray-500">{workspace.members.length} members</div>
-                <div className="text-sm text-gray-500">{workspace.drives.length} drives</div>
+                <div className="text-sm text-gray-500">
+                  {workspace.members?.length || 0} members
+                </div>
+                <div className="text-sm text-gray-500">
+                  {workspace.drives?.length || 0} drives
+                </div>
               </div>
             </CardContent>
           </Card>
