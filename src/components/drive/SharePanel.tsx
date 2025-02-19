@@ -19,19 +19,29 @@ interface Member {
 }
 
 interface SharePanelProps {
-  members: Member[];
-  isPublic: boolean;
-  onClose: () => void;
-  onRoleChange: (memberId: string, role: 'editor' | 'viewer') => void;
-  onPublicChange: (value: boolean) => void;
+  open: boolean;
+  onOpenChange: (open: boolean) => void;
+  members?: Member[];
+  isPublic?: boolean;
+  onRoleChange?: (memberId: string, role: 'editor' | 'viewer') => void;
+  onPublicChange?: (value: boolean) => void;
 }
 
-export const SharePanel = ({ members, isPublic, onClose, onRoleChange, onPublicChange }: SharePanelProps) => {
+export const SharePanel = ({ 
+  open, 
+  onOpenChange,
+  members = [],
+  isPublic = false,
+  onRoleChange = () => {},
+  onPublicChange = () => {}
+}: SharePanelProps) => {
+  if (!open) return null;
+
   return (
     <div className="w-80 border-l bg-white p-4 flex flex-col h-full">
       <div className="flex items-center justify-between mb-6">
         <h3 className="text-lg font-semibold">Share</h3>
-        <Button variant="ghost" size="icon" onClick={onClose}>
+        <Button variant="ghost" size="icon" onClick={() => onOpenChange(false)}>
           <X className="h-4 w-4" />
         </Button>
       </div>
