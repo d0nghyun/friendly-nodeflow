@@ -9,6 +9,13 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 
@@ -68,6 +75,10 @@ export const MembersList = ({
     }
   };
 
+  const handleRoleChange = (memberId: string, newRole: string) => {
+    onRoleChange?.(memberId, newRole);
+  };
+
   return (
     <div className="space-y-6">
       <div className="flex justify-between items-center">
@@ -124,10 +135,25 @@ export const MembersList = ({
               </div>
             </div>
             <div className="flex items-center gap-4">
-              <span className="flex items-center gap-1 text-sm">
+              <div className="flex items-center gap-2">
                 <UserCheck className="h-4 w-4 text-gray-400" />
-                {member.role}
-              </span>
+                <Select
+                  value={member.role}
+                  onValueChange={(value) => handleRoleChange(member.id, value)}
+                  disabled={!canEditRoles}
+                >
+                  <SelectTrigger className="w-[110px]">
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {getAvailableRoles()?.map((role) => (
+                      <SelectItem key={role.value} value={role.value}>
+                        {role.label}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
               <span className="text-sm text-gray-500">
                 Joined {member.joinedAt}
               </span>
