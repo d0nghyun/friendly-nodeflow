@@ -29,7 +29,7 @@ export const FileExplorer = ({
   return (
     <div className="flex-1 flex flex-col">
       <div className="border-b bg-white p-4">
-        <Link to="/organization/org1">
+        <Link to="/drive">
           <Button variant="ghost" className="gap-2 mb-4">
             <ChevronLeft className="h-4 w-4" />
             Back to Drives
