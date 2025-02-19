@@ -1,9 +1,18 @@
 
 import { useState } from "react";
 import { useParams, Link } from "react-router-dom";
-import { Pencil, Trash2, ChevronLeft, Calendar, Users } from "lucide-react";
+import { Pencil, Trash2, ChevronLeft, Calendar, Users, UserPlus } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
+import { Input } from "@/components/ui/input";
 import { FileExplorer } from "@/components/drive/FileExplorer";
 import { SharePanel } from "@/components/drive/SharePanel";
 import { workspaces } from "@/mocks/workspaceData";
@@ -13,6 +22,8 @@ const DriveDetail = () => {
   const { driveId } = useParams();
   const [selectedFiles, setSelectedFiles] = useState<number[]>([]);
   const [showSharePanel, setShowSharePanel] = useState(false);
+  const [showInviteDialog, setShowInviteDialog] = useState(false);
+  const [inviteEmail, setInviteEmail] = useState("");
   const [activeTab, setActiveTab] = useState("folders");
 
   // Find the drive from workspaces mock data
@@ -64,6 +75,8 @@ const DriveDetail = () => {
     { id: "folder2", name: "2024" }
   ];
 
+  const canInviteMembers = drive.userRole === "editor";
+
   const handleFileSelect = (fileId: number) => {
     setSelectedFiles(prev => 
       prev.includes(fileId)
@@ -88,8 +101,10 @@ const DriveDetail = () => {
     console.log("Change role", { memberId, newRole });
   };
 
-  const handleInviteMember = (email: string) => {
-    console.log("Invite member:", email);
+  const handleInviteMember = () => {
+    console.log("Invite member:", inviteEmail);
+    setInviteEmail("");
+    setShowInviteDialog(false);
   };
 
   return (
@@ -149,6 +164,41 @@ const DriveDetail = () => {
         </TabsContent>
 
         <TabsContent value="members" className="mt-6">
+          <div className="mb-6 flex justify-between items-center">
+            <h2 className="text-lg font-semibold">Drive Members</h2>
+            <Dialog open={showInviteDialog} onOpenChange={setShowInviteDialog}>
+              <DialogTrigger asChild>
+                <Button disabled={!canInviteMembers} className="gap-2">
+                  <UserPlus className="h-4 w-4" />
+                  Invite Member
+                </Button>
+              </DialogTrigger>
+              <DialogContent>
+                <DialogHeader>
+                  <DialogTitle>Invite Member</DialogTitle>
+                  <DialogDescription>
+                    Enter the email address of the person you want to invite.
+                  </DialogDescription>
+                </DialogHeader>
+                <div className="space-y-4 pt-4">
+                  <Input
+                    placeholder="Email address"
+                    type="email"
+                    value={inviteEmail}
+                    onChange={(e) => setInviteEmail(e.target.value)}
+                  />
+                  <div className="flex justify-end gap-2">
+                    <Button variant="outline" onClick={() => setShowInviteDialog(false)}>
+                      Cancel
+                    </Button>
+                    <Button onClick={handleInviteMember}>
+                      Send Invitation
+                    </Button>
+                  </div>
+                </div>
+              </DialogContent>
+            </Dialog>
+          </div>
           <MembersList
             members={members}
             userRole={drive.userRole}
