@@ -199,13 +199,29 @@ const DriveDetail = () => {
               </DialogContent>
             </Dialog>
           </div>
-          <MembersList
-            members={members}
-            userRole={drive.userRole}
-            containerType="drive"
-            onRoleChange={handleRoleChange}
-            onInviteMember={handleInviteMember}
-          />
+          <div className="space-y-4">
+            {members.map(member => (
+              <div 
+                key={member.id} 
+                className="flex items-center justify-between p-4 border rounded-lg bg-white"
+              >
+                <div className="flex items-center gap-3">
+                  <div className="h-10 w-10 rounded-full bg-gray-100 flex items-center justify-center">
+                    <Users className="h-5 w-5 text-gray-600" />
+                  </div>
+                  <div>
+                    <div className="font-medium">{member.name}</div>
+                    <div className="text-sm text-gray-500">{member.email}</div>
+                  </div>
+                </div>
+                <div className="flex items-center gap-4">
+                  <span className="text-sm text-gray-500">
+                    Joined {member.joinedAt}
+                  </span>
+                </div>
+              </div>
+            ))}
+          </div>
         </TabsContent>
       </Tabs>
 
