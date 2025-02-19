@@ -1,7 +1,6 @@
-
 import { useState } from "react";
 import { useParams, Link } from "react-router-dom";
-import { Pencil, Trash2, ChevronLeft, Calendar, User } from "lucide-react";
+import { Pencil, Trash2, ChevronLeft, Calendar, User, UserPlus, UserCheck } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { FileExplorer } from "@/components/drive/FileExplorer";
@@ -22,6 +21,13 @@ const DriveDetail = () => {
   if (!drive) {
     return <div>Drive not found</div>;
   }
+
+  // Mock members data
+  const members = [
+    { id: "1", name: "John Doe", email: "john@quantit.com", role: "Owner", joinedAt: "2024-01-15" },
+    { id: "2", name: "Jane Smith", email: "jane@quantit.com", role: "Editor", joinedAt: "2024-02-01" },
+    { id: "3", name: "Mike Johnson", email: "mike@quantit.com", role: "Viewer", joinedAt: "2024-02-10" },
+  ];
 
   const files = [
     { 
@@ -139,10 +145,37 @@ const DriveDetail = () => {
           <div className="flex justify-between mb-4">
             <h2 className="text-lg font-semibold">Drive Members</h2>
             <Button className="gap-2">
+              <UserPlus className="h-4 w-4" />
               Add Member
             </Button>
           </div>
-          {/* Members list will be implemented here */}
+          <div className="space-y-4">
+            {members.map(member => (
+              <div 
+                key={member.id} 
+                className="flex items-center justify-between p-4 border rounded-lg bg-white"
+              >
+                <div className="flex items-center gap-3">
+                  <div className="h-10 w-10 rounded-full bg-gray-100 flex items-center justify-center">
+                    <User className="h-5 w-5 text-gray-600" />
+                  </div>
+                  <div>
+                    <div className="font-medium">{member.name}</div>
+                    <div className="text-sm text-gray-500">{member.email}</div>
+                  </div>
+                </div>
+                <div className="flex items-center gap-4">
+                  <span className="flex items-center gap-1 text-sm">
+                    <UserCheck className="h-4 w-4 text-gray-400" />
+                    {member.role}
+                  </span>
+                  <span className="text-sm text-gray-500">
+                    Joined {member.joinedAt}
+                  </span>
+                </div>
+              </div>
+            ))}
+          </div>
         </TabsContent>
       </Tabs>
 
