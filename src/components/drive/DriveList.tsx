@@ -9,7 +9,7 @@ interface DriveListProps {
   onDriveSelect: (driveId: string, driveName: string) => void;
 }
 
-export const DriveList = ({ drives, onDriveSelect }: DriveListProps) => {
+export const DriveList = ({ drives }: DriveListProps) => {
   return (
     <div className="p-6">
       <div className="flex justify-between items-center mb-6">
@@ -27,7 +27,6 @@ export const DriveList = ({ drives, onDriveSelect }: DriveListProps) => {
           <DriveCard 
             key={drive.id}
             drive={drive}
-            onClick={(id) => onDriveSelect(id, drive.name)}
           />
         ))}
       </div>
