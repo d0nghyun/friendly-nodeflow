@@ -8,7 +8,6 @@ interface DriveCardProps {
     id: string;
     name: string;
     description: string;
-    owner: string;
     membersCount: number;
   };
 }
@@ -25,12 +24,9 @@ export const DriveCard = ({ drive }: DriveCardProps) => {
           <CardDescription>{drive.description}</CardDescription>
         </CardHeader>
         <CardContent>
-          <div className="flex items-center gap-4 text-sm text-gray-500">
-            <div className="flex items-center gap-1">
-              <Users className="h-4 w-4" />
-              {drive.membersCount} members
-            </div>
-            <div>Owner: {drive.owner}</div>
+          <div className="flex items-center gap-1 text-sm text-gray-500">
+            <Users className="h-4 w-4" />
+            {drive.membersCount} members
           </div>
         </CardContent>
       </Card>

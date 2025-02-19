@@ -1,6 +1,7 @@
+
 import { useState } from "react";
 import { useParams, Link } from "react-router-dom";
-import { Pencil, Trash2, ChevronLeft, Calendar, User } from "lucide-react";
+import { Pencil, Trash2, ChevronLeft, Calendar, Users } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { FileExplorer } from "@/components/drive/FileExplorer";
@@ -36,7 +37,6 @@ const DriveDetail = () => {
       name: "Documents", 
       type: "folder" as const, 
       modified: "2024-02-20", 
-      owner: "John Doe",
       shared: true,
       public: false
     },
@@ -45,7 +45,6 @@ const DriveDetail = () => {
       name: "Images", 
       type: "folder" as const, 
       modified: "2024-02-19", 
-      owner: "John Doe",
       shared: false,
       public: true
     },
@@ -54,7 +53,6 @@ const DriveDetail = () => {
       name: "Report.pdf", 
       type: "file" as const, 
       modified: "2024-02-18", 
-      owner: "Jane Smith",
       shared: true,
       public: false
     }
@@ -88,12 +86,10 @@ const DriveDetail = () => {
 
   const handleRoleChange = (memberId: string, newRole: string) => {
     console.log("Change role", { memberId, newRole });
-    // Here you would typically make an API call to update the role
   };
 
   const handleInviteMember = (email: string) => {
     console.log("Invite member:", email);
-    // Here you would typically make an API call to invite the member
   };
 
   return (
@@ -111,13 +107,13 @@ const DriveDetail = () => {
             <h1 className="text-2xl font-bold">{drive.name}</h1>
             <p className="text-gray-500 mt-1">{drive.description}</p>
             <div className="flex gap-4 mt-2 text-sm text-gray-500">
-              <span className="flex items-center gap-1">
-                <User className="h-4 w-4" />
-                Owner: {drive.owner}
-              </span>
-              <span className="flex items-center gap-1">
+              <span className="flex items-center gap-2">
                 <Calendar className="h-4 w-4" />
-                Created: 2024-02-20
+                Created: {drive.createdAt || "2024-02-20"}
+              </span>
+              <span className="flex items-center gap-2">
+                <Users className="h-4 w-4" />
+                {members.length} members
               </span>
             </div>
           </div>

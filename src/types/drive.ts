@@ -3,9 +3,8 @@ export interface Drive {
   id: string;
   name: string;
   description: string;
-  owner: string;
   shared: boolean;
-  userRole: 'owner' | 'editor' | 'viewer';
+  userRole: 'editor' | 'viewer';
 }
 
 export interface FileItem {
@@ -13,7 +12,6 @@ export interface FileItem {
   name: string;
   type: 'file' | 'folder';
   modified: string;
-  owner: string;
   shared: boolean;
   public: boolean;
 }
@@ -22,6 +20,6 @@ export interface Member {
   id: string;
   name: string;
   email: string;
-  role: 'owner' | 'editor' | 'viewer';
+  role: 'editor' | 'viewer';
   joinedAt: string;
 }
