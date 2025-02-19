@@ -1,106 +1,72 @@
 
-import { useState } from 'react';
-import { DriveList } from '@/components/drive/DriveList';
-import { FileExplorer } from '@/components/drive/FileExplorer';
-import { SharePanel } from '@/components/drive/SharePanel';
-import { workspaces } from '@/mocks/workspaceData';
-import type { FileItem } from '@/types/drive';
+import { useState } from "react";
+import { useParams } from "react-router-dom";
+import { FileExplorer } from "@/components/drive/FileExplorer";
+import { SharePanel } from "@/components/drive/SharePanel";
 
 const Drive = () => {
-  const [selectedDrive, setSelectedDrive] = useState<string | null>(null);
-  const [currentPath, setCurrentPath] = useState<{ id: string; name: string; }[]>([]);
+  const { driveId } = useParams();
   const [selectedFiles, setSelectedFiles] = useState<number[]>([]);
   const [showSharePanel, setShowSharePanel] = useState(false);
-  const [isPublic, setIsPublic] = useState(false);
 
-  // 워크스페이스의 모든 드라이브를 하나의 배열로 통합
-  const drives = workspaces.reduce((acc, workspace) => {
-    return [...acc, ...workspace.drives.map(drive => ({
-      ...drive,
-      membersCount: workspace.members.length
-    }))];
-  }, [] as Array<typeof workspaces[0]['drives'][0] & { membersCount: number }>);
-
-  // 파일 목록
-  const files: FileItem[] = [
+  const files = [
     { 
       id: 1, 
-      name: 'Project Plan.pdf', 
-      type: 'file',
-      modified: '2024-02-20',
-      owner: 'John Doe',
+      name: "Documents", 
+      type: "folder" as const, 
+      modified: "2024-02-20", 
+      owner: "John Doe",
       shared: true,
-      public: true
+      public: false
     },
     { 
       id: 2, 
-      name: 'Assets', 
-      type: 'folder',
-      modified: '2024-02-19',
-      owner: 'Jane Smith',
-      shared: true,
-      public: false
+      name: "Images", 
+      type: "folder" as const, 
+      modified: "2024-02-19", 
+      owner: "John Doe",
+      shared: false,
+      public: true
     },
     { 
       id: 3, 
-      name: 'Documentation', 
-      type: 'folder',
-      modified: '2024-02-18',
-      owner: 'Mike Johnson',
-      shared: false,
+      name: "Report.pdf", 
+      type: "file" as const, 
+      modified: "2024-02-18", 
+      owner: "Jane Smith",
+      shared: true,
       public: false
-    },
+    }
   ];
 
-  // 멤버 목록 - 현재 선택된 드라이브의 워크스페이스 멤버들을 사용
-  const members = selectedDrive 
-    ? workspaces
-        .find(ws => ws.drives.some(d => d.id === selectedDrive))
-        ?.members.map(m => ({
-          id: m.id,
-          name: m.name,
-          email: m.email,
-          role: m.role === 'admin' ? 'editor' as const : 'viewer' as const
-        })) ?? []
-    : [];
+  const currentPath = [
+    { id: "root", name: "My Drive" },
+    { id: "folder1", name: "Projects" },
+    { id: "folder2", name: "2024" }
+  ];
 
   const handleFileSelect = (fileId: number) => {
-    setSelectedFiles(prev => {
-      if (prev.includes(fileId)) {
-        return prev.filter(id => id !== fileId);
-      }
-      return [...prev, fileId];
-    });
+    setSelectedFiles(prev => 
+      prev.includes(fileId)
+        ? prev.filter(id => id !== fileId)
+        : [...prev, fileId]
+    );
   };
 
   const handleFolderOpen = (folderId: number) => {
-    const folder = files.find(f => f.id === folderId);
-    if (folder) {
-      setCurrentPath(prev => [...prev, { id: folderId.toString(), name: folder.name }]);
-    }
+    console.log("Opening folder:", folderId);
   };
 
   const handlePathNavigate = (pathId: string) => {
-    const pathIndex = currentPath.findIndex(p => p.id === pathId);
-    setCurrentPath(prev => prev.slice(0, pathIndex + 1));
+    console.log("Navigating to path:", pathId);
   };
 
-  const handleDriveSelect = (driveId: string, driveName: string) => {
-    setSelectedDrive(driveId);
-    setCurrentPath([{ id: driveId, name: driveName }]);
+  const handleShareClick = () => {
+    setShowSharePanel(true);
   };
-
-  if (!selectedDrive) {
-    return (
-      <DriveList 
-        drives={drives}
-        onDriveSelect={handleDriveSelect}
-      />
-    );
-  }
 
   return (
-    <div className="w-full h-full flex">
+    <div className="flex h-[calc(100vh-3.5rem)]">
       <FileExplorer 
         currentPath={currentPath}
         selectedFiles={selectedFiles}
@@ -108,20 +74,12 @@ const Drive = () => {
         onPathNavigate={handlePathNavigate}
         onFileSelect={handleFileSelect}
         onFolderOpen={handleFolderOpen}
-        onShareClick={() => setShowSharePanel(true)}
+        onShareClick={handleShareClick}
       />
-
-      {showSharePanel && (
-        <SharePanel 
-          members={members}
-          isPublic={isPublic}
-          onClose={() => setShowSharePanel(false)}
-          onRoleChange={(memberId, role) => {
-            console.log('Role changed:', memberId, role);
-          }}
-          onPublicChange={setIsPublic}
-        />
-      )}
+      <SharePanel 
+        open={showSharePanel} 
+        onOpenChange={setShowSharePanel} 
+      />
     </div>
   );
 };

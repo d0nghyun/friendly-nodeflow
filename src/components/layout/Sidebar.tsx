@@ -14,7 +14,7 @@ export const Sidebar = () => {
     if (workspaceId && !expandedWorkspaces.includes(workspaceId)) {
       setExpandedWorkspaces(prev => [...prev, workspaceId]);
     }
-  }, [workspaceId]);
+  }, [workspaceId, workflowId]); // workflowId도 의존성 배열에 추가
 
   const toggleWorkspace = (workspaceId: string) => {
     setExpandedWorkspaces(prev => 
