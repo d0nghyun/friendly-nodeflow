@@ -1,6 +1,7 @@
+
 import { useParams } from "react-router-dom";
 import { useState } from "react";
-import { Grid, Users, HardDrive } from "lucide-react";
+import { Grid, Users, HardDrive, UserPlus } from "lucide-react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import {
   Table,
@@ -10,15 +11,33 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
+import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
 import { OrganizationHeader } from "@/components/organization/OrganizationHeader";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import type { Organization, OrganizationMember } from "@/types/organization";
+import type { Organization, OrganizationMember, OrganizationRole } from "@/types/organization";
 import { workspaces } from "@/mocks/workspaceData";
 
 const OrganizationDetail = () => {
   const { organizationId } = useParams();
   const [activeTab, setActiveTab] = useState("members");
   const [searchQuery, setSearchQuery] = useState("");
+  const [showInviteDialog, setShowInviteDialog] = useState(false);
+  const [inviteEmail, setInviteEmail] = useState("");
 
   const allDrives = workspaces.reduce((acc, workspace) => {
     return [...acc, ...workspace.drives];
@@ -78,6 +97,18 @@ const OrganizationDetail = () => {
     member.email.toLowerCase().includes(searchQuery.toLowerCase())
   );
 
+  const handleRoleChange = (memberId: string, newRole: OrganizationRole) => {
+    console.log("Change role", { memberId, newRole });
+    // Here you would typically make an API call to update the role
+  };
+
+  const handleInviteMember = () => {
+    console.log("Invite member:", inviteEmail);
+    setInviteEmail("");
+    setShowInviteDialog(false);
+    // Here you would typically make an API call to invite the member
+  };
+
   return (
     <div className="p-6">
       <OrganizationHeader organization={organization} />
@@ -102,6 +133,40 @@ const OrganizationDetail = () => {
           <div className="space-y-6">
             <div className="flex justify-between items-center">
               <h2 className="text-lg font-semibold">Organization Members</h2>
+              {isAdmin && (
+                <Dialog open={showInviteDialog} onOpenChange={setShowInviteDialog}>
+                  <DialogTrigger asChild>
+                    <Button className="gap-2">
+                      <UserPlus className="h-4 w-4" />
+                      Invite Member
+                    </Button>
+                  </DialogTrigger>
+                  <DialogContent>
+                    <DialogHeader>
+                      <DialogTitle>Invite Member</DialogTitle>
+                      <DialogDescription>
+                        Enter the email address of the person you want to invite.
+                      </DialogDescription>
+                    </DialogHeader>
+                    <div className="space-y-4 pt-4">
+                      <Input
+                        placeholder="Email address"
+                        type="email"
+                        value={inviteEmail}
+                        onChange={(e) => setInviteEmail(e.target.value)}
+                      />
+                      <div className="flex justify-end gap-2">
+                        <Button variant="outline" onClick={() => setShowInviteDialog(false)}>
+                          Cancel
+                        </Button>
+                        <Button onClick={handleInviteMember}>
+                          Send Invitation
+                        </Button>
+                      </div>
+                    </div>
+                  </DialogContent>
+                </Dialog>
+              )}
             </div>
             <Table>
               <TableHeader>
@@ -117,7 +182,28 @@ const OrganizationDetail = () => {
                   <TableRow key={member.id}>
                     <TableCell className="font-medium">{member.name}</TableCell>
                     <TableCell>{member.email}</TableCell>
-                    <TableCell className="capitalize">{member.role}</TableCell>
+                    <TableCell>
+                      {member.role === "owner" ? (
+                        <span className="capitalize">Owner</span>
+                      ) : isAdmin ? (
+                        <Select
+                          value={member.role}
+                          onValueChange={(value: OrganizationRole) => 
+                            handleRoleChange(member.id, value)
+                          }
+                        >
+                          <SelectTrigger className="w-32">
+                            <SelectValue />
+                          </SelectTrigger>
+                          <SelectContent>
+                            <SelectItem value="admin">Admin</SelectItem>
+                            <SelectItem value="member">Member</SelectItem>
+                          </SelectContent>
+                        </Select>
+                      ) : (
+                        <span className="capitalize">{member.role}</span>
+                      )}
+                    </TableCell>
                     <TableCell>{member.joinedAt}</TableCell>
                   </TableRow>
                 ))}
