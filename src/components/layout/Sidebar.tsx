@@ -1,44 +1,14 @@
 
 import { Grid, ChevronDown, ChevronRight } from "lucide-react";
-import { Link, useLocation } from "react-router-dom";
+import { Link, useLocation, useParams } from "react-router-dom";
 import { useState } from "react";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
+import { workspaces } from "@/mocks/workspaceData";
 
 export const Sidebar = () => {
   const location = useLocation();
-  const [expandedWorkspaces, setExpandedWorkspaces] = useState<string[]>([]);
-
-  const workspaces = [{
-    id: "main",
-    name: "Main Workspace",
-    workflows: [{
-      id: "flow1",
-      name: "User Onboarding"
-    }, {
-      id: "flow2",
-      name: "Payment Processing"
-    }]
-  }, {
-    id: "marketing",
-    name: "Marketing",
-    workflows: [{
-      id: "flow3",
-      name: "Email Campaign"
-    }, {
-      id: "flow4",
-      name: "Social Media"
-    }]
-  }, {
-    id: "sales",
-    name: "Sales",
-    workflows: [{
-      id: "flow5",
-      name: "Lead Generation"
-    }, {
-      id: "flow6",
-      name: "Deal Pipeline"
-    }]
-  }];
+  const { workspaceId } = useParams();
+  const [expandedWorkspaces, setExpandedWorkspaces] = useState<string[]>([workspaceId || '']);
 
   const toggleWorkspace = (workspaceId: string) => {
     setExpandedWorkspaces(prev => 
