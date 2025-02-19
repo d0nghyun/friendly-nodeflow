@@ -1,4 +1,3 @@
-
 import { useParams } from "react-router-dom";
 import { useState } from "react";
 import { Grid, Users, HardDrive, UserPlus } from "lucide-react";
@@ -31,6 +30,7 @@ import { Button } from "@/components/ui/button";
 import { OrganizationHeader } from "@/components/organization/OrganizationHeader";
 import type { Organization, OrganizationMember, OrganizationRole } from "@/types/organization";
 import { workspaces } from "@/mocks/workspaceData";
+import { MembersList } from "@/components/members/MembersList";
 
 const OrganizationDetail = () => {
   const { organizationId } = useParams();
@@ -97,15 +97,13 @@ const OrganizationDetail = () => {
     member.email.toLowerCase().includes(searchQuery.toLowerCase())
   );
 
-  const handleRoleChange = (memberId: string, newRole: OrganizationRole) => {
+  const handleRoleChange = (memberId: string, newRole: string) => {
     console.log("Change role", { memberId, newRole });
     // Here you would typically make an API call to update the role
   };
 
-  const handleInviteMember = () => {
-    console.log("Invite member:", inviteEmail);
-    setInviteEmail("");
-    setShowInviteDialog(false);
+  const handleInviteMember = (email: string) => {
+    console.log("Invite member:", email);
     // Here you would typically make an API call to invite the member
   };
 
@@ -130,86 +128,13 @@ const OrganizationDetail = () => {
         </TabsList>
 
         <TabsContent value="members" className="mt-6">
-          <div className="space-y-6">
-            <div className="flex justify-between items-center">
-              <h2 className="text-lg font-semibold">Organization Members</h2>
-              {isAdmin && (
-                <Dialog open={showInviteDialog} onOpenChange={setShowInviteDialog}>
-                  <DialogTrigger asChild>
-                    <Button className="gap-2">
-                      <UserPlus className="h-4 w-4" />
-                      Invite Member
-                    </Button>
-                  </DialogTrigger>
-                  <DialogContent>
-                    <DialogHeader>
-                      <DialogTitle>Invite Member</DialogTitle>
-                      <DialogDescription>
-                        Enter the email address of the person you want to invite.
-                      </DialogDescription>
-                    </DialogHeader>
-                    <div className="space-y-4 pt-4">
-                      <Input
-                        placeholder="Email address"
-                        type="email"
-                        value={inviteEmail}
-                        onChange={(e) => setInviteEmail(e.target.value)}
-                      />
-                      <div className="flex justify-end gap-2">
-                        <Button variant="outline" onClick={() => setShowInviteDialog(false)}>
-                          Cancel
-                        </Button>
-                        <Button onClick={handleInviteMember}>
-                          Send Invitation
-                        </Button>
-                      </div>
-                    </div>
-                  </DialogContent>
-                </Dialog>
-              )}
-            </div>
-            <Table>
-              <TableHeader>
-                <TableRow>
-                  <TableHead>Name</TableHead>
-                  <TableHead>Email</TableHead>
-                  <TableHead>Role</TableHead>
-                  <TableHead>Joined</TableHead>
-                </TableRow>
-              </TableHeader>
-              <TableBody>
-                {filteredMembers.map((member) => (
-                  <TableRow key={member.id}>
-                    <TableCell className="font-medium">{member.name}</TableCell>
-                    <TableCell>{member.email}</TableCell>
-                    <TableCell>
-                      {member.role === "owner" ? (
-                        <span className="capitalize">Owner</span>
-                      ) : isAdmin ? (
-                        <Select
-                          value={member.role}
-                          onValueChange={(value: OrganizationRole) => 
-                            handleRoleChange(member.id, value)
-                          }
-                        >
-                          <SelectTrigger className="w-32">
-                            <SelectValue />
-                          </SelectTrigger>
-                          <SelectContent>
-                            <SelectItem value="admin">Admin</SelectItem>
-                            <SelectItem value="member">Member</SelectItem>
-                          </SelectContent>
-                        </Select>
-                      ) : (
-                        <span className="capitalize">{member.role}</span>
-                      )}
-                    </TableCell>
-                    <TableCell>{member.joinedAt}</TableCell>
-                  </TableRow>
-                ))}
-              </TableBody>
-            </Table>
-          </div>
+          <MembersList
+            members={organization.members}
+            userRole={organization.userRole}
+            containerType="organization"
+            onRoleChange={handleRoleChange}
+            onInviteMember={handleInviteMember}
+          />
         </TabsContent>
 
         <TabsContent value="workspaces" className="mt-6">

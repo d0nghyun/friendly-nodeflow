@@ -33,6 +33,7 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { getWorkspaceById } from "@/mocks/workspaceData";
+import { MembersList } from "@/components/members/MembersList";
 
 const WorkspaceDetail = () => {
   const { workspaceId } = useParams();
@@ -47,6 +48,16 @@ const WorkspaceDetail = () => {
   const isAdmin = workspace.userRole === "admin";
   const isMember = workspace.userRole === "member";
   const canModify = isAdmin || isMember;
+
+  const handleRoleChange = (memberId: string, newRole: string) => {
+    console.log("Change role", { memberId, newRole });
+    // Here you would typically make an API call to update the role
+  };
+
+  const handleInviteMember = (email: string) => {
+    console.log("Invite member:", email);
+    // Here you would typically make an API call to invite the member
+  };
 
   return (
     <div className="p-6">
@@ -95,55 +106,13 @@ const WorkspaceDetail = () => {
         </TabsList>
 
         <TabsContent value="members" className="mt-6">
-          <div className="flex justify-between mb-4">
-            <h2 className="text-lg font-semibold">Workspace Members</h2>
-            <Button disabled={!isAdmin} className="gap-2">
-              <UserPlus className="h-4 w-4" />
-              Invite Member
-            </Button>
-          </div>
-          <Table>
-            <TableHeader>
-              <TableRow>
-                <TableHead>Name</TableHead>
-                <TableHead>Email</TableHead>
-                <TableHead>Role</TableHead>
-                <TableHead>Joined</TableHead>
-                <TableHead className="w-[100px]"></TableHead>
-              </TableRow>
-            </TableHeader>
-            <TableBody>
-              {workspace.members.map((member) => (
-                <TableRow key={member.id}>
-                  <TableCell className="font-medium">{member.name}</TableCell>
-                  <TableCell>{member.email}</TableCell>
-                  <TableCell>
-                    {isAdmin ? (
-                      <Select defaultValue={member.role}>
-                        <SelectTrigger className="w-[120px]">
-                          <SelectValue />
-                        </SelectTrigger>
-                        <SelectContent>
-                          <SelectItem value="admin">Admin</SelectItem>
-                          <SelectItem value="member">Member</SelectItem>
-                        </SelectContent>
-                      </Select>
-                    ) : (
-                      <span className="capitalize">{member.role}</span>
-                    )}
-                  </TableCell>
-                  <TableCell>{member.joinedAt}</TableCell>
-                  <TableCell>
-                    {isAdmin && (
-                      <Button variant="ghost" size="sm" className="text-red-600 hover:text-red-600">
-                        Remove
-                      </Button>
-                    )}
-                  </TableCell>
-                </TableRow>
-              ))}
-            </TableBody>
-          </Table>
+          <MembersList
+            members={workspace.members}
+            userRole={workspace.userRole}
+            containerType="workspace"
+            onRoleChange={handleRoleChange}
+            onInviteMember={handleInviteMember}
+          />
         </TabsContent>
 
         <TabsContent value="workflows" className="mt-6">
