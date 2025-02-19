@@ -1,7 +1,6 @@
-
 import { useState } from "react";
 import { useParams, Link } from "react-router-dom";
-import { Pencil, Trash2, ChevronLeft, Calendar, Users, UserPlus } from "lucide-react";
+import { Pencil, Trash2, ChevronLeft, Calendar, Users, UserPlus, UserCheck } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import {
@@ -12,11 +11,17 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { Input } from "@/components/ui/input";
 import { FileExplorer } from "@/components/drive/FileExplorer";
 import { SharePanel } from "@/components/drive/SharePanel";
 import { workspaces } from "@/mocks/workspaceData";
-import { MembersList } from "@/components/members/MembersList";
 
 const DriveDetail = () => {
   const { driveId } = useParams();
@@ -26,7 +31,6 @@ const DriveDetail = () => {
   const [inviteEmail, setInviteEmail] = useState("");
   const [activeTab, setActiveTab] = useState("folders");
 
-  // Find the drive from workspaces mock data
   const drive = workspaces.flatMap(workspace => 
     workspace.drives.filter(drive => drive.id === driveId)
   )[0];
@@ -35,7 +39,6 @@ const DriveDetail = () => {
     return <div>Drive not found</div>;
   }
 
-  // Mock members data
   const members = [
     { id: "1", name: "John Doe", email: "john@quantit.com", role: "editor", joinedAt: "2024-01-15" },
     { id: "2", name: "Jane Smith", email: "jane@quantit.com", role: "editor", joinedAt: "2024-02-01" },
@@ -76,6 +79,7 @@ const DriveDetail = () => {
   ];
 
   const canInviteMembers = drive.userRole === "editor";
+  const canManageRoles = drive.userRole === "editor";
 
   const handleFileSelect = (fileId: number) => {
     setSelectedFiles(prev => 
@@ -215,7 +219,23 @@ const DriveDetail = () => {
                   </div>
                 </div>
                 <div className="flex items-center gap-4">
-                  <span className="text-sm text-gray-500">
+                  <div className="flex items-center gap-2">
+                    <UserCheck className="h-4 w-4 text-gray-400" />
+                    <Select
+                      value={member.role}
+                      onValueChange={(value) => handleRoleChange(member.id, value)}
+                      disabled={!canManageRoles}
+                    >
+                      <SelectTrigger className="w-[110px]">
+                        <SelectValue />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="editor">Editor</SelectItem>
+                        <SelectItem value="viewer">Viewer</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
+                  <span className="text-sm text-gray-500 ml-4">
                     Joined {member.joinedAt}
                   </span>
                 </div>
