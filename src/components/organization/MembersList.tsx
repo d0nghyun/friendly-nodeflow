@@ -2,14 +2,16 @@
 import { Plus } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import type { Member } from '@/types/organization';
+import type { OrganizationMember } from '@/types/organization';
 
 interface MembersListProps {
-  members: Member[];
+  members: OrganizationMember[];
   canInvite: boolean;
+  searchQuery?: string;
+  onSearchChange?: (value: string) => void;
 }
 
-export const MembersList = ({ members, canInvite }: MembersListProps) => {
+export const MembersList = ({ members, canInvite, searchQuery, onSearchChange }: MembersListProps) => {
   return (
     <div>
       <div className="flex items-center justify-between mb-4">
@@ -28,7 +30,7 @@ export const MembersList = ({ members, canInvite }: MembersListProps) => {
           <div key={member.id} className="flex items-center justify-between p-4 bg-white rounded-lg border">
             <div className="flex items-center gap-3">
               <Avatar>
-                <AvatarImage src={member.avatar} />
+                <AvatarImage src={member.avatarUrl} />
                 <AvatarFallback>{member.name.slice(0, 2).toUpperCase()}</AvatarFallback>
               </Avatar>
               <div>

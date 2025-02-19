@@ -57,14 +57,12 @@ const OrganizationDetail = () => {
         joinedAt: "2024-02-01"
       }
     ],
-    // workspaces 데이터를 중앙화된 데이터로 변경
     workspaces: workspaces.map(ws => ({
       id: ws.id,
       name: ws.name,
       description: ws.description,
       membersCount: ws.members.length
     })),
-    // drives 데이터를 중앙화된 데이터로 변경
     drives: allDrives
   };
 
@@ -99,14 +97,17 @@ const OrganizationDetail = () => {
         <TabsContent value="members" className="mt-6">
           <MembersList 
             members={filteredMembers}
-            isAdmin={isAdmin}
+            canInvite={isAdmin}
             searchQuery={searchQuery}
             onSearchChange={setSearchQuery}
           />
         </TabsContent>
 
         <TabsContent value="workspaces" className="mt-6">
-          <WorkspacesList workspaces={organization.workspaces} />
+          <WorkspacesList 
+            workspaces={organization.workspaces} 
+            canCreate={isAdmin}
+          />
         </TabsContent>
 
         <TabsContent value="drives" className="mt-6">
