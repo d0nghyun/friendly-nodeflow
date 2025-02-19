@@ -25,9 +25,9 @@ const DriveDetail = () => {
 
   // Mock members data
   const members = [
-    { id: "1", name: "John Doe", email: "john@quantit.com", role: "Owner", joinedAt: "2024-01-15" },
-    { id: "2", name: "Jane Smith", email: "jane@quantit.com", role: "Editor", joinedAt: "2024-02-01" },
-    { id: "3", name: "Mike Johnson", email: "mike@quantit.com", role: "Viewer", joinedAt: "2024-02-10" },
+    { id: "1", name: "John Doe", email: "john@quantit.com", role: "editor", joinedAt: "2024-01-15" },
+    { id: "2", name: "Jane Smith", email: "jane@quantit.com", role: "editor", joinedAt: "2024-02-01" },
+    { id: "3", name: "Mike Johnson", email: "mike@quantit.com", role: "viewer", joinedAt: "2024-02-10" },
   ];
 
   const files = [
