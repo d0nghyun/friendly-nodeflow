@@ -1,6 +1,5 @@
 
-import { Link } from "react-router-dom";
-import { ChevronLeft, Share, Trash2 } from 'lucide-react';
+import { Share, Trash2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { FilesList } from '@/components/drive/FilesList';
@@ -29,13 +28,6 @@ export const FileExplorer = ({
   return (
     <div className="flex-1 flex flex-col">
       <div className="border-b bg-white p-4">
-        <Link to="/drives">
-          <Button variant="ghost" className="gap-2 mb-4">
-            <ChevronLeft className="h-4 w-4" />
-            Back to Drives
-          </Button>
-        </Link>
-        
         <div className="flex items-center justify-between mb-4">
           <div className="space-y-1">
             <DriveBreadcrumb 
