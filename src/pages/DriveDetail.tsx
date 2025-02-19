@@ -4,7 +4,7 @@ import { useParams } from "react-router-dom";
 import { FileExplorer } from "@/components/drive/FileExplorer";
 import { SharePanel } from "@/components/drive/SharePanel";
 
-const Drive = () => {
+const DriveDetail = () => {
   const { driveId } = useParams();
   const [selectedFiles, setSelectedFiles] = useState<number[]>([]);
   const [showSharePanel, setShowSharePanel] = useState(false);
@@ -84,4 +84,4 @@ const Drive = () => {
   );
 };
 
-export default Drive;
+export default DriveDetail;

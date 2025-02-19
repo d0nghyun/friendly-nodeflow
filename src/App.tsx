@@ -5,7 +5,8 @@ import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import { AppShell } from "./components/layout/AppShell";
-import Drive from "./pages/Drive";
+import DriveList from "./pages/DriveList";
+import DriveDetail from "./pages/DriveDetail";
 import NotFound from "./pages/NotFound";
 import Workspaces from "./pages/Workspaces";
 import WorkspaceDetail from "./pages/WorkspaceDetail";
@@ -32,7 +33,8 @@ const App = () => {
               <Route path="/" element={<Navigate to="/workspaces" replace />} />
               <Route path="/organizations" element={<Organizations />} />
               <Route path="/organization/:organizationId" element={<OrganizationDetail />} />
-              <Route path="/drive" element={<Drive />} />
+              <Route path="/drive" element={<DriveList />} />
+              <Route path="/drive/:driveId" element={<DriveDetail />} />
               <Route path="/workspaces" element={<Workspaces />} />
               <Route path="/workspace/:workspaceId" element={<WorkspaceDetail />} />
               <Route path="/:workspaceId/:workflowId" element={<WorkflowDetail />} />

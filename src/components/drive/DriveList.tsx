@@ -6,7 +6,6 @@ import type { Drive } from '@/types/drive';
 
 interface DriveListProps {
   drives: (Drive & { membersCount: number })[];
-  onDriveSelect: (driveId: string, driveName: string) => void;
 }
 
 export const DriveList = ({ drives }: DriveListProps) => {
