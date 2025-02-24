@@ -16,6 +16,7 @@ const DriveDetail = () => {
   const [showInviteDialog, setShowInviteDialog] = useState(false);
   const [inviteEmail, setInviteEmail] = useState("");
   const [activeTab, setActiveTab] = useState("folders");
+  const [currentFolderId, setCurrentFolderId] = useState("root");
 
   const drive = workspaces.flatMap(workspace => 
     workspace.drives.filter(drive => drive.id === driveId)
@@ -31,38 +32,56 @@ const DriveDetail = () => {
     { id: "3", name: "Mike Johnson", email: "mike@quantit.com", role: "viewer", joinedAt: "2024-02-10" },
   ];
 
-  const files: FileItem[] = [
-    { 
-      id: 1, 
-      name: "Documents", 
-      type: "folder", 
-      modified: "2024-02-20", 
-      shared: true,
-      public: false
-    },
-    { 
-      id: 2, 
-      name: "Images", 
-      type: "folder", 
-      modified: "2024-02-19", 
-      shared: false,
-      public: true
-    },
-    { 
-      id: 3, 
-      name: "Report.pdf", 
-      type: "file", 
-      modified: "2024-02-18", 
-      shared: true,
-      public: false
-    }
-  ];
+  // 폴더 구조 데이터
+  const folderStructure: Record<string, FileItem[]> = {
+    root: [
+      { id: 1, name: "Content Model", type: "folder", modified: "2024-02-20", shared: false, public: false },
+      { id: 2, name: "Alpha Model", type: "folder", modified: "2024-02-20", shared: false, public: false },
+      { id: 3, name: "Raw", type: "folder", modified: "2024-02-20", shared: false, public: false },
+    ],
+    1: [ // Content Model
+      { id: 11, name: "cm1", type: "folder", modified: "2024-02-20", shared: false, public: false },
+      { id: 12, name: "cm2", type: "folder", modified: "2024-02-20", shared: false, public: false },
+    ],
+    2: [ // Alpha Model
+      { id: 21, name: "us", type: "folder", modified: "2024-02-20", shared: false, public: false },
+      { id: 22, name: "kr", type: "folder", modified: "2024-02-20", shared: false, public: false },
+    ],
+    21: [ // us
+      { id: 211, name: "am1", type: "folder", modified: "2024-02-20", shared: false, public: false },
+    ],
+    22: [ // kr
+      { id: 221, name: "am1", type: "folder", modified: "2024-02-20", shared: false, public: false },
+    ],
+    3: [ // Raw
+      { id: 31, name: "sample.csv", type: "file", modified: "2024-02-20", shared: false, public: false },
+      { id: 32, name: "bareksa", type: "folder", modified: "2024-02-20", shared: false, public: false },
+    ],
+    32: [ // bareksa
+      { id: 321, name: "nav", type: "file", modified: "2024-02-20", shared: false, public: false },
+    ],
+  };
 
-  const currentPath = [
-    { id: "root", name: "My Drive" },
-    { id: "folder1", name: "Projects" },
-    { id: "folder2", name: "2024" }
-  ];
+  // 경로 추적을 위한 helper 함수
+  const findPath = (targetId: string, path: { id: string; name: string; }[] = []): { id: string; name: string; }[] | null => {
+    if (targetId === 'root') {
+      return [{ id: 'root', name: 'My Drive' }];
+    }
+
+    for (const [folderId, items] of Object.entries(folderStructure)) {
+      const item = items.find(item => item.id.toString() === targetId);
+      if (item) {
+        const parentPath = findPath(folderId);
+        if (parentPath) {
+          return [...parentPath, { id: targetId, name: item.name }];
+        }
+      }
+    }
+    return null;
+  };
+
+  const currentPath = findPath(currentFolderId) || [{ id: 'root', name: 'My Drive' }];
+  const files = folderStructure[currentFolderId] || [];
 
   const canInviteMembers = drive.userRole === "editor";
   const canManageRoles = drive.userRole === "editor";
@@ -76,11 +95,13 @@ const DriveDetail = () => {
   };
 
   const handleFolderOpen = (folderId: number) => {
-    console.log("Opening folder:", folderId);
+    setCurrentFolderId(folderId.toString());
+    setSelectedFiles([]);
   };
 
   const handlePathNavigate = (pathId: string) => {
-    console.log("Navigating to path:", pathId);
+    setCurrentFolderId(pathId);
+    setSelectedFiles([]);
   };
 
   const handleShareClick = () => {
