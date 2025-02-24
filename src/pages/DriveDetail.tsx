@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { useParams } from "react-router-dom";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -6,7 +5,7 @@ import { FileExplorer } from "@/components/drive/FileExplorer";
 import { SharePanel } from "@/components/drive/SharePanel";
 import { DriveHeader } from "@/components/drive/DriveHeader";
 import { DriveMembers } from "@/components/drive/DriveMembers";
-import { workspaces } from "@/mocks/workspaceData";
+import { drives } from "@/mocks/workspaceData";
 import type { FileItem, Member } from "@/types/drive";
 
 const DriveDetail = () => {
@@ -18,9 +17,7 @@ const DriveDetail = () => {
   const [activeTab, setActiveTab] = useState("folders");
   const [currentFolderId, setCurrentFolderId] = useState("root");
 
-  const drive = workspaces.flatMap(workspace => 
-    workspace.drives.filter(drive => drive.id === driveId)
-  )[0];
+  const drive = drives.find(drive => drive.id === driveId);
 
   if (!drive) {
     return <div>Drive not found</div>;
@@ -32,7 +29,6 @@ const DriveDetail = () => {
     { id: "3", name: "Mike Johnson", email: "mike@quantit.com", role: "viewer", joinedAt: "2024-02-10" },
   ];
 
-  // 폴더 구조 데이터
   const folderStructure: Record<string, FileItem[]> = {
     root: [
       { id: 1, name: "Content Model", type: "folder", modified: "2024-02-20", shared: false, public: false },
@@ -62,7 +58,6 @@ const DriveDetail = () => {
     ],
   };
 
-  // 경로 추적을 위한 helper 함수
   const findPath = (targetId: string, path: { id: string; name: string; }[] = []): { id: string; name: string; }[] | null => {
     if (targetId === 'root') {
       return [{ id: 'root', name: drive.name }];
