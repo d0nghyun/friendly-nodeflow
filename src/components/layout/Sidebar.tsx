@@ -22,7 +22,7 @@ export const Sidebar = () => {
     if (currentWorkspaceId) {
       setActiveWorkspaceId(currentWorkspaceId);
       if (!expandedWorkspaces.includes(currentWorkspaceId)) {
-        setExpandedWorkspaces([currentWorkspaceId]);
+        setExpandedWorkspaces(prev => [...prev, currentWorkspaceId]);
       }
     }
   }, [location.pathname]);
@@ -30,11 +30,15 @@ export const Sidebar = () => {
   const toggleWorkspace = (workspaceId: string) => {
     if (workspaceId === activeWorkspaceId) {
       setExpandedWorkspaces(prev => 
-        prev.includes(workspaceId) ? [] : [workspaceId]
+        prev.includes(workspaceId) ? prev.filter(id => id !== workspaceId) : [...prev, workspaceId]
       );
     } else {
       setActiveWorkspaceId(workspaceId);
-      setExpandedWorkspaces([workspaceId]);
+      setExpandedWorkspaces(prev => 
+        prev.includes(workspaceId) 
+          ? prev.filter(id => id !== workspaceId)
+          : [...prev, workspaceId]
+      );
     }
   };
 
@@ -87,11 +91,15 @@ export const Sidebar = () => {
                 </>
               )}
             </CollapsibleTrigger>
-            {!isSidebarCollapsed && (
+            {(!isSidebarCollapsed && (expandedWorkspaces.includes(workspace.id) || (currentWorkspaceId === workspace.id && currentWorkflowId))) && (
               <CollapsibleContent>
                 <div className="space-y-1 pl-6 mt-1">
                   {workspace.workflows.map(workflow => {
                     const isActive = currentWorkspaceId === workspace.id && currentWorkflowId === workflow.id;
+                    // 워크스페이스가 접혔을 때는 활성화된 워크플로우만 표시
+                    if (!expandedWorkspaces.includes(workspace.id) && !isActive) {
+                      return null;
+                    }
                     return (
                       <Link
                         key={workflow.id}
