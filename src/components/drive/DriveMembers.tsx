@@ -39,7 +39,7 @@ export const DriveMembers = ({
   return (
     <>
       <div className="mb-6 flex justify-between items-center">
-        <h2 className="text-lg font-semibold">Drive Members</h2>
+        <h2 className="text-lg font-semibold">Members</h2>
         <Dialog open={showInviteDialog} onOpenChange={onShowInviteDialogChange}>
           <DialogTrigger asChild>
             <Button disabled={!canInviteMembers} className="gap-2">

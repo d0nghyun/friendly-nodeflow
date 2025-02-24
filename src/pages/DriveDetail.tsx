@@ -65,7 +65,7 @@ const DriveDetail = () => {
   // 경로 추적을 위한 helper 함수
   const findPath = (targetId: string, path: { id: string; name: string; }[] = []): { id: string; name: string; }[] | null => {
     if (targetId === 'root') {
-      return [{ id: 'root', name: 'My Drive' }];
+      return [{ id: 'root', name: drive.name }];
     }
 
     for (const [folderId, items] of Object.entries(folderStructure)) {
@@ -80,7 +80,7 @@ const DriveDetail = () => {
     return null;
   };
 
-  const currentPath = findPath(currentFolderId) || [{ id: 'root', name: 'My Drive' }];
+  const currentPath = findPath(currentFolderId) || [{ id: 'root', name: drive.name }];
   const files = folderStructure[currentFolderId] || [];
 
   const canInviteMembers = drive.userRole === "editor";
