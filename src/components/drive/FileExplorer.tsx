@@ -1,14 +1,7 @@
 
-import { Share, Trash2, Plus, Upload } from 'lucide-react';
+import { Share, Trash2, Upload, FolderPlus } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from "@/components/ui/dialog";
 import { FilesList } from '@/components/drive/FilesList';
 import { DriveBreadcrumb } from '@/components/drive/DriveBreadcrumb';
 import type { FileItem } from '@/types/drive';
@@ -47,48 +40,39 @@ export const FileExplorer = ({
               placeholder="Search files..." 
               className="w-64"
             />
-            <Dialog>
-              <DialogTrigger asChild>
-                <Button variant="outline" className="gap-2">
-                  <Plus className="h-4 w-4" />
-                  New
-                </Button>
-              </DialogTrigger>
-              <DialogContent>
-                <DialogHeader>
-                  <DialogTitle>Add New</DialogTitle>
-                </DialogHeader>
-                <div className="grid gap-4 py-4">
-                  <Button variant="outline" className="justify-start gap-2">
-                    <Upload className="h-4 w-4" />
-                    Upload File
-                  </Button>
-                  <Button variant="outline" className="justify-start gap-2">
-                    <Plus className="h-4 w-4" />
-                    Create Folder
-                  </Button>
-                </div>
-              </DialogContent>
-            </Dialog>
-            {selectedFiles.length > 0 && (
-              <>
-                <Button 
-                  variant="outline" 
-                  className="gap-2"
-                  onClick={onShareClick}
-                >
-                  <Share className="h-4 w-4" />
-                  Share
-                </Button>
-                <Button 
-                  variant="outline" 
-                  className="gap-2 text-red-600 hover:text-red-600"
-                >
-                  <Trash2 className="h-4 w-4" />
-                  Delete
-                </Button>
-              </>
-            )}
+            <Button 
+              variant="outline" 
+              className="gap-2"
+              onClick={() => console.log("Upload file")}
+            >
+              <Upload className="h-4 w-4" />
+              Upload
+            </Button>
+            <Button 
+              variant="outline" 
+              className="gap-2"
+              onClick={() => console.log("Create folder")}
+            >
+              <FolderPlus className="h-4 w-4" />
+              Folder
+            </Button>
+            <Button 
+              variant="outline" 
+              className={`gap-2 ${selectedFiles.length === 0 ? 'opacity-50 cursor-not-allowed' : ''}`}
+              disabled={selectedFiles.length === 0}
+              onClick={onShareClick}
+            >
+              <Share className="h-4 w-4" />
+              Share
+            </Button>
+            <Button 
+              variant="outline" 
+              className={`gap-2 text-red-600 hover:text-red-600 ${selectedFiles.length === 0 ? 'opacity-50 cursor-not-allowed' : ''}`}
+              disabled={selectedFiles.length === 0}
+            >
+              <Trash2 className="h-4 w-4" />
+              Delete
+            </Button>
           </div>
         </div>
       </div>
