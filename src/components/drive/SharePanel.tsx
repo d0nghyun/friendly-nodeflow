@@ -11,34 +11,23 @@ import {
 import { Switch } from "@/components/ui/switch";
 import { Input } from "@/components/ui/input";
 
-interface Member {
-  id: string;
-  name: string;
-  email: string;
-  role: 'editor' | 'viewer';
-}
-
 interface SharePanelProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
-  members?: Member[];
   isPublic?: boolean;
-  onRoleChange?: (memberId: string, role: 'editor' | 'viewer') => void;
   onPublicChange?: (value: boolean) => void;
 }
 
 export const SharePanel = ({ 
   open, 
   onOpenChange,
-  members = [],
   isPublic = false,
-  onRoleChange = () => {},
   onPublicChange = () => {}
 }: SharePanelProps) => {
   if (!open) return null;
 
   return (
-    <div className="w-80 border-l bg-white p-4 flex flex-col h-full">
+    <div className="fixed inset-y-0 right-0 w-80 border-l bg-white p-4 shadow-lg transform transition-transform z-50">
       <div className="flex items-center justify-between mb-6">
         <h3 className="text-lg font-semibold">Share</h3>
         <Button variant="ghost" size="icon" onClick={() => onOpenChange(false)}>
@@ -67,26 +56,24 @@ export const SharePanel = ({
           <div>
             <h4 className="text-sm font-medium mb-2">Members</h4>
             <div className="space-y-2">
-              {members.map((member) => (
-                <div key={member.id} className="flex items-center justify-between">
-                  <div className="flex items-center gap-2">
-                    <Users className="h-4 w-4 text-gray-400" />
-                    <div>
-                      <div className="font-medium">{member.name}</div>
-                      <div className="text-sm text-gray-500">{member.email}</div>
-                    </div>
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-2">
+                  <Users className="h-4 w-4 text-gray-400" />
+                  <div>
+                    <div className="font-medium">John Doe</div>
+                    <div className="text-sm text-gray-500">john@example.com</div>
                   </div>
-                  <Select defaultValue={member.role} onValueChange={(value: 'editor' | 'viewer') => onRoleChange(member.id, value)}>
-                    <SelectTrigger className="w-[110px]">
-                      <SelectValue />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="editor">Editor</SelectItem>
-                      <SelectItem value="viewer">Viewer</SelectItem>
-                    </SelectContent>
-                  </Select>
                 </div>
-              ))}
+                <Select defaultValue="editor">
+                  <SelectTrigger className="w-[110px]">
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="editor">Editor</SelectItem>
+                    <SelectItem value="viewer">Viewer</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
             </div>
           </div>
 
