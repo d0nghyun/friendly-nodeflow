@@ -14,16 +14,12 @@ import {
 } from "@/components/ui/table";
 import { OrganizationHeader } from "@/components/organization/OrganizationHeader";
 import type { Organization, OrganizationMember } from "@/types/organization";
-import { workspaces } from "@/mocks/workspaceData";
+import { workspaces, drives } from "@/mocks/workspaceData";
 import { MembersList } from "@/components/members/MembersList";
 
 const OrganizationDetail = () => {
   const { organizationId } = useParams();
   const [activeTab, setActiveTab] = useState("members");
-
-  const allDrives = workspaces.reduce((acc, workspace) => {
-    return [...acc, ...workspace.drives];
-  }, [] as typeof workspaces[0]['drives']);
 
   const organization: Organization & { members: OrganizationMember[], drives: any[], workspaces: any[] } = {
     id: organizationId!,
@@ -69,7 +65,7 @@ const OrganizationDetail = () => {
       membersCount: ws.members.length,
       createdAt: ws.createdAt
     })),
-    drives: allDrives
+    drives: drives
   };
 
   const handleRoleChange = (memberId: string, newRole: string) => {
@@ -173,13 +169,13 @@ const OrganizationDetail = () => {
                     <TableCell className="whitespace-nowrap">
                       <span className="flex items-center gap-2">
                         <Calendar className="h-4 w-4 text-gray-500" />
-                        {drive.createdAt || "N/A"}
+                        {drive.createdAt}
                       </span>
                     </TableCell>
                     <TableCell>
                       <span className="flex items-center gap-2">
                         <Users className="h-4 w-4 text-gray-500" />
-                        {drive.membersCount || "N/A"} members
+                        {drive.membersCount} members
                       </span>
                     </TableCell>
                   </TableRow>
