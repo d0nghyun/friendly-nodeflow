@@ -13,22 +13,29 @@ export const Sidebar = () => {
     workspaceId ? [workspaceId] : []
   );
   const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
+  const [activeWorkspaceId, setActiveWorkspaceId] = useState<string | null>(workspaceId || null);
 
   useEffect(() => {
     const pathMatch = location.pathname.match(/^\/([^/]+)\/([^/]+)$/);
     const currentWorkspaceId = pathMatch?.[1];
     
-    if (currentWorkspaceId && !expandedWorkspaces.includes(currentWorkspaceId)) {
-      setExpandedWorkspaces(prev => [...prev, currentWorkspaceId]);
+    if (currentWorkspaceId) {
+      setActiveWorkspaceId(currentWorkspaceId);
+      if (!expandedWorkspaces.includes(currentWorkspaceId)) {
+        setExpandedWorkspaces([currentWorkspaceId]);
+      }
     }
-  }, [location.pathname, expandedWorkspaces]);
+  }, [location.pathname]);
 
   const toggleWorkspace = (workspaceId: string) => {
-    setExpandedWorkspaces(prev => 
-      prev.includes(workspaceId)
-        ? prev.filter(id => id !== workspaceId)
-        : [...prev, workspaceId]
-    );
+    if (workspaceId === activeWorkspaceId) {
+      setExpandedWorkspaces(prev => 
+        prev.includes(workspaceId) ? [] : [workspaceId]
+      );
+    } else {
+      setActiveWorkspaceId(workspaceId);
+      setExpandedWorkspaces([workspaceId]);
+    }
   };
 
   const pathMatch = location.pathname.match(/^\/([^/]+)\/([^/]+)$/);
@@ -59,7 +66,9 @@ export const Sidebar = () => {
             open={expandedWorkspaces.includes(workspace.id)}
             onOpenChange={() => toggleWorkspace(workspace.id)}
           >
-            <CollapsibleTrigger className="flex items-center gap-2 text-gray-600 w-full hover:bg-gray-50 rounded p-1">
+            <CollapsibleTrigger className={`flex items-center gap-2 w-full hover:bg-gray-50 rounded p-1 ${
+              workspace.id === activeWorkspaceId ? 'text-gray-900' : 'text-gray-600'
+            }`}>
               {isSidebarCollapsed ? (
                 <Link to={`/workspace/${workspace.id}`} className="flex items-center">
                   <Grid className="h-4 w-4" />
