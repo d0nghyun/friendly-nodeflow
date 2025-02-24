@@ -7,7 +7,7 @@ import { SharePanel } from "@/components/drive/SharePanel";
 import { DriveHeader } from "@/components/drive/DriveHeader";
 import { DriveMembers } from "@/components/drive/DriveMembers";
 import { workspaces } from "@/mocks/workspaceData";
-import type { FileItem } from "@/types/drive";
+import type { FileItem, Member } from "@/types/drive";
 
 const DriveDetail = () => {
   const { driveId } = useParams();
@@ -25,7 +25,7 @@ const DriveDetail = () => {
     return <div>Drive not found</div>;
   }
 
-  const members = [
+  const members: Member[] = [
     { id: "1", name: "John Doe", email: "john@quantit.com", role: "editor", joinedAt: "2024-01-15" },
     { id: "2", name: "Jane Smith", email: "jane@quantit.com", role: "editor", joinedAt: "2024-02-01" },
     { id: "3", name: "Mike Johnson", email: "mike@quantit.com", role: "viewer", joinedAt: "2024-02-10" },
