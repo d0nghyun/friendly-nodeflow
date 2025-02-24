@@ -33,6 +33,7 @@ interface MembersListProps {
   containerType: 'organization' | 'workspace' | 'drive';
   onRoleChange?: (memberId: string, newRole: string) => void;
   onInviteMember?: (email: string) => void;
+  hideHeader?: boolean;
 }
 
 export const MembersList = ({
@@ -41,6 +42,7 @@ export const MembersList = ({
   containerType,
   onRoleChange,
   onInviteMember,
+  hideHeader = false,
 }: MembersListProps) => {
   const [showInviteDialog, setShowInviteDialog] = useState(false);
   const [inviteEmail, setInviteEmail] = useState("");
@@ -81,43 +83,45 @@ export const MembersList = ({
 
   return (
     <div className="space-y-6">
-      <div className="flex justify-between items-center">
-        <h2 className="text-lg font-semibold">{containerType.charAt(0).toUpperCase() + containerType.slice(1)} Members</h2>
-        {isAdmin && (
-          <Dialog open={showInviteDialog} onOpenChange={setShowInviteDialog}>
-            <DialogTrigger asChild>
-              <Button className="gap-2">
-                <UserPlus className="h-4 w-4" />
-                Invite Member
-              </Button>
-            </DialogTrigger>
-            <DialogContent>
-              <DialogHeader>
-                <DialogTitle>Invite Member</DialogTitle>
-                <DialogDescription>
-                  Enter the email address of the person you want to invite.
-                </DialogDescription>
-              </DialogHeader>
-              <div className="space-y-4 pt-4">
-                <Input
-                  placeholder="Email address"
-                  type="email"
-                  value={inviteEmail}
-                  onChange={(e) => setInviteEmail(e.target.value)}
-                />
-                <div className="flex justify-end gap-2">
-                  <Button variant="outline" onClick={() => setShowInviteDialog(false)}>
-                    Cancel
-                  </Button>
-                  <Button onClick={handleInvite}>
-                    Send Invitation
-                  </Button>
+      {!hideHeader && (
+        <div className="flex justify-between items-center">
+          <h2 className="text-lg font-semibold">{containerType.charAt(0).toUpperCase() + containerType.slice(1)} Members</h2>
+          {isAdmin && (
+            <Dialog open={showInviteDialog} onOpenChange={setShowInviteDialog}>
+              <DialogTrigger asChild>
+                <Button className="gap-2">
+                  <UserPlus className="h-4 w-4" />
+                  Invite Member
+                </Button>
+              </DialogTrigger>
+              <DialogContent>
+                <DialogHeader>
+                  <DialogTitle>Invite Member</DialogTitle>
+                  <DialogDescription>
+                    Enter the email address of the person you want to invite.
+                  </DialogDescription>
+                </DialogHeader>
+                <div className="space-y-4 pt-4">
+                  <Input
+                    placeholder="Email address"
+                    type="email"
+                    value={inviteEmail}
+                    onChange={(e) => setInviteEmail(e.target.value)}
+                  />
+                  <div className="flex justify-end gap-2">
+                    <Button variant="outline" onClick={() => setShowInviteDialog(false)}>
+                      Cancel
+                    </Button>
+                    <Button onClick={handleInvite}>
+                      Send Invitation
+                    </Button>
+                  </div>
                 </div>
-              </div>
-            </DialogContent>
-          </Dialog>
-        )}
-      </div>
+              </DialogContent>
+            </Dialog>
+          )}
+        </div>
+      )}
 
       <div className="space-y-4">
         {members.map(member => (
