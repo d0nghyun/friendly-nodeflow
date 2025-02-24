@@ -56,23 +56,25 @@ export const FileExplorer = ({
               <FolderPlus className="h-4 w-4" />
               Folder
             </Button>
-            <Button 
-              variant="outline" 
-              className={`gap-2 ${selectedFiles.length === 0 ? 'opacity-50 cursor-not-allowed' : ''}`}
-              disabled={selectedFiles.length === 0}
-              onClick={onShareClick}
-            >
-              <Share className="h-4 w-4" />
-              Share
-            </Button>
-            <Button 
-              variant="outline" 
-              className={`gap-2 text-red-600 hover:text-red-600 ${selectedFiles.length === 0 ? 'opacity-50 cursor-not-allowed' : ''}`}
-              disabled={selectedFiles.length === 0}
-            >
-              <Trash2 className="h-4 w-4" />
-              Delete
-            </Button>
+            {selectedFiles.length > 0 && (
+              <>
+                <Button 
+                  variant="outline" 
+                  className="gap-2"
+                  onClick={onShareClick}
+                >
+                  <Share className="h-4 w-4" />
+                  Share
+                </Button>
+                <Button 
+                  variant="outline" 
+                  className="gap-2 text-red-600 hover:text-red-600"
+                >
+                  <Trash2 className="h-4 w-4" />
+                  Delete
+                </Button>
+              </>
+            )}
           </div>
         </div>
       </div>
