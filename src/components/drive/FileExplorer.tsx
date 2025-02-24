@@ -70,7 +70,7 @@ export const FileExplorer = ({
                 </div>
               </DialogContent>
             </Dialog>
-            {selectedFiles.length > 0 ? (
+            {selectedFiles.length > 0 && (
               <>
                 <Button 
                   variant="outline" 
@@ -88,15 +88,6 @@ export const FileExplorer = ({
                   Delete
                 </Button>
               </>
-            ) : (
-              <Button 
-                variant="outline" 
-                className="gap-2"
-                onClick={onShareClick}
-              >
-                <Share className="h-4 w-4" />
-                Share
-              </Button>
             )}
           </div>
         </div>
