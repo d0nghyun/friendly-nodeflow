@@ -15,6 +15,10 @@ export const Sidebar = () => {
   const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
   const [activeWorkspaceId, setActiveWorkspaceId] = useState<string | null>(workspaceId || null);
 
+  const pathMatch = location.pathname.match(/^\/([^/]+)\/([^/]+)$/);
+  const currentWorkspaceId = pathMatch?.[1] || workspaceId;
+  const currentWorkflowId = pathMatch?.[2] || workflowId;
+
   useEffect(() => {
     const pathMatch = location.pathname.match(/^\/([^/]+)\/([^/]+)$/);
     const currentWorkspaceId = pathMatch?.[1];
@@ -22,25 +26,40 @@ export const Sidebar = () => {
     if (currentWorkspaceId) {
       setActiveWorkspaceId(currentWorkspaceId);
       if (!expandedWorkspaces.includes(currentWorkspaceId)) {
-        setExpandedWorkspaces([currentWorkspaceId]);
+        setExpandedWorkspaces(prev => [...prev, currentWorkspaceId]);
       }
     }
   }, [location.pathname]);
 
   const toggleWorkspace = (workspaceId: string) => {
-    if (workspaceId === activeWorkspaceId) {
-      setExpandedWorkspaces(prev => 
-        prev.includes(workspaceId) ? [] : [workspaceId]
-      );
-    } else {
-      setActiveWorkspaceId(workspaceId);
-      setExpandedWorkspaces([workspaceId]);
-    }
+    setExpandedWorkspaces(prev => {
+      // 현재 워크스페이스에 활성화된 워크플로우가 있는지 확인
+      const hasActiveWorkflow = currentWorkspaceId === workspaceId && currentWorkflowId;
+      
+      if (prev.includes(workspaceId)) {
+        // 접을 때: 활성화된 워크플로우가 있으면 유지, 없으면 제거
+        if (hasActiveWorkflow) {
+          return prev;
+        }
+        return prev.filter(id => id !== workspaceId);
+      } else {
+        // 펼칠 때: 추가
+        return [...prev, workspaceId];
+      }
+    });
   };
 
-  const pathMatch = location.pathname.match(/^\/([^/]+)\/([^/]+)$/);
-  const currentWorkspaceId = pathMatch?.[1] || workspaceId;
-  const currentWorkflowId = pathMatch?.[2] || workflowId;
+  const toggleAllWorkspaces = () => {
+    if (expandedWorkspaces.length === workspaces.length) {
+      // 전부 접기: 활성화된 워크플로우가 있는 워크스페이스만 남김
+      setExpandedWorkspaces(
+        currentWorkspaceId && currentWorkflowId ? [currentWorkspaceId] : []
+      );
+    } else {
+      // 전부 펼치기
+      setExpandedWorkspaces(workspaces.map(w => w.id));
+    }
+  };
 
   return (
     <div className={`relative h-[calc(100vh-3.5rem)] border-r bg-white transition-all duration-300 ${
@@ -59,7 +78,18 @@ export const Sidebar = () => {
         )}
       </Button>
       
-      <div className="flex-1 p-4 space-y-6 overflow-y-auto">
+      {!isSidebarCollapsed && (
+        <Button
+          variant="ghost"
+          size="sm"
+          onClick={toggleAllWorkspaces}
+          className="absolute right-4 top-2"
+        >
+          {expandedWorkspaces.length === workspaces.length ? "접기" : "펼치기"}
+        </Button>
+      )}
+      
+      <div className="flex-1 p-4 space-y-6 overflow-y-auto mt-10">
         {workspaces.map(workspace => (
           <Collapsible
             key={workspace.id}
