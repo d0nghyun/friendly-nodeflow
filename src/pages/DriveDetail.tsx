@@ -1,27 +1,13 @@
+
 import { useState } from "react";
-import { useParams, Link } from "react-router-dom";
-import { Pencil, Trash2, ChevronLeft, Calendar, Users, UserPlus, UserCheck } from "lucide-react";
-import { Button } from "@/components/ui/button";
+import { useParams } from "react-router-dom";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from "@/components/ui/dialog";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
-import { Input } from "@/components/ui/input";
 import { FileExplorer } from "@/components/drive/FileExplorer";
 import { SharePanel } from "@/components/drive/SharePanel";
+import { DriveHeader } from "@/components/drive/DriveHeader";
+import { DriveMembers } from "@/components/drive/DriveMembers";
 import { workspaces } from "@/mocks/workspaceData";
+import type { FileItem } from "@/types/drive";
 
 const DriveDetail = () => {
   const { driveId } = useParams();
@@ -45,11 +31,11 @@ const DriveDetail = () => {
     { id: "3", name: "Mike Johnson", email: "mike@quantit.com", role: "viewer", joinedAt: "2024-02-10" },
   ];
 
-  const files = [
+  const files: FileItem[] = [
     { 
       id: 1, 
       name: "Documents", 
-      type: "folder" as const, 
+      type: "folder", 
       modified: "2024-02-20", 
       shared: true,
       public: false
@@ -57,7 +43,7 @@ const DriveDetail = () => {
     { 
       id: 2, 
       name: "Images", 
-      type: "folder" as const, 
+      type: "folder", 
       modified: "2024-02-19", 
       shared: false,
       public: true
@@ -65,7 +51,7 @@ const DriveDetail = () => {
     { 
       id: 3, 
       name: "Report.pdf", 
-      type: "file" as const, 
+      type: "file", 
       modified: "2024-02-18", 
       shared: true,
       public: false
@@ -113,41 +99,7 @@ const DriveDetail = () => {
 
   return (
     <div className="p-6">
-      <div className="mb-6">
-        <Link to="/drive">
-          <Button variant="ghost" className="gap-2 mb-4">
-            <ChevronLeft className="h-4 w-4" />
-            Back to Drives
-          </Button>
-        </Link>
-
-        <div className="flex items-start justify-between">
-          <div>
-            <h1 className="text-2xl font-bold">{drive.name}</h1>
-            <p className="text-gray-500 mt-1">{drive.description}</p>
-            <div className="flex gap-4 mt-2 text-sm text-gray-500">
-              <span className="flex items-center gap-2">
-                <Calendar className="h-4 w-4" />
-                Created: {drive.createdAt || "2024-02-20"}
-              </span>
-              <span className="flex items-center gap-2">
-                <Users className="h-4 w-4" />
-                {members.length} members
-              </span>
-            </div>
-          </div>
-          <div className="flex gap-2">
-            <Button variant="outline" className="gap-2">
-              <Pencil className="h-4 w-4" />
-              Edit
-            </Button>
-            <Button variant="outline" className="gap-2 text-red-600 hover:text-red-600">
-              <Trash2 className="h-4 w-4" />
-              Delete
-            </Button>
-          </div>
-        </div>
-      </div>
+      <DriveHeader drive={drive} membersCount={members.length} />
 
       <Tabs defaultValue="folders" value={activeTab} onValueChange={setActiveTab}>
         <TabsList>
@@ -168,80 +120,17 @@ const DriveDetail = () => {
         </TabsContent>
 
         <TabsContent value="members" className="mt-6">
-          <div className="mb-6 flex justify-between items-center">
-            <h2 className="text-lg font-semibold">Drive Members</h2>
-            <Dialog open={showInviteDialog} onOpenChange={setShowInviteDialog}>
-              <DialogTrigger asChild>
-                <Button disabled={!canInviteMembers} className="gap-2">
-                  <UserPlus className="h-4 w-4" />
-                  Invite Member
-                </Button>
-              </DialogTrigger>
-              <DialogContent>
-                <DialogHeader>
-                  <DialogTitle>Invite Member</DialogTitle>
-                  <DialogDescription>
-                    Enter the email address of the person you want to invite.
-                  </DialogDescription>
-                </DialogHeader>
-                <div className="space-y-4 pt-4">
-                  <Input
-                    placeholder="Email address"
-                    type="email"
-                    value={inviteEmail}
-                    onChange={(e) => setInviteEmail(e.target.value)}
-                  />
-                  <div className="flex justify-end gap-2">
-                    <Button variant="outline" onClick={() => setShowInviteDialog(false)}>
-                      Cancel
-                    </Button>
-                    <Button onClick={handleInviteMember}>
-                      Send Invitation
-                    </Button>
-                  </div>
-                </div>
-              </DialogContent>
-            </Dialog>
-          </div>
-          <div className="space-y-4">
-            {members.map(member => (
-              <div 
-                key={member.id} 
-                className="flex items-center justify-between p-4 border rounded-lg bg-white"
-              >
-                <div className="flex items-center gap-3">
-                  <div className="h-10 w-10 rounded-full bg-gray-100 flex items-center justify-center">
-                    <Users className="h-5 w-5 text-gray-600" />
-                  </div>
-                  <div>
-                    <div className="font-medium">{member.name}</div>
-                    <div className="text-sm text-gray-500">{member.email}</div>
-                  </div>
-                </div>
-                <div className="flex items-center gap-4">
-                  <div className="flex items-center gap-2">
-                    <UserCheck className="h-4 w-4 text-gray-400" />
-                    <Select
-                      value={member.role}
-                      onValueChange={(value) => handleRoleChange(member.id, value)}
-                      disabled={!canManageRoles}
-                    >
-                      <SelectTrigger className="w-[110px]">
-                        <SelectValue />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="editor">Editor</SelectItem>
-                        <SelectItem value="viewer">Viewer</SelectItem>
-                      </SelectContent>
-                    </Select>
-                  </div>
-                  <span className="text-sm text-gray-500 ml-4">
-                    Joined {member.joinedAt}
-                  </span>
-                </div>
-              </div>
-            ))}
-          </div>
+          <DriveMembers 
+            members={members}
+            canInviteMembers={canInviteMembers}
+            canManageRoles={canManageRoles}
+            showInviteDialog={showInviteDialog}
+            inviteEmail={inviteEmail}
+            onInviteEmailChange={setInviteEmail}
+            onShowInviteDialogChange={setShowInviteDialog}
+            onInviteMember={handleInviteMember}
+            onRoleChange={handleRoleChange}
+          />
         </TabsContent>
       </Tabs>
 
